@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variant 16 - Constellation</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          night: '#0B1120',
+          deep: '#0F172A',
+          card: '#131936'
+        },
+        fontFamily: {
+          head: ['Archivo', 'system-ui', 'sans-serif'],
+          body: ['"Space Grotesk"', 'system-ui', 'sans-serif']
+        }
+      }
+    }
+  };
+</script>
+<style>
+  html { scroll-padding-top: 4.5rem; }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+
+  body {
+    background-color: #0B1120;
+    background-image:
+      radial-gradient(1100px 600px at 80% -10%, rgba(67, 56, 202, 0.16), transparent 60%),
+      radial-gradient(900px 700px at 10% 110%, rgba(124, 58, 237, 0.10), transparent 60%);
+    background-attachment: fixed;
+  }
+
+  :focus-visible {
+    outline: 2px solid #A5B4FC;
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  /* ---- The one mechanic: constellation lines that draw on scroll ---- */
+  .draw-path {
+    fill: none;
+    stroke: #8B95F8;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 5px rgba(129, 140, 248, 0.75));
+  }
+  .ghost-path {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.09);
+    stroke-width: 1;
+    stroke-dasharray: 2 7;
+    stroke-linecap: round;
+  }
+
+  /* Project star nodes (HTML) */
+  .star-node {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    margin-left: -8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transition: background-color 0.25s ease-out, box-shadow 0.25s ease-out;
+  }
+  .star-node.lit {
+    background: #ffffff;
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow:
+      0 0 14px 3px rgba(165, 180, 252, 0.85),
+      0 0 42px 8px rgba(124, 58, 237, 0.30);
+  }
+
+  /* Decorative constellation stars (SVG circles) */
+  .deco-star {
+    fill: rgba(255, 255, 255, 0.30);
+    transition: fill 0.25s ease-out, filter 0.25s ease-out;
+  }
+  .deco-star.lit {
+    fill: #ffffff;
+    filter: drop-shadow(0 0 6px rgba(165, 180, 252, 0.9));
+  }
+
+  .project-card {
+    background: rgba(19, 25, 54, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: border-color 0.2s ease-out;
+  }
+  .project-card:hover { border-color: rgba(255, 255, 255, 0.22); }
+
+  .tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    padding: 0.28rem 0.65rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #C7D2FE;
+    background: rgba(255, 255, 255, 0.03);
+    white-space: nowrap;
+  }
+
+  .glow-text { text-shadow: 0 0 10px rgba(165, 180, 252, 0.35); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body class="font-body text-slate-200 antialiased overflow-x-hidden min-h-screen">
+
+  <!-- Starfield background -->
+  <canvas id="starfield" aria-hidden="true" class="fixed inset-0 -z-10 pointer-events-none"></canvas>
+
+  <!-- Fixed chrome -->
+  <a href="../index.html"
+     class="fixed top-4 left-4 z-50 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-deep/70 px-3.5 py-1.5 text-sm text-slate-300 backdrop-blur hover:text-white hover:border-white/25 transition-colors cursor-pointer">
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+    All variants
+  </a>
+
+  <nav aria-label="Section navigation"
+       class="fixed top-4 right-4 z-50 hidden sm:flex items-center gap-1 rounded-full border border-white/10 bg-deep/70 px-2 py-1 backdrop-blur">
+    <a href="#about" class="rounded-full px-3 py-1 text-sm text-slate-300 hover:text-white transition-colors cursor-pointer">About</a>
+    <a href="#work" class="rounded-full px-3 py-1 text-sm text-slate-300 hover:text-white transition-colors cursor-pointer">Work</a>
+    <a href="#contact" class="rounded-full px-3 py-1 text-sm text-slate-300 hover:text-white transition-colors cursor-pointer">Contact</a>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <header class="relative min-h-screen flex items-center">
+    <div class="mx-auto w-full max-w-5xl px-6 py-24">
+      <div class="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
+        <div>
+          <p class="font-head text-xs font-medium uppercase tracking-[0.3em] text-indigo-300">Night-sky portfolio</p>
+          <h1 class="mt-4 font-head text-4xl font-bold leading-tight text-white sm:text-6xl glow-text">Alex Morgan</h1>
+          <p class="mt-3 font-head text-lg font-medium text-indigo-200 sm:text-xl">Software Engineer &amp; Designer</p>
+          <p class="mt-6 max-w-prose leading-relaxed text-slate-300">
+            Every project starts as a scattered point of light. I draw the lines between them —
+            scroll, and watch the constellations take shape.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="#work"
+               class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 font-head text-sm font-semibold text-white hover:bg-indigo-500 transition-colors cursor-pointer">
+              See the constellations
+              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+            </a>
+            <a href="#contact"
+               class="inline-flex items-center rounded-full border border-white/15 px-5 py-2.5 font-head text-sm font-semibold text-slate-200 hover:border-white/35 hover:text-white transition-colors cursor-pointer">
+              Get in touch
+            </a>
+          </div>
+        </div>
+
+        <!-- Hero constellation: draws itself with scroll -->
+        <div data-constellation aria-hidden="true" class="mx-auto w-full max-w-[560px]">
+          <svg viewBox="0 0 640 420" class="h-auto w-full" role="presentation">
+            <path class="ghost-path" d="M60 320 L170 210 L300 260 L420 120 L540 180 L600 60"></path>
+            <path class="draw-path" d="M60 320 L170 210 L300 260 L420 120 L540 180 L600 60"></path>
+            <circle class="deco-star" data-at="0"    cx="60"  cy="320" r="4"></circle>
+            <circle class="deco-star" data-at="0.21" cx="170" cy="210" r="3.2"></circle>
+            <circle class="deco-star" data-at="0.40" cx="300" cy="260" r="4.4"></circle>
+            <circle class="deco-star" data-at="0.64" cx="420" cy="120" r="3.4"></circle>
+            <circle class="deco-star" data-at="0.82" cx="540" cy="180" r="4"></circle>
+            <circle class="deco-star" data-at="0.99" cx="600" cy="60"  r="3"></circle>
+          </svg>
+        </div>
+      </div>
+
+      <p class="mt-16 flex items-center gap-2 text-sm text-slate-400">
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        Scroll — the lines draw themselves.
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ ABOUT ============ -->
+    <section id="about" class="relative py-24 sm:py-32">
+      <div class="mx-auto max-w-5xl px-6">
+        <p class="font-head text-xs font-medium uppercase tracking-[0.3em] text-indigo-300">About</p>
+        <h2 class="mt-3 font-head text-3xl font-semibold text-white sm:text-4xl">A cartographer of ideas</h2>
+        <div class="mt-8 max-w-prose space-y-5 leading-relaxed text-slate-300">
+          <p>
+            I'm a software engineer and designer who treats every product like a night sky: full of
+            bright, disconnected points that only make sense once someone traces the lines between them.
+            My work lives at that intersection — systems thinking with a designer's hand.
+          </p>
+          <p>
+            Over the past decade I've shipped data platforms, design systems, and developer tools for
+            teams of every size. I care about the quiet details: latency budgets, type safety, the
+            exact easing curve on a hover state.
+          </p>
+          <p>
+            When I'm not at a keyboard, I'm usually somewhere dark with a telescope, doing the analog
+            version of the same job — finding patterns in the noise.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WORK ============ -->
+    <section id="work" class="relative py-24 sm:py-32">
+      <div class="mx-auto max-w-5xl px-6">
+        <p class="font-head text-xs font-medium uppercase tracking-[0.3em] text-indigo-300">Selected work</p>
+        <h2 class="mt-3 font-head text-3xl font-semibold text-white sm:text-4xl">Four stars, one line through them</h2>
+        <p class="mt-4 max-w-prose leading-relaxed text-slate-400">Keep scrolling — each project lights up as the constellation reaches it.</p>
+
+        <div id="constellation-field" class="relative mt-20">
+          <svg id="constellation-svg" preserveAspectRatio="none" aria-hidden="true"
+               class="absolute inset-0 z-0 h-full w-full pointer-events-none" role="presentation">
+            <path id="constellation-ghost" class="ghost-path" d=""></path>
+            <path id="constellation-draw" class="draw-path" d=""></path>
+          </svg>
+
+          <div id="project-list" class="relative flex flex-col gap-24 md:gap-36">
+
+            <article class="project-card relative z-10 w-full rounded-xl p-6 sm:p-8 md:w-[55%] md:self-start">
+              <span class="star-node" aria-hidden="true"></span>
+              <div class="flex items-baseline gap-3">
+                <span class="font-head text-sm font-medium text-indigo-300/70">01</span>
+                <h3 class="font-head text-xl font-semibold text-white">Lyra Metrics</h3>
+              </div>
+              <p class="mt-3 leading-relaxed text-slate-300">Real-time analytics that turns scattered event streams into one legible sky of dashboards.</p>
+              <ul class="mt-5 flex flex-wrap gap-2" aria-label="Technologies">
+                <li class="tag">TypeScript</li>
+                <li class="tag">ClickHouse</li>
+                <li class="tag">WebSockets</li>
+              </ul>
+            </article>
+
+            <article class="project-card relative z-10 w-full rounded-xl p-6 sm:p-8 md:w-[55%] md:self-end">
+              <span class="star-node" aria-hidden="true"></span>
+              <div class="flex items-baseline gap-3">
+                <span class="font-head text-sm font-medium text-indigo-300/70">02</span>
+                <h3 class="font-head text-xl font-semibold text-white">Orion Deploy</h3>
+              </div>
+              <p class="mt-3 leading-relaxed text-slate-300">A zero-downtime deploy orchestrator that maps service dependencies like a star chart.</p>
+              <ul class="mt-5 flex flex-wrap gap-2" aria-label="Technologies">
+                <li class="tag">Go</li>
+                <li class="tag">Kubernetes</li>
+                <li class="tag">gRPC</li>
+              </ul>
+            </article>
+
+            <article class="project-card relative z-10 w-full rounded-xl p-6 sm:p-8 md:w-[55%] md:self-start md:ml-[6%]">
+              <span class="star-node" aria-hidden="true"></span>
+              <div class="flex items-baseline gap-3">
+                <span class="font-head text-sm font-medium text-indigo-300/70">03</span>
+                <h3 class="font-head text-xl font-semibold text-white">Cassiopeia UI</h3>
+              </div>
+              <p class="mt-3 leading-relaxed text-slate-300">An accessible component library where every primitive is documented down to its focus ring.</p>
+              <ul class="mt-5 flex flex-wrap gap-2" aria-label="Technologies">
+                <li class="tag">React</li>
+                <li class="tag">Tailwind</li>
+                <li class="tag">Radix</li>
+              </ul>
+            </article>
+
+            <article class="project-card relative z-10 w-full rounded-xl p-6 sm:p-8 md:w-[55%] md:self-end md:mr-[3%]">
+              <span class="star-node" aria-hidden="true"></span>
+              <div class="flex items-baseline gap-3">
+                <span class="font-head text-sm font-medium text-indigo-300/70">04</span>
+                <h3 class="font-head text-xl font-semibold text-white">Vega Search</h3>
+              </div>
+              <p class="mt-3 leading-relaxed text-slate-300">Federated search that ranks results across a dozen data sources in under fifty milliseconds.</p>
+              <ul class="mt-5 flex flex-wrap gap-2" aria-label="Technologies">
+                <li class="tag">Rust</li>
+                <li class="tag">Tantivy</li>
+                <li class="tag">GraphQL</li>
+              </ul>
+            </article>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section id="contact" class="relative py-24 sm:py-32">
+      <div class="mx-auto max-w-5xl px-6">
+        <div data-constellation aria-hidden="true" class="w-full max-w-xs">
+          <svg viewBox="0 0 320 80" class="h-auto w-full" role="presentation">
+            <path class="ghost-path" d="M10 60 L90 25 L170 50 L250 15 L310 45"></path>
+            <path class="draw-path" d="M10 60 L90 25 L170 50 L250 15 L310 45"></path>
+            <circle class="deco-star" data-at="0"    cx="10"  cy="60" r="3"></circle>
+            <circle class="deco-star" data-at="0.27" cx="90"  cy="25" r="2.4"></circle>
+            <circle class="deco-star" data-at="0.53" cx="170" cy="50" r="3.2"></circle>
+            <circle class="deco-star" data-at="0.79" cx="250" cy="15" r="2.4"></circle>
+            <circle class="deco-star" data-at="0.99" cx="310" cy="45" r="3"></circle>
+          </svg>
+        </div>
+        <p class="mt-8 font-head text-xs font-medium uppercase tracking-[0.3em] text-indigo-300">Contact</p>
+        <h2 class="mt-3 font-head text-3xl font-semibold text-white sm:text-4xl">Send a signal</h2>
+        <p class="mt-4 max-w-prose leading-relaxed text-slate-300">
+          Have a scattered set of ideas that needs a line drawn through it? I'd love to hear about it.
+        </p>
+        <a href="mailto:hello@alexmorgan.dev"
+           class="mt-8 inline-block font-head text-xl font-semibold text-indigo-200 underline decoration-indigo-500/50 underline-offset-8 hover:text-white hover:decoration-indigo-300 transition-colors sm:text-2xl cursor-pointer break-all">
+          hello@alexmorgan.dev
+        </a>
+        <div class="mt-10 flex flex-wrap gap-3">
+          <a href="#"
+             class="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 font-head text-sm font-semibold text-slate-200 hover:border-white/35 hover:text-white transition-colors cursor-pointer">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            GitHub
+          </a>
+          <a href="#"
+             class="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 font-head text-sm font-semibold text-slate-200 hover:border-white/35 hover:text-white transition-colors cursor-pointer">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/5 py-10">
+    <p class="mx-auto max-w-5xl px-6 text-sm text-slate-400">&copy; 2026 Alex Morgan — drawn under a synthetic sky.</p>
+  </footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var prefersReduced = window.matchMedia
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : false;
+
+  /* =========================================================
+     Starfield background (canvas) + subtle pointer parallax
+     ========================================================= */
+  var canvas = document.getElementById('starfield');
+  var ctx = null;
+  var fieldStars = [];
+  var W = 0, H = 0, DPR = 1;
+  var targetX = 0, targetY = 0, curX = 0, curY = 0;
+  var parallaxRaf = null;
+
+  if (canvas && typeof canvas.getContext === 'function') {
+    ctx = canvas.getContext('2d');
+  }
+
+  function buildStars() {
+    if (!ctx) return;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.max(1, Math.round(W * DPR));
+    canvas.height = Math.max(1, Math.round(H * DPR));
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    fieldStars = [];
+    var count = Math.min(260, Math.round((W * H) / 4500));
+    var depths = [0.35, 0.65, 1];
+    for (var i = 0; i < count; i++) {
+      var d = depths[Math.floor(Math.random() * depths.length)];
+      fieldStars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: (Math.random() * 0.9 + 0.4) * d,
+        a: Math.random() * 0.5 + 0.22,
+        d: d,
+        tint: Math.random() < 0.12
+      });
+    }
+    renderStars();
+  }
+
+  function renderStars() {
+    if (!ctx) return;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < fieldStars.length; i++) {
+      var s = fieldStars[i];
+      var ox = curX * s.d * 10;
+      var oy = curY * s.d * 10;
+      ctx.beginPath();
+      ctx.arc(s.x + ox, s.y + oy, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.tint
+        ? 'rgba(165,180,252,' + s.a + ')'
+        : 'rgba(255,255,255,' + s.a + ')';
+      ctx.fill();
+    }
+  }
+
+  function parallaxTick() {
+    parallaxRaf = null;
+    curX += (targetX - curX) * 0.08;
+    curY += (targetY - curY) * 0.08;
+    renderStars();
+    if (Math.abs(targetX - curX) > 0.003 || Math.abs(targetY - curY) > 0.003) {
+      parallaxRaf = requestAnimationFrame(parallaxTick);
+    } else {
+      curX = targetX;
+      curY = targetY;
+      renderStars();
+    }
+  }
+
+  /* =========================================================
+     Constellations that draw themselves on scroll
+     ========================================================= */
+  var items = []; // { el, path, len, stars: [{ node, at }] }
+
+  function setupDecoConstellations() {
+    var containers = document.querySelectorAll('[data-constellation]');
+    for (var i = 0; i < containers.length; i++) {
+      var el = containers[i];
+      var path = el.querySelector('.draw-path');
+      if (!path || typeof path.getTotalLength !== 'function') continue;
+      var len = 0;
+      try { len = path.getTotalLength(); } catch (e) { continue; }
+      if (!len) continue;
+      path.style.strokeDasharray = len + ' ' + len;
+      path.style.strokeDashoffset = String(len);
+      var circles = el.querySelectorAll('.deco-star');
+      var starList = [];
+      for (var j = 0; j < circles.length; j++) {
+        starList.push({
+          node: circles[j],
+          at: parseFloat(circles[j].getAttribute('data-at')) || 0
+        });
+      }
+      items.push({ el: el, path: path, len: len, stars: starList });
+    }
+  }
+
+  // The main project constellation: path built from live card-star positions.
+  var field = document.getElementById('constellation-field');
+  var projSvg = document.getElementById('constellation-svg');
+  var projDraw = document.getElementById('constellation-draw');
+  var projGhost = document.getElementById('constellation-ghost');
+  var projNodes = field ? Array.prototype.slice.call(field.querySelectorAll('.star-node')) : [];
+  var projectItem = null;
+
+  function buildProjectConstellation() {
+    if (!field || !projSvg || !projDraw || projNodes.length < 2) return;
+    var fr = field.getBoundingClientRect();
+    if (fr.width < 1 || fr.height < 1) return;
+    projSvg.setAttribute('viewBox', '0 0 ' + Math.round(fr.width) + ' ' + Math.round(fr.height));
+
+    var pts = [];
+    for (var i = 0; i < projNodes.length; i++) {
+      var r = projNodes[i].getBoundingClientRect();
+      pts.push([r.left - fr.left + r.width / 2, r.top - fr.top + r.height / 2]);
+    }
+    var d = 'M ' + pts.map(function (p) {
+      return p[0].toFixed(1) + ' ' + p[1].toFixed(1);
+    }).join(' L ');
+    projDraw.setAttribute('d', d);
+    if (projGhost) projGhost.setAttribute('d', d);
+
+    var len = 0;
+    try { len = projDraw.getTotalLength(); } catch (e) { return; }
+    if (!len) return;
+    projDraw.style.strokeDasharray = len + ' ' + len;
+
+    var cum = [0], total = 0;
+    for (var k = 1; k < pts.length; k++) {
+      total += Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]);
+      cum.push(total);
+    }
+    var starList = [];
+    for (var m = 0; m < projNodes.length; m++) {
+      starList.push({ node: projNodes[m], at: total > 0 ? cum[m] / total : 0 });
+    }
+    projectItem = { el: field, path: projDraw, len: len, stars: starList };
+  }
+
+  function progressFor(el) {
+    var r = el.getBoundingClientRect();
+    var vh = window.innerHeight || 1;
+    var passed = vh * 0.78 - r.top;
+    var total = r.height + vh * 0.32;
+    if (total <= 0) return 1;
+    return Math.max(0, Math.min(1, passed / total));
+  }
+
+  function applyItem(item, p) {
+    item.path.style.strokeDashoffset = String(item.len * (1 - p));
+    for (var i = 0; i < item.stars.length; i++) {
+      var s = item.stars[i];
+      if (p >= s.at - 0.015) {
+        s.node.classList.add('lit');
+      } else {
+        s.node.classList.remove('lit');
+      }
+    }
+  }
+
+  var ticking = false;
+  function updateAll() {
+    ticking = false;
+    var all = projectItem ? items.concat([projectItem]) : items;
+    for (var i = 0; i < all.length; i++) {
+      applyItem(all[i], prefersReduced ? 1 : progressFor(all[i].el));
+    }
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updateAll);
+    }
+  }
+
+  /* =========================================================
+     Init + listeners
+     ========================================================= */
+  buildStars();
+  setupDecoConstellations();
+  buildProjectConstellation();
+  updateAll();
+
+  if (!prefersReduced) {
+    window.addEventListener('scroll', onScroll, { passive: true });
+    if (ctx) {
+      window.addEventListener('pointermove', function (e) {
+        if (!W || !H) return;
+        targetX = (e.clientX / W) * 2 - 1;
+        targetY = (e.clientY / H) * 2 - 1;
+        if (parallaxRaf === null) parallaxRaf = requestAnimationFrame(parallaxTick);
+      }, { passive: true });
+    }
+  }
+
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      buildStars();
+      buildProjectConstellation();
+      updateAll();
+    }, 150);
+  });
+
+  // Re-measure once assets (webfonts) have settled layout.
+  window.addEventListener('load', function () {
+    buildProjectConstellation();
+    updateAll();
+    setTimeout(function () {
+      buildProjectConstellation();
+      updateAll();
+    }, 350);
+  });
+})();
+</script>
+</body>
+</html>

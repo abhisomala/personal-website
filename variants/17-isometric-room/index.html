@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variant 17 - Isometric room</title>
+<link rel="icon" href="data:,">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  if (window.tailwind) {
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#09090B',
+            primary: '#18181B',
+            secondary: '#3F3F46',
+            accent: '#2563EB',
+            paper: '#FAFAFA',
+            mutedbg: '#E8ECF0',
+            line: '#E4E4E7'
+          },
+          fontFamily: {
+            head: ['Archivo', 'ui-sans-serif', 'sans-serif'],
+            body: ['"Space Grotesk"', 'ui-sans-serif', 'sans-serif']
+          }
+        }
+      }
+    };
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { overflow-x: hidden; }
+
+  /* ---------- Room hotspots: the one mechanic ---------- */
+  .hotspot { cursor: pointer; }
+  .hotspot .obj { transition: transform 0.22s ease; }
+  .hotspot:hover .obj,
+  .hotspot:focus-visible .obj { transform: translateY(-7px); }
+
+  .hotspot .hl { transition: stroke 0.2s ease, stroke-width 0.2s ease; stroke-linejoin: round; }
+  .hotspot:hover .hl,
+  .hotspot:focus-visible .hl,
+  .hotspot[aria-expanded="true"] .hl { stroke: #2563EB; stroke-width: 2.5; }
+
+  .pill-bg { fill: #FFFFFF; stroke: #D4D4D8; stroke-width: 1.5; transition: fill 0.2s ease, stroke 0.2s ease; }
+  .pill-text {
+    font-family: 'Space Grotesk', ui-sans-serif, sans-serif;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+    fill: #18181B; transition: fill 0.2s ease;
+  }
+  .lead { stroke: #A1A1AA; stroke-width: 1.5; transition: stroke 0.2s ease; }
+  .lead-dot { fill: #A1A1AA; transition: fill 0.2s ease; }
+
+  .hotspot:hover .pill-bg { stroke: #2563EB; fill: #EFF6FF; }
+  .hotspot:hover .lead,
+  .hotspot:focus-visible .lead { stroke: #2563EB; }
+  .hotspot:hover .lead-dot,
+  .hotspot:focus-visible .lead-dot { fill: #2563EB; }
+
+  .hotspot[aria-expanded="true"] .pill-bg { fill: #2563EB; stroke: #2563EB; }
+  .hotspot[aria-expanded="true"] .pill-text { fill: #FFFFFF; }
+  .hotspot[aria-expanded="true"] .lead { stroke: #2563EB; }
+  .hotspot[aria-expanded="true"] .lead-dot { fill: #2563EB; }
+
+  /* visible keyboard focus indicator drawn in-SVG (outline on <g> is unreliable) */
+  .hotspot:focus { outline: none; }
+  .hotspot:focus-visible .pill-bg { stroke: #18181B; stroke-width: 3; }
+
+  /* ---------- Panels ---------- */
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .panel-in { animation: panelIn 0.24s ease both; }
+  .panel h2:focus { outline: none; }
+
+  /* ---------- Reduced motion: mechanic degrades to color highlight only ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .hotspot:hover .obj,
+    .hotspot:focus-visible .obj { transform: none; }
+    .panel-in { animation: none; }
+  }
+</style>
+</head>
+<body class="bg-paper font-body text-ink antialiased">
+
+<a href="#main"
+   class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-1/2 focus:-translate-x-1/2 focus:z-[60] focus:rounded-full focus:bg-primary focus:px-5 focus:py-2 focus:text-sm focus:font-semibold focus:text-white">
+  Skip to content
+</a>
+
+<a href="../index.html"
+   class="fixed top-4 left-4 z-50 inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-1.5 text-xs font-semibold tracking-wide text-primary shadow-sm transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+  All variants
+</a>
+
+<!-- ================= HERO / ROOM ================= -->
+<header class="mx-auto w-full max-w-4xl px-4 pt-16 pb-4 sm:pt-14">
+  <div class="text-center">
+    <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-secondary">Portfolio &mdash; one small studio</p>
+    <h1 class="mt-2 font-head text-4xl font-bold tracking-tight text-primary sm:text-5xl">Alex Morgan</h1>
+    <p class="mt-2 text-base text-secondary sm:text-lg">Software Engineer &amp; Designer</p>
+    <p class="mt-3 text-sm text-secondary">This is my desk. <span class="font-semibold text-primary">Click an object</span> to look around.</p>
+  </div>
+
+  <div id="room" class="mx-auto mt-6 max-w-3xl">
+    <svg viewBox="110 35 680 560" class="h-auto w-full" role="group"
+         aria-label="Isometric illustration of a studio room. Three objects are interactive: the bookshelf opens About, the laptop opens Projects, and the phone opens Contact.">
+
+      <!-- ===== Walls ===== -->
+      <g aria-hidden="true">
+        <polygon points="450,52 450,260 138,416 138,208" fill="#E6E9EF"/>
+        <polygon points="450,52 450,260 762,416 762,208" fill="#F0F2F6"/>
+        <line x1="450" y1="52" x2="450" y2="260" stroke="#D8DCE3" stroke-width="2"/>
+
+        <!-- Window on right wall -->
+        <polygon points="593,227.5 684,273 684,195 593,149.5" fill="#FFFFFF" stroke="#D4D4D8" stroke-width="1.5"/>
+        <polygon points="599.5,224.3 677.5,263.3 677.5,198.3 599.5,159.3" fill="#DBEAFE"/>
+        <line x1="638.5" y1="243.8" x2="638.5" y2="178.8" stroke="#FFFFFF" stroke-width="4"/>
+        <line x1="599.5" y1="191.8" x2="677.5" y2="230.8" stroke="#FFFFFF" stroke-width="4"/>
+
+        <!-- Framed print on left wall -->
+        <polygon points="255,201.5 203,227.5 203,266.5 255,240.5" fill="#FFFFFF" stroke="#D4D4D8" stroke-width="1.5"/>
+        <polygon points="249.8,209.3 208.2,230.1 208.2,258.7 249.8,237.9" fill="#EFF6FF"/>
+        <line x1="212" y1="252" x2="244" y2="218" stroke="#93C5FD" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="224" cy="241" r="5.5" fill="#2563EB"/>
+      </g>
+
+      <!-- ===== Floor + rug ===== -->
+      <g aria-hidden="true">
+        <polygon points="450,260 762,416 450,572 138,416" fill="#DCE0E7" stroke="#C9CFD8" stroke-width="1.5"/>
+        <ellipse cx="424" cy="452" rx="118" ry="56" fill="#E9EDF2" stroke="#D4DAE2" stroke-width="1.5"/>
+        <ellipse cx="424" cy="452" rx="86" ry="40" fill="none" stroke="#D4DAE2" stroke-width="1.5"/>
+      </g>
+
+      <!-- ===== BOOKSHELF (About) ===== -->
+      <g id="hs-about" class="hotspot" role="button" tabindex="0"
+         data-panel="about" aria-controls="panel-about" aria-expanded="false"
+         aria-label="Bookshelf: open About">
+        <ellipse cx="352" cy="344" rx="80" ry="19" fill="rgba(24,24,27,0.10)"/>
+        <g class="obj">
+          <!-- carcass: side, front (books face), top -->
+          <polygon class="hl" points="320,364 288.8,348.4 288.8,192.4 320,208" fill="#AEB5C0" stroke="none"/>
+          <polygon class="hl" points="424,312 320,364 320,208 424,156" fill="#CBD1DA" stroke="none"/>
+          <polygon class="hl" points="392.8,140.4 424,156 320,208 288.8,192.4" fill="#E2E6EC" stroke="none"/>
+
+          <!-- shelf recesses -->
+          <polygon points="416.2,302.9 327.8,347.1 327.8,308.1 416.2,263.9" fill="#8E95A1"/>
+          <polygon points="416.2,250.9 327.8,295.1 327.8,256.1 416.2,211.9" fill="#8E95A1"/>
+          <polygon points="416.2,198.9 327.8,243.1 327.8,214.5 416.2,170.3" fill="#8E95A1"/>
+
+          <!-- books, bottom row -->
+          <polygon points="412.3,304.9 400.6,310.7 400.6,275.6 412.3,269.8" fill="#52525B"/>
+          <polygon points="400.6,310.7 388.9,316.6 388.9,285.4 400.6,279.5" fill="#2563EB"/>
+          <polygon points="388.9,316.6 375.9,323.1 375.9,286.7 388.9,280.2" fill="#71717A"/>
+          <polygon points="375.9,323.1 364.2,328.9 364.2,299 375.9,293.2" fill="#93C5FD"/>
+          <polygon points="364.2,328.9 351.2,335.4 351.2,301.6 364.2,295.1" fill="#3F3F46"/>
+          <polygon points="348.6,336.7 330.4,345.8 330.4,336.7 348.6,327.6" fill="#93C5FD"/>
+          <polygon points="348.6,327.6 330.4,336.7 330.4,328.9 348.6,319.8" fill="#A1A1AA"/>
+
+          <!-- books, middle row -->
+          <polygon points="412.3,252.9 399.3,259.4 399.3,225.6 412.3,219.1" fill="#71717A"/>
+          <polygon points="399.3,259.4 387.6,265.2 387.6,235.3 399.3,229.5" fill="#52525B"/>
+          <polygon points="387.6,265.2 374.6,271.7 374.6,236.6 387.6,230.1" fill="#93C5FD"/>
+          <polygon points="374.6,271.7 362.9,277.6 362.9,246.4 374.6,240.5" fill="#A1A1AA"/>
+          <polygon points="362.9,277.6 349.9,284.1 349.9,250.3 362.9,243.8" fill="#2563EB"/>
+          <polygon points="349.9,284.1 338.2,289.9 338.2,261.3 349.9,255.5" fill="#3F3F46"/>
+
+          <!-- books, top row + vase -->
+          <polygon points="411,201.5 398,208 398,182 411,175.5" fill="#3F3F46"/>
+          <polygon points="398,208 386.3,213.9 386.3,190.5 398,184.6" fill="#93C5FD"/>
+          <polygon points="386.3,213.9 373.3,220.4 373.3,194.4 386.3,187.9" fill="#71717A"/>
+          <circle cx="351" cy="222" r="7" fill="#A1A1AA"/>
+          <rect x="347" y="228" width="8" height="4" rx="1.5" fill="#71717A"/>
+        </g>
+
+        <!-- floating tag -->
+        <g>
+          <line class="lead" x1="356" y1="119" x2="356" y2="162"/>
+          <circle class="lead-dot" cx="356" cy="165" r="3"/>
+          <rect class="pill-bg" x="319" y="93" width="74" height="26" rx="13"/>
+          <text class="pill-text" x="356" y="110" text-anchor="middle">ABOUT</text>
+        </g>
+        <rect x="283" y="135" width="148" height="238" fill="transparent"/>
+      </g>
+
+      <!-- ===== Desk (decorative) ===== -->
+      <g aria-hidden="true">
+        <ellipse cx="560" cy="398" rx="132" ry="27" fill="rgba(24,24,27,0.08)"/>
+        <!-- back legs -->
+        <rect x="523.5" y="256" width="9" height="77" rx="2" fill="#9AA1AC"/>
+        <rect x="664" y="326" width="9" height="77" rx="2" fill="#9AA1AC"/>
+        <!-- desktop slab -->
+        <polygon points="528,241.8 684,319.8 616.4,353.6 460.4,275.6" fill="#E7EAEF" stroke="#C7CDD6" stroke-width="1.5"/>
+        <polygon points="460.4,275.6 616.4,353.6 616.4,360.1 460.4,282.1" fill="#C4CAD4"/>
+        <polygon points="684,319.8 616.4,353.6 616.4,360.1 684,326.3" fill="#AEB5C0"/>
+        <!-- front legs -->
+        <rect x="471.5" y="282" width="9" height="77" rx="2" fill="#B4BAC4"/>
+        <rect x="612" y="354" width="9" height="76" rx="2" fill="#B4BAC4"/>
+        <!-- mug -->
+        <rect x="495.6" y="246" width="18" height="18" rx="3" fill="#2563EB"/>
+        <ellipse cx="504.6" cy="246" rx="9" ry="4" fill="#1D4ED8"/>
+        <path d="M496,250 C489,250 489,259 496,259" fill="none" stroke="#2563EB" stroke-width="3"/>
+      </g>
+
+      <!-- ===== LAPTOP (Projects) ===== -->
+      <g id="hs-projects" class="hotspot" role="button" tabindex="0"
+         data-panel="projects" aria-controls="panel-projects" aria-expanded="false"
+         aria-label="Laptop: open Projects">
+        <ellipse cx="562" cy="303" rx="54" ry="13" fill="rgba(24,24,27,0.10)"/>
+        <g class="obj">
+          <!-- lid + display -->
+          <polygon class="hl" points="551.4,271.7 603.4,297.7 613.8,235.3 561.8,209.3" fill="#3F3F46" stroke="none"/>
+          <polygon points="555.1,269.5 600.9,292.4 610.1,237.5 564.3,214.6" fill="#DBEAFE"/>
+          <path d="M566,228 l24,12" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+          <path d="M572,240 l14,7" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M568,251 l28,14" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+          <path d="M575,264 l16,8" stroke="#93C5FD" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- base -->
+          <polygon points="517.6,288.6 569.6,314.6 569.6,318.6 517.6,292.6" fill="#8A919D"/>
+          <polygon points="603.4,297.7 569.6,314.6 569.6,318.6 603.4,301.7" fill="#7A8290"/>
+          <polygon class="hl" points="551.4,271.7 603.4,297.7 569.6,314.6 517.6,288.6" fill="#C7CDD6" stroke="none"/>
+          <polygon points="551.4,276.9 590.4,296.4 570.9,306.2 531.9,286.7" fill="#AEB5C0"/>
+          <polygon points="541,293.8 556.6,301.6 552.7,303.6 537.1,295.8" fill="#AEB5C0"/>
+        </g>
+
+        <g>
+          <line class="lead" x1="588" y1="171" x2="588" y2="208"/>
+          <circle class="lead-dot" cx="588" cy="211" r="3"/>
+          <rect class="pill-bg" x="540" y="145" width="96" height="26" rx="13"/>
+          <text class="pill-text" x="588" y="162" text-anchor="middle">PROJECTS</text>
+        </g>
+        <rect x="514" y="200" width="106" height="104" fill="transparent"/>
+      </g>
+
+      <!-- ===== PHONE (Contact) ===== -->
+      <g id="hs-contact" class="hotspot" role="button" tabindex="0"
+         data-panel="contact" aria-controls="panel-contact" aria-expanded="false"
+         aria-label="Phone: open Contact">
+        <ellipse cx="610" cy="329" rx="23" ry="8" fill="rgba(24,24,27,0.12)"/>
+        <g class="obj">
+          <polygon points="593,324.2 608.6,332 608.6,335.4 593,327.6" fill="#09090B"/>
+          <polygon points="626.8,322.9 608.6,332 608.6,335.4 626.8,326.3" fill="#27272A"/>
+          <polygon class="hl" points="611.2,315.1 626.8,322.9 608.6,332 593,324.2" fill="#18181B" stroke="none"/>
+          <polygon points="611,316.6 623.8,323 608.8,330.5 596,324.1" fill="#DBEAFE"/>
+          <circle cx="610" cy="323.6" r="2" fill="#2563EB"/>
+        </g>
+
+        <g>
+          <line class="lead" x1="662" y1="358" x2="630" y2="338"/>
+          <circle class="lead-dot" cx="627" cy="336" r="3"/>
+          <rect class="pill-bg" x="642" y="359" width="92" height="26" rx="13"/>
+          <text class="pill-text" x="688" y="376" text-anchor="middle">CONTACT</text>
+        </g>
+        <ellipse cx="611" cy="326" rx="27" ry="17" fill="transparent"/>
+      </g>
+
+      <!-- ===== Chair (decorative) ===== -->
+      <g aria-hidden="true">
+        <ellipse cx="489" cy="411" rx="22" ry="7" fill="#B4BAC4"/>
+        <rect x="485" y="372" width="8" height="38" rx="2" fill="#9AA1AC"/>
+        <path d="M525.4,362.7 L525.4,368.7 L489,386.9 L452.6,368.7 L452.6,362.7 L489,380.9 Z" fill="#B4BAC4"/>
+        <polygon points="489,344.5 525.4,362.7 489,380.9 452.6,362.7" fill="#E7EAEF" stroke="#C7CDD6" stroke-width="1.5"/>
+      </g>
+
+      <!-- ===== Plant (decorative) ===== -->
+      <g aria-hidden="true">
+        <ellipse cx="286" cy="401" rx="26" ry="8" fill="rgba(24,24,27,0.08)"/>
+        <path d="M286,368 C270,352 258,336 262,314 C280,328 288,348 286,368 Z" fill="#64748B"/>
+        <path d="M286,368 C298,348 310,338 318,326 C316,350 302,362 286,368 Z" fill="#94A3B8"/>
+        <path d="M286,368 C284,342 288,324 296,308 C306,330 298,354 286,368 Z" fill="#475569"/>
+        <path d="M272,372 L300,372 L296,398 L276,398 Z" fill="#B4BAC4"/>
+        <rect x="270" y="366" width="32" height="8" rx="3" fill="#C4CAD4"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- text fallback / obvious affordances -->
+  <div class="mx-auto mt-2 flex max-w-3xl flex-wrap items-center justify-center gap-2 px-4">
+    <span class="text-xs font-medium uppercase tracking-[0.18em] text-secondary">Or open:</span>
+    <button type="button" data-panel="about" aria-controls="panel-about" aria-expanded="false"
+            class="legend-btn inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent aria-expanded:border-accent aria-expanded:bg-accent aria-expanded:text-white">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Bookshelf &middot; About
+    </button>
+    <button type="button" data-panel="projects" aria-controls="panel-projects" aria-expanded="false"
+            class="legend-btn inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent aria-expanded:border-accent aria-expanded:bg-accent aria-expanded:text-white">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>
+      Laptop &middot; Projects
+    </button>
+    <button type="button" data-panel="contact" aria-controls="panel-contact" aria-expanded="false"
+            class="legend-btn inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent aria-expanded:border-accent aria-expanded:bg-accent aria-expanded:text-white">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
+      Phone &middot; Contact
+    </button>
+  </div>
+</header>
+
+<!-- ================= PANELS ================= -->
+<main id="main" class="mx-auto w-full max-w-3xl px-5 pb-16 pt-8">
+  <div id="panelWrap" class="min-h-[340px]" aria-live="polite">
+
+    <!-- Intro (default) -->
+    <section id="panel-intro" class="panel rounded-2xl border border-line bg-white p-6 sm:p-8" aria-labelledby="h-intro">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">The studio</p>
+      <h2 id="h-intro" tabindex="-1" class="mt-2 font-head text-2xl font-bold tracking-tight text-primary sm:text-3xl">Make yourself at home.</h2>
+      <p class="mt-3 max-w-prose leading-relaxed text-secondary">
+        Everything I make happens in this one small room. The <strong class="font-semibold text-primary">laptop</strong> holds my projects,
+        the <strong class="font-semibold text-primary">bookshelf</strong> keeps the story so far, and the
+        <strong class="font-semibold text-primary">phone</strong> is how you reach me. Click around &mdash; nothing here bites.
+      </p>
+      <div class="mt-5 flex flex-wrap gap-2">
+        <button type="button" data-panel="projects" aria-controls="panel-projects" aria-expanded="false"
+                class="inline-flex cursor-pointer items-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          Open the laptop
+        </button>
+        <button type="button" data-panel="about" aria-controls="panel-about" aria-expanded="false"
+                class="inline-flex cursor-pointer items-center rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold text-primary transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          Browse the bookshelf
+        </button>
+        <button type="button" data-panel="contact" aria-controls="panel-contact" aria-expanded="false"
+                class="inline-flex cursor-pointer items-center rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold text-primary transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          Pick up the phone
+        </button>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="panel-about" class="panel rounded-2xl border border-line bg-white p-6 sm:p-8" aria-labelledby="h-about" hidden>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">From the bookshelf</p>
+      <h2 id="h-about" tabindex="-1" class="mt-2 font-head text-2xl font-bold tracking-tight text-primary sm:text-3xl">About</h2>
+      <div class="mt-4 max-w-prose space-y-4 leading-relaxed text-secondary">
+        <p>
+          Placeholder paragraph one. I'm Alex, a software engineer and designer who likes small rooms,
+          small tools, and software that feels hand-built. Most of what's on these shelves started as a
+          weekend sketch that refused to stay a sketch.
+        </p>
+        <p>
+          Placeholder paragraph two. By day I build interfaces and the systems behind them; by night I
+          redraw this room one polygon at a time. I care about the details you only notice when they're
+          missing &mdash; focus states, empty states, and the third state nobody planned for.
+        </p>
+        <p>
+          Placeholder paragraph three. When I'm away from the desk you'll find me rearranging actual
+          bookshelves, over-watering the plant in the corner, and defending the mug's permanent spot
+          next to the laptop.
+        </p>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="panel-projects" class="panel rounded-2xl border border-line bg-white p-6 sm:p-8" aria-labelledby="h-projects" hidden>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">On the laptop</p>
+      <h2 id="h-projects" tabindex="-1" class="mt-2 font-head text-2xl font-bold tracking-tight text-primary sm:text-3xl">Projects</h2>
+      <div class="mt-5 grid gap-4 sm:grid-cols-2">
+        <article class="rounded-xl border border-line bg-paper p-5">
+          <h3 class="font-head text-lg font-semibold text-primary">Isogrid</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-secondary">A CSS toolkit for building isometric layouts without doing the projection math by hand.</p>
+          <ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Technologies">
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">CSS</li>
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">TypeScript</li>
+          </ul>
+        </article>
+        <article class="rounded-xl border border-line bg-paper p-5">
+          <h3 class="font-head text-lg font-semibold text-primary">Shelfmark</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-secondary">A personal library tracker that remembers which shelf, which row, and which mood every book belongs to.</p>
+          <ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Technologies">
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">React</li>
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">SQLite</li>
+          </ul>
+        </article>
+        <article class="rounded-xl border border-line bg-paper p-5">
+          <h3 class="font-head text-lg font-semibold text-primary">Deskset</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-secondary">A drag-and-drop desk configurator for planning your dream setup before buying a single cable.</p>
+          <ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Technologies">
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Svelte</li>
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Three.js</li>
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Vite</li>
+          </ul>
+        </article>
+        <article class="rounded-xl border border-line bg-paper p-5">
+          <h3 class="font-head text-lg font-semibold text-primary">Roomtone</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-secondary">A tiny ambient-sound app tuned to the hum of a quiet studio at 2 a.m.</p>
+          <ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Technologies">
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Web Audio</li>
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Vue</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="panel-contact" class="panel rounded-2xl border border-line bg-white p-6 sm:p-8" aria-labelledby="h-contact" hidden>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">By the phone</p>
+      <h2 id="h-contact" tabindex="-1" class="mt-2 font-head text-2xl font-bold tracking-tight text-primary sm:text-3xl">Contact</h2>
+      <p class="mt-3 max-w-prose leading-relaxed text-secondary">
+        The phone on the desk is mostly for show &mdash; email works better. I read everything,
+        usually with the mug in hand.
+      </p>
+      <div class="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <a href="mailto:hello@alexmorgan.dev"
+           class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+          hello@alexmorgan.dev
+        </a>
+        <a href="#"
+           class="inline-flex items-center justify-center gap-2 rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+          GitHub
+        </a>
+        <a href="#"
+           class="inline-flex items-center justify-center gap-2 rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <div class="mt-6 text-center">
+    <a href="#room"
+       class="inline-flex items-center gap-1.5 text-sm font-semibold text-secondary underline-offset-4 transition-colors hover:text-accent hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+      Back to the room
+    </a>
+  </div>
+</main>
+
+<footer class="border-t border-line bg-white">
+  <div class="mx-auto max-w-3xl px-5 py-6 text-center text-xs text-secondary">
+    &copy; 2026 Alex Morgan &mdash; drawn in SVG, one room at a time.
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+
+    var panels = {
+      intro: document.getElementById('panel-intro'),
+      about: document.getElementById('panel-about'),
+      projects: document.getElementById('panel-projects'),
+      contact: document.getElementById('panel-contact')
+    };
+
+    var triggers = Array.prototype.slice.call(document.querySelectorAll('[data-panel]'));
+    if (triggers.length === 0) return;
+
+    function openPanel(key) {
+      var pane = panels[key];
+      if (!pane) return;
+
+      Object.keys(panels).forEach(function (k) {
+        if (panels[k]) panels[k].hidden = (k !== key);
+      });
+
+      // restart entrance animation (no-op under reduced motion via CSS)
+      pane.classList.remove('panel-in');
+      void pane.offsetWidth;
+      pane.classList.add('panel-in');
+
+      // sync every trigger that points at any panel
+      triggers.forEach(function (t) {
+        t.setAttribute('aria-expanded', String(t.getAttribute('data-panel') === key));
+      });
+
+      // move focus to the panel heading, then bring it into view
+      var heading = pane.querySelector('h2');
+      if (heading) {
+        try { heading.focus({ preventScroll: true }); } catch (e) { heading.focus(); }
+      }
+      if (pane.scrollIntoView) {
+        pane.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', block: 'nearest' });
+      }
+    }
+
+    triggers.forEach(function (t) {
+      t.addEventListener('click', function () {
+        openPanel(t.getAttribute('data-panel'));
+      });
+      // SVG <g role="button"> needs manual keyboard activation
+      if (t.tagName && t.tagName.toLowerCase() === 'g') {
+        t.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            openPanel(t.getAttribute('data-panel'));
+          }
+        });
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

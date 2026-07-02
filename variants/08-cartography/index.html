@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variant 08 - Cartography</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#18181B',
+          inksoft: '#3F3F46',
+          fg: '#09090B',
+          paper: '#FAFAFA',
+          parchment: '#FBF9F4',
+          sea: '#DEE7EE',
+          mist: '#E8ECF0',
+          line: '#E4E4E7',
+          accent: '#2563EB'
+        },
+        fontFamily: {
+          display: ['"Abril Fatface"', 'serif'],
+          body: ['Merriweather', 'serif']
+        }
+      }
+    }
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: Merriweather, serif; background: #FAFAFA; color: #18181B; }
+
+  /* ---------- shared focus states ---------- */
+  a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+    outline: 3px solid #2563EB;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ---------- graticule backdrop (hero) ---------- */
+  .graticule {
+    background-image:
+      linear-gradient(#E4E4E7 1px, transparent 1px),
+      linear-gradient(90deg, #E4E4E7 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+  .graticule-fade {
+    background: radial-gradient(ellipse at center, rgba(250,250,250,0) 0%, rgba(250,250,250,.92) 78%, #FAFAFA 100%);
+  }
+
+  /* ---------- cartouche ---------- */
+  .cartouche {
+    border: 1px solid #3F3F46;
+    box-shadow: inset 0 0 0 5px #FAFAFA, inset 0 0 0 6px #3F3F46;
+    border-radius: 18px;
+    background: #FBF9F4;
+  }
+
+  /* ---------- map frame ---------- */
+  .map-frame {
+    border: 1px solid #3F3F46;
+    box-shadow: inset 0 0 0 6px #FBF9F4, inset 0 0 0 7px #3F3F46;
+    border-radius: 20px;
+    background: #FBF9F4;
+    padding: 14px;
+  }
+  .map-inner {
+    border: 1px solid #3F3F46;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    background: #DEE7EE;
+  }
+
+  /* ---------- atlas svg ---------- */
+  #atlas-svg { display: block; width: 100%; height: auto; }
+  #atlas-svg text { user-select: none; }
+  .region { cursor: pointer; outline: none; }
+  .region .shoal {
+    fill: none; stroke: #C6D6E2; stroke-width: 14; stroke-linejoin: round;
+    transition: opacity .25s ease;
+  }
+  .region .land {
+    fill: #FBF9F4; stroke: #3F3F46; stroke-width: 2;
+    transition: fill .2s ease, stroke .2s ease, stroke-width .2s ease;
+  }
+  .region:hover .land { fill: #F2ECDD; }
+  .region:focus .land, .region:focus-visible .land {
+    stroke: #2563EB; stroke-width: 4;
+  }
+  .region.active .land { stroke: #2563EB; stroke-width: 3; fill: #F2ECDD; }
+  .region, .route, .sea-label, .compass { transition: opacity .3s ease; }
+  #atlas-svg.zoomed .region:not(.active),
+  #atlas-svg.zoomed .route,
+  #atlas-svg.zoomed .sea-label,
+  #atlas-svg.zoomed .compass { opacity: .18; }
+  #atlas-svg.zoomed .region:not(.active) { pointer-events: none; }
+  #atlas-svg.zoomed #sea-bg { cursor: zoom-out; }
+
+  .region-name {
+    font-family: Merriweather, serif; font-weight: 700;
+    font-size: 21px; letter-spacing: .18em; text-transform: uppercase;
+    fill: #18181B;
+  }
+  .region-sub {
+    font-family: Merriweather, serif; font-style: italic;
+    font-size: 13px; fill: #3F3F46; letter-spacing: .04em;
+  }
+  .sea-label {
+    font-family: Merriweather, serif; font-style: italic;
+    font-size: 15px; fill: #52525B; letter-spacing: .3em;
+  }
+  .grid-label { font-family: Merriweather, serif; font-size: 11px; fill: #52525B; letter-spacing: .1em; }
+  .route { fill: none; stroke: #2563EB; stroke-width: 2; stroke-dasharray: 3 7; stroke-linecap: round; }
+
+  /* ---------- detail panels ---------- */
+  #atlas-overlay { position: absolute; inset: 0; pointer-events: none; }
+  .region-panel {
+    pointer-events: auto;
+    position: absolute;
+    width: min(24rem, calc(100% - 1.5rem));
+    background: #FBF9F4;
+    border: 1px solid #3F3F46;
+    box-shadow: inset 0 0 0 4px #FBF9F4, inset 0 0 0 5px #3F3F46, 0 18px 40px -18px rgba(9,9,11,.45);
+    border-radius: 16px;
+    padding: 1.5rem 1.5rem 1.35rem;
+    opacity: 0;
+    transform: translateY(-50%) scale(.97);
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .region-panel[data-side="right"] { right: 1.25rem; top: 50%; }
+  .region-panel[data-side="left"]  { left: 1.25rem;  top: 50%; }
+  .region-panel.visible { opacity: 1; transform: translateY(-50%) scale(1); }
+  @media (max-width: 767px) {
+    .region-panel, .region-panel[data-side="right"], .region-panel[data-side="left"] {
+      left: .6rem; right: .6rem; bottom: .6rem; top: auto;
+      width: auto; max-height: 78%; overflow-y: auto;
+      transform: translateY(8px) scale(1);
+    }
+    .region-panel.visible { transform: translateY(0) scale(1); }
+  }
+
+  .tag {
+    display: inline-block; border: 1px solid #3F3F46; border-radius: 999px;
+    padding: .18rem .7rem; font-size: .72rem; letter-spacing: .12em;
+    text-transform: uppercase; color: #18181B; background: #FAFAFA;
+  }
+
+  /* ---------- atlas index buttons ---------- */
+  .index-btn {
+    cursor: pointer; text-align: left; width: 100%;
+    border: 1px solid #3F3F46; border-radius: 16px; background: #FBF9F4;
+    padding: 1rem 1.15rem;
+    transition: background .2s ease, border-color .2s ease;
+  }
+  .index-btn:hover { background: #F2ECDD; }
+  .index-btn[aria-expanded="true"] { border-color: #2563EB; box-shadow: inset 0 0 0 1px #2563EB; }
+
+  .smallcaps { letter-spacing: .22em; text-transform: uppercase; }
+
+  .skip-link {
+    position: absolute; left: -9999px; top: 0; z-index: 100;
+    background: #18181B; color: #FFFFFF; padding: .6rem 1rem; border-radius: 0 0 8px 0;
+  }
+  .skip-link:focus { left: 0; }
+
+  .legend-swatch { flex: none; margin-top: .15rem; }
+
+  /* ---------- reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body class="antialiased">
+
+<a href="#main" class="skip-link font-body text-sm">Skip to main content</a>
+
+<a href="../index.html"
+   class="fixed top-3 left-3 z-50 font-body text-xs smallcaps text-ink bg-parchment border border-inksoft rounded-full px-3 py-1.5 hover:bg-mist transition-colors">
+  &larr; All variants
+</a>
+
+<!-- ============ HERO ============ -->
+<header class="relative min-h-screen flex items-center justify-center graticule overflow-hidden px-4">
+  <div class="absolute inset-0 graticule-fade" aria-hidden="true"></div>
+
+  <!-- compass rose -->
+  <svg aria-hidden="true" class="absolute top-8 right-6 md:top-12 md:right-12 w-20 h-20 md:w-28 md:h-28 opacity-70" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="46" fill="none" stroke="#3F3F46" stroke-width="1"/>
+    <circle cx="50" cy="50" r="38" fill="none" stroke="#3F3F46" stroke-width=".5" stroke-dasharray="2 4"/>
+    <path d="M50 8 L54 46 L50 50 L46 46 Z" fill="#18181B"/>
+    <path d="M50 92 L54 54 L50 50 L46 54 Z" fill="#FBF9F4" stroke="#18181B" stroke-width="1"/>
+    <path d="M8 50 L46 46 L50 50 L46 54 Z" fill="#FBF9F4" stroke="#18181B" stroke-width="1"/>
+    <path d="M92 50 L54 46 L50 50 L54 54 Z" fill="#FBF9F4" stroke="#18181B" stroke-width="1"/>
+    <text x="50" y="6" text-anchor="middle" font-size="9" fill="#18181B" font-family="Merriweather, serif">N</text>
+  </svg>
+
+  <div class="relative z-10 max-w-2xl w-full text-center cartouche px-6 py-10 md:px-14 md:py-14 my-24">
+    <p class="font-body text-xs md:text-sm smallcaps text-inksoft mb-4">A General Atlas &middot; Surveyed 2026</p>
+    <h1 class="font-display text-4xl sm:text-5xl md:text-6xl text-fg leading-tight">Alex Morgan</h1>
+    <p class="font-body text-sm md:text-base smallcaps text-inksoft mt-4">Software Engineer &amp; Designer</p>
+    <div class="w-24 h-px bg-inksoft mx-auto my-6" aria-hidden="true"></div>
+    <p class="font-body text-sm md:text-base text-inksoft leading-relaxed max-w-md mx-auto">
+      Charting software from first survey to shipped shore. Every project below is a
+      region on the map &mdash; select one to zoom in.
+    </p>
+    <nav aria-label="Site sections" class="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 font-body text-xs smallcaps">
+      <a href="#about" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">Legend</a>
+      <a href="#projects" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">Charted regions</a>
+      <a href="#contact" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">Dispatches</a>
+    </nav>
+    <a href="#projects"
+       class="inline-block mt-8 font-body text-sm bg-ink text-white rounded-full px-6 py-3 hover:bg-accent transition-colors">
+      Open the atlas &darr;
+    </a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ ABOUT ============ -->
+  <section id="about" class="max-w-4xl mx-auto px-4 py-16 md:py-24">
+    <p class="font-body text-xs smallcaps text-inksoft mb-3">Plate 0 &middot; Legend</p>
+    <h2 class="font-display text-3xl md:text-4xl text-fg mb-8">About the Cartographer</h2>
+    <div class="grid md:grid-cols-5 gap-10">
+      <div class="md:col-span-3 space-y-5 font-body text-sm md:text-base leading-relaxed text-ink">
+        <p>
+          Placeholder paragraph one. I am a software engineer and designer who treats every
+          product like unexplored territory: survey the terrain, sketch the coastline, then
+          draw the roads people will actually travel.
+        </p>
+        <p>
+          Placeholder paragraph two. Over the past several years I have charted design systems,
+          data platforms, and realtime infrastructure &mdash; usually somewhere between the
+          engineering interior and the design coast, where the interesting borders are.
+        </p>
+        <p>
+          Placeholder paragraph three. When I am not mapping software I am probably annotating
+          an actual map, arguing about projections, or planning the next expedition.
+        </p>
+      </div>
+      <div class="md:col-span-2">
+        <div class="border border-inksoft rounded-2xl bg-parchment p-6">
+          <h3 class="font-body text-xs smallcaps text-inksoft mb-4">Legend</h3>
+          <ul class="space-y-4 font-body text-sm text-ink">
+            <li class="flex items-start gap-3">
+              <svg class="legend-swatch" width="34" height="20" viewBox="0 0 34 20" aria-hidden="true">
+                <path d="M4 12 C3 6, 12 3, 20 5 C28 7, 32 11, 28 15 C23 19, 8 18, 4 12 Z" fill="#FBF9F4" stroke="#3F3F46" stroke-width="1.5"/>
+              </svg>
+              <span>Solid land &mdash; shipped, production work</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="legend-swatch" width="34" height="20" viewBox="0 0 34 20" aria-hidden="true">
+                <path d="M2 14 C12 4, 22 16, 32 6" fill="none" stroke="#2563EB" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
+              </svg>
+              <span>Dashed route &mdash; collaboration across teams</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="legend-swatch" width="34" height="20" viewBox="0 0 34 20" aria-hidden="true">
+                <path d="M12 16 L17 6 L22 16 Z" fill="none" stroke="#3F3F46" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+              <span>Peak &mdash; deep technical specialty</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROJECTS / THE ATLAS ============ -->
+  <section id="projects" class="max-w-6xl mx-auto px-4 py-16 md:py-24">
+    <p class="font-body text-xs smallcaps text-inksoft mb-3">Plates I&ndash;IV &middot; Selected Work</p>
+    <h2 class="font-display text-3xl md:text-4xl text-fg mb-3">The Charted Regions</h2>
+    <p class="font-body text-sm md:text-base text-inksoft leading-relaxed max-w-2xl mb-10">
+      Four regions have been surveyed so far. Select a region on the map &mdash; or in the
+      index below it &mdash; and the chart zooms in to reveal its record. Press
+      <kbd class="border border-line rounded px-1.5 py-0.5 text-xs bg-white">Esc</kbd> or choose
+      &ldquo;Back to the atlas&rdquo; to sail back out.
+    </p>
+
+    <figure class="map-frame" role="group" aria-label="Interactive atlas of projects">
+      <div class="map-inner">
+        <svg id="atlas-svg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet"
+             role="img" aria-label="Stylized map with four project regions: Terra Forma, Port Query, Signal Strait, and Isle of Render">
+
+          <!-- sea + graticule -->
+          <rect id="sea-bg" x="-400" y="-300" width="1800" height="1300" fill="#DEE7EE"/>
+          <g stroke="#C8D5DF" stroke-width="1" aria-hidden="true">
+            <line x1="100" y1="0" x2="100" y2="700"/><line x1="200" y1="0" x2="200" y2="700"/>
+            <line x1="300" y1="0" x2="300" y2="700"/><line x1="400" y1="0" x2="400" y2="700"/>
+            <line x1="500" y1="0" x2="500" y2="700"/><line x1="600" y1="0" x2="600" y2="700"/>
+            <line x1="700" y1="0" x2="700" y2="700"/><line x1="800" y1="0" x2="800" y2="700"/>
+            <line x1="900" y1="0" x2="900" y2="700"/>
+            <line x1="0" y1="100" x2="1000" y2="100"/><line x1="0" y1="200" x2="1000" y2="200"/>
+            <line x1="0" y1="300" x2="1000" y2="300"/><line x1="0" y1="400" x2="1000" y2="400"/>
+            <line x1="0" y1="500" x2="1000" y2="500"/><line x1="0" y1="600" x2="1000" y2="600"/>
+          </g>
+          <g aria-hidden="true">
+            <text class="grid-label" x="100" y="18" text-anchor="middle">72&#176;W</text>
+            <text class="grid-label" x="500" y="18" text-anchor="middle">68&#176;W</text>
+            <text class="grid-label" x="900" y="18" text-anchor="middle">64&#176;W</text>
+            <text class="grid-label" x="14" y="104">44&#176;N</text>
+            <text class="grid-label" x="14" y="404">41&#176;N</text>
+            <text class="grid-label" x="14" y="604">39&#176;N</text>
+          </g>
+
+          <!-- routes -->
+          <g aria-hidden="true">
+            <path class="route" d="M385 215 C 470 180, 550 230, 638 200"/>
+            <path class="route" d="M770 272 C 790 330, 750 380, 760 428"/>
+            <path class="route" d="M458 532 C 510 560, 565 515, 618 538"/>
+            <path class="route" d="M252 292 C 230 340, 250 385, 232 425"/>
+          </g>
+
+          <!-- sea labels -->
+          <g aria-hidden="true">
+            <text class="sea-label" x="500" y="360" text-anchor="middle">MARE&#160;&#160;INTERFACIUM</text>
+            <text class="sea-label" x="505" y="640" text-anchor="middle" font-size="13">GULF OF SHIPPING</text>
+          </g>
+
+          <!-- compass -->
+          <g class="compass" transform="translate(495,120)" aria-hidden="true">
+            <circle r="32" fill="none" stroke="#3F3F46" stroke-width="1"/>
+            <circle r="25" fill="none" stroke="#3F3F46" stroke-width=".5" stroke-dasharray="2 4"/>
+            <path d="M0 -30 L3 -3 L0 0 L-3 -3 Z" fill="#18181B"/>
+            <path d="M0 30 L3 3 L0 0 L-3 3 Z" fill="#FBF9F4" stroke="#18181B" stroke-width="1"/>
+            <path d="M-30 0 L-3 -3 L0 0 L-3 3 Z" fill="#FBF9F4" stroke="#18181B" stroke-width="1"/>
+            <path d="M30 0 L3 -3 L0 0 L3 3 Z" fill="#FBF9F4" stroke="#18181B" stroke-width="1"/>
+            <text y="-38" text-anchor="middle" font-size="11" fill="#18181B" font-family="Merriweather, serif">N</text>
+          </g>
+
+          <!-- REGION I : Terra Forma (NW) -->
+          <g id="region-terra" class="region" data-region="terra" tabindex="0" role="button"
+             aria-label="Terra Forma, plate one: a living design system. Activate to zoom in and view details."
+             aria-expanded="false">
+            <path class="shoal" d="M 160 210 C 150 160, 200 110, 260 120 C 320 128, 380 150, 375 205 C 370 260, 320 290, 255 285 C 195 280, 170 255, 160 210 Z"/>
+            <path class="land"  d="M 160 210 C 150 160, 200 110, 260 120 C 320 128, 380 150, 375 205 C 370 260, 320 290, 255 285 C 195 280, 170 255, 160 210 Z"/>
+            <path d="M232 182 L246 158 L260 182 Z M254 186 L266 166 L278 186 Z" fill="none" stroke="#3F3F46" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"/>
+            <circle cx="215" cy="228" r="3.5" fill="#18181B" aria-hidden="true"/>
+            <text class="region-name" x="264" y="222" text-anchor="middle">Terra Forma</text>
+            <text class="region-sub" x="264" y="244" text-anchor="middle">Plate I &middot; design system</text>
+          </g>
+
+          <!-- REGION II : Port Query (NE) -->
+          <g id="region-query" class="region" data-region="query" tabindex="0" role="button"
+             aria-label="Port Query, plate two: a self-serve analytics platform. Activate to zoom in and view details."
+             aria-expanded="false">
+            <path class="shoal" d="M 640 190 C 630 140, 690 100, 750 105 C 810 110, 880 130, 885 185 C 890 235, 850 270, 790 268 C 760 267, 745 245, 720 250 C 685 258, 650 235, 640 190 Z"/>
+            <path class="land"  d="M 640 190 C 630 140, 690 100, 750 105 C 810 110, 880 130, 885 185 C 890 235, 850 270, 790 268 C 760 267, 745 245, 720 250 C 685 258, 650 235, 640 190 Z"/>
+            <circle cx="695" cy="150" r="3.5" fill="#18181B" aria-hidden="true"/>
+            <path d="M812 145 L826 121 L840 145 Z" fill="none" stroke="#3F3F46" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"/>
+            <text class="region-name" x="762" y="192" text-anchor="middle">Port Query</text>
+            <text class="region-sub" x="762" y="214" text-anchor="middle">Plate II &middot; data platform</text>
+          </g>
+
+          <!-- REGION III : Signal Strait (SW, two islets) -->
+          <g id="region-signal" class="region" data-region="signal" tabindex="0" role="button"
+             aria-label="Signal Strait, plate three: realtime messaging infrastructure. Activate to zoom in and view details."
+             aria-expanded="false">
+            <path class="shoal" d="M 140 500 C 135 455, 180 420, 230 428 C 275 435, 300 465, 292 505 C 284 548, 240 575, 195 565 C 158 557, 145 540, 140 500 Z"/>
+            <path class="land"  d="M 140 500 C 135 455, 180 420, 230 428 C 275 435, 300 465, 292 505 C 284 548, 240 575, 195 565 C 158 557, 145 540, 140 500 Z"/>
+            <path class="shoal" d="M 320 520 C 318 480, 355 450, 400 458 C 440 466, 462 495, 452 535 C 442 572, 400 592, 360 582 C 332 574, 322 552, 320 520 Z"/>
+            <path class="land"  d="M 320 520 C 318 480, 355 450, 400 458 C 440 466, 462 495, 452 535 C 442 572, 400 592, 360 582 C 332 574, 322 552, 320 520 Z"/>
+            <path d="M298 540 C 306 528, 312 528, 318 518" fill="none" stroke="#2563EB" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" aria-hidden="true"/>
+            <circle cx="205" cy="465" r="3.5" fill="#18181B" aria-hidden="true"/>
+            <circle cx="398" cy="562" r="3.5" fill="#18181B" aria-hidden="true"/>
+            <text class="region-name" x="296" y="418" text-anchor="middle">Signal Strait</text>
+            <text class="region-sub" x="296" y="620" text-anchor="middle">Plate III &middot; realtime infra</text>
+          </g>
+
+          <!-- REGION IV : Isle of Render (SE) -->
+          <g id="region-render" class="region" data-region="render" tabindex="0" role="button"
+             aria-label="Isle of Render, plate four: an experimental WebGL terrain project. Activate to zoom in and view details."
+             aria-expanded="false">
+            <path class="shoal" d="M 620 520 C 612 465, 665 425, 730 432 C 795 440, 880 460, 885 520 C 890 575, 835 610, 765 605 C 700 600, 628 575, 620 520 Z"/>
+            <path class="land"  d="M 620 520 C 612 465, 665 425, 730 432 C 795 440, 880 460, 885 520 C 890 575, 835 610, 765 605 C 700 600, 628 575, 620 520 Z"/>
+            <path d="M690 505 L706 477 L722 505 Z M716 510 L730 486 L744 510 Z" fill="none" stroke="#3F3F46" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"/>
+            <circle cx="830" cy="560" r="3.5" fill="#18181B" aria-hidden="true"/>
+            <text class="region-name" x="756" y="545" text-anchor="middle">Isle of Render</text>
+            <text class="region-sub" x="756" y="567" text-anchor="middle">Plate IV &middot; WebGL terrain</text>
+          </g>
+        </svg>
+
+        <!-- detail panels -->
+        <div id="atlas-overlay">
+          <article class="region-panel" id="panel-terra" data-side="right" role="dialog" aria-labelledby="panel-terra-title" hidden>
+            <button type="button" class="panel-close font-body text-xs smallcaps text-ink border border-inksoft rounded-full px-3 py-1.5 hover:bg-mist transition-colors cursor-pointer" data-close>&larr; Back to the atlas</button>
+            <p class="font-body text-xs smallcaps text-inksoft mt-5">Plate I &middot; 43&#176;N, 71&#176;W</p>
+            <h3 id="panel-terra-title" class="font-display text-2xl text-fg mt-1">Terra Forma</h3>
+            <p class="font-body text-sm leading-relaxed text-ink mt-3">A living design system charted for a fintech product suite &mdash; tokens, components, and the roads between them.</p>
+            <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies">
+              <li class="tag">Design Tokens</li><li class="tag">React</li><li class="tag">Figma</li>
+            </ul>
+          </article>
+
+          <article class="region-panel" id="panel-query" data-side="left" role="dialog" aria-labelledby="panel-query-title" hidden>
+            <button type="button" class="panel-close font-body text-xs smallcaps text-ink border border-inksoft rounded-full px-3 py-1.5 hover:bg-mist transition-colors cursor-pointer" data-close>&larr; Back to the atlas</button>
+            <p class="font-body text-xs smallcaps text-inksoft mt-5">Plate II &middot; 43&#176;N, 65&#176;W</p>
+            <h3 id="panel-query-title" class="font-display text-2xl text-fg mt-1">Port Query</h3>
+            <p class="font-body text-sm leading-relaxed text-ink mt-3">A self-serve analytics harbor where product teams dock their data and sail away with answers.</p>
+            <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies">
+              <li class="tag">TypeScript</li><li class="tag">PostgreSQL</li><li class="tag">GraphQL</li>
+            </ul>
+          </article>
+
+          <article class="region-panel" id="panel-signal" data-side="right" role="dialog" aria-labelledby="panel-signal-title" hidden>
+            <button type="button" class="panel-close font-body text-xs smallcaps text-ink border border-inksoft rounded-full px-3 py-1.5 hover:bg-mist transition-colors cursor-pointer" data-close>&larr; Back to the atlas</button>
+            <p class="font-body text-xs smallcaps text-inksoft mt-5">Plate III &middot; 40&#176;N, 71&#176;W</p>
+            <h3 id="panel-signal-title" class="font-display text-2xl text-fg mt-1">Signal Strait</h3>
+            <p class="font-body text-sm leading-relaxed text-ink mt-3">Realtime messaging channels navigated at sub-second latency, across a strait of ten million daily crossings.</p>
+            <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies">
+              <li class="tag">WebSockets</li><li class="tag">Go</li><li class="tag">Redis</li>
+            </ul>
+          </article>
+
+          <article class="region-panel" id="panel-render" data-side="left" role="dialog" aria-labelledby="panel-render-title" hidden>
+            <button type="button" class="panel-close font-body text-xs smallcaps text-ink border border-inksoft rounded-full px-3 py-1.5 hover:bg-mist transition-colors cursor-pointer" data-close>&larr; Back to the atlas</button>
+            <p class="font-body text-xs smallcaps text-inksoft mt-5">Plate IV &middot; 40&#176;N, 65&#176;W</p>
+            <h3 id="panel-render-title" class="font-display text-2xl text-fg mt-1">Isle of Render</h3>
+            <p class="font-body text-sm leading-relaxed text-ink mt-3">An experimental WebGL island of generative terrain &mdash; heightmaps grown from noise and lit by shader weather.</p>
+            <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies">
+              <li class="tag">WebGL</li><li class="tag">Three.js</li><li class="tag">GLSL</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+      <figcaption class="font-body text-xs text-inksoft italic text-center pt-3">
+        Fig. 1 &mdash; General chart of selected work. Not to scale; here be refactors.
+      </figcaption>
+    </figure>
+
+    <p class="sr-only" role="status" aria-live="polite" id="atlas-live"></p>
+
+    <!-- atlas index -->
+    <h3 class="font-body text-xs smallcaps text-inksoft mt-12 mb-4">Atlas Index</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <button type="button" class="index-btn" data-region="terra" aria-expanded="false" aria-controls="panel-terra">
+        <span class="font-display text-lg text-fg block">I &middot; Terra Forma</span>
+        <span class="font-body text-sm text-inksoft block mt-1">A living design system charted for a fintech product suite.</span>
+      </button>
+      <button type="button" class="index-btn" data-region="query" aria-expanded="false" aria-controls="panel-query">
+        <span class="font-display text-lg text-fg block">II &middot; Port Query</span>
+        <span class="font-body text-sm text-inksoft block mt-1">A self-serve analytics harbor where teams dock their data.</span>
+      </button>
+      <button type="button" class="index-btn" data-region="signal" aria-expanded="false" aria-controls="panel-signal">
+        <span class="font-display text-lg text-fg block">III &middot; Signal Strait</span>
+        <span class="font-body text-sm text-inksoft block mt-1">Realtime messaging channels navigated at sub-second latency.</span>
+      </button>
+      <button type="button" class="index-btn" data-region="render" aria-expanded="false" aria-controls="panel-render">
+        <span class="font-display text-lg text-fg block">IV &middot; Isle of Render</span>
+        <span class="font-body text-sm text-inksoft block mt-1">An experimental WebGL island of generative terrain.</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" class="max-w-4xl mx-auto px-4 py-16 md:py-24">
+    <div class="cartouche px-6 py-10 md:px-12 md:py-12 text-center">
+      <p class="font-body text-xs smallcaps text-inksoft mb-3">Final plate &middot; Correspondence</p>
+      <h2 class="font-display text-3xl md:text-4xl text-fg mb-4">Send a Dispatch</h2>
+      <p class="font-body text-sm md:text-base text-inksoft leading-relaxed max-w-md mx-auto mb-8">
+        New expeditions, collaborations, and interesting coastlines welcome.
+        Coordinates below; response within one tide.
+      </p>
+      <ul class="space-y-3 font-body text-sm md:text-base">
+        <li>
+          <a href="mailto:hello@alexmorgan.dev" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">hello@alexmorgan.dev</a>
+        </li>
+        <li>
+          <a href="#" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">GitHub &mdash; charted commits</a>
+        </li>
+        <li>
+          <a href="#" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">LinkedIn &mdash; the official gazetteer</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-line py-8 text-center">
+  <p class="font-body text-xs text-inksoft smallcaps">&copy; 2026 Alex Morgan &mdash; surveyed &amp; drawn by hand</p>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var svg = document.getElementById('atlas-svg');
+  var overlay = document.getElementById('atlas-overlay');
+  var live = document.getElementById('atlas-live');
+  var seaBg = document.getElementById('sea-bg');
+  if (!svg || !overlay) return;
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function motionOK() { return !reduceMotion.matches; }
+
+  var HOME = [0, 0, 1000, 700];
+  var REGIONS = {
+    terra:  { box: [55, 53, 420, 294],  name: 'Terra Forma' },
+    query:  { box: [550, 43, 420, 294], name: 'Port Query' },
+    signal: { box: [55, 363, 420, 294], name: 'Signal Strait' },
+    render: { box: [545, 368, 420, 294], name: 'Isle of Render' }
+  };
+
+  var activeId = null;
+  var lastTrigger = null;
+  var rafId = null;
+  var panelTimer = null;
+  var openToken = 0;
+
+  function setViewBox(b) {
+    svg.setAttribute('viewBox', b[0] + ' ' + b[1] + ' ' + b[2] + ' ' + b[3]);
+  }
+
+  function currentViewBox() {
+    var raw = svg.getAttribute('viewBox') || '0 0 1000 700';
+    var parts = raw.split(/[\s,]+/).map(Number);
+    return parts.length === 4 && parts.every(isFinite) ? parts : HOME.slice();
+  }
+
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function animateViewBox(target, duration, done) {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    if (!motionOK() || duration <= 0) {
+      setViewBox(target);
+      if (done) done();
+      return;
+    }
+    var from = currentViewBox();
+    var start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var t = Math.min((ts - start) / duration, 1);
+      var e = easeInOutCubic(t);
+      setViewBox([
+        from[0] + (target[0] - from[0]) * e,
+        from[1] + (target[1] - from[1]) * e,
+        from[2] + (target[2] - from[2]) * e,
+        from[3] + (target[3] - from[3]) * e
+      ]);
+      if (t < 1) {
+        rafId = requestAnimationFrame(step);
+      } else {
+        rafId = null;
+        if (done) done();
+      }
+    }
+    rafId = requestAnimationFrame(step);
+  }
+
+  function triggersFor(id) {
+    return Array.prototype.slice.call(document.querySelectorAll('[data-region="' + id + '"]'));
+  }
+
+  function panelFor(id) {
+    return document.getElementById('panel-' + id);
+  }
+
+  function announce(msg) {
+    if (live) live.textContent = msg;
+  }
+
+  function showPanel(id, token) {
+    var panel = panelFor(id);
+    if (!panel || token !== openToken) return;
+    panel.hidden = false;
+    // force reflow so the transition runs
+    void panel.offsetWidth;
+    panel.classList.add('visible');
+    var closeBtn = panel.querySelector('[data-close]');
+    if (closeBtn) {
+      try { closeBtn.focus({ preventScroll: true }); } catch (e) { closeBtn.focus(); }
+    }
+  }
+
+  function hidePanel(id) {
+    var panel = panelFor(id);
+    if (!panel) return;
+    panel.classList.remove('visible');
+    if (motionOK()) {
+      (function (p) {
+        setTimeout(function () { if (!p.classList.contains('visible')) p.hidden = true; }, 260);
+      })(panel);
+    } else {
+      panel.hidden = true;
+    }
+  }
+
+  function openRegion(id, trigger) {
+    var region = REGIONS[id];
+    var g = document.getElementById('region-' + id);
+    if (!region || !g) return;
+
+    if (activeId === id) { closeRegion(); return; }
+
+    if (activeId) {
+      // switch regions: hide old panel + clear old state, keep zoom flowing
+      var oldG = document.getElementById('region-' + activeId);
+      if (oldG) oldG.classList.remove('active');
+      triggersFor(activeId).forEach(function (el) { el.setAttribute('aria-expanded', 'false'); });
+      hidePanel(activeId);
+    }
+
+    activeId = id;
+    lastTrigger = trigger || g;
+    openToken += 1;
+    var token = openToken;
+    if (panelTimer) { clearTimeout(panelTimer); panelTimer = null; }
+
+    svg.classList.add('zoomed');
+    g.classList.add('active');
+    triggersFor(id).forEach(function (el) { el.setAttribute('aria-expanded', 'true'); });
+    announce('Zoomed into ' + region.name + '. Details shown. Press Escape to return to the atlas.');
+
+    if (motionOK()) {
+      animateViewBox(region.box, 800, null);
+      panelTimer = setTimeout(function () { showPanel(id, token); }, 620);
+    } else {
+      setViewBox(region.box);
+      showPanel(id, token);
+    }
+  }
+
+  function closeRegion() {
+    if (!activeId) return;
+    var id = activeId;
+    activeId = null;
+    openToken += 1;
+    if (panelTimer) { clearTimeout(panelTimer); panelTimer = null; }
+
+    hidePanel(id);
+    var g = document.getElementById('region-' + id);
+    if (g) g.classList.remove('active');
+    triggersFor(id).forEach(function (el) { el.setAttribute('aria-expanded', 'false'); });
+    svg.classList.remove('zoomed');
+    animateViewBox(HOME, 800, null);
+    announce('Returned to the full atlas.');
+
+    if (lastTrigger && typeof lastTrigger.focus === 'function') {
+      try { lastTrigger.focus({ preventScroll: true }); } catch (e) { lastTrigger.focus(); }
+    }
+    lastTrigger = null;
+  }
+
+  // --- region shapes on the map ---
+  Object.keys(REGIONS).forEach(function (id) {
+    var g = document.getElementById('region-' + id);
+    if (!g) return;
+    g.addEventListener('click', function () { openRegion(id, g); });
+    g.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') {
+        ev.preventDefault();
+        openRegion(id, g);
+      }
+    });
+  });
+
+  // --- atlas index buttons ---
+  Array.prototype.slice.call(document.querySelectorAll('.index-btn')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var id = btn.getAttribute('data-region');
+      if (!id || !REGIONS[id]) return;
+      var frame = svg.closest('.map-frame');
+      if (frame && frame.scrollIntoView) {
+        frame.scrollIntoView({ behavior: motionOK() ? 'smooth' : 'auto', block: 'nearest' });
+      }
+      openRegion(id, btn);
+    });
+  });
+
+  // --- close buttons ---
+  Array.prototype.slice.call(document.querySelectorAll('[data-close]')).forEach(function (btn) {
+    btn.addEventListener('click', function () { closeRegion(); });
+  });
+
+  // --- click open sea to zoom back out ---
+  if (seaBg) {
+    seaBg.addEventListener('click', function () { if (activeId) closeRegion(); });
+  }
+
+  // --- escape to zoom out ---
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape' && activeId) closeRegion();
+  });
+})();
+</script>
+</body>
+</html>

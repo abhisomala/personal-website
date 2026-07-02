@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Variant 02 - Living blueprint</title>
+<link rel="icon" href="data:,">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#18181B',
+            paper: '#FAFAFA',
+            graphite: '#3F3F46',
+            accent: '#2563EB',
+            muted: '#E8ECF0'
+          },
+          fontFamily: {
+            head: ['Archivo', 'sans-serif'],
+            body: ['"Space Grotesk"', 'sans-serif'],
+            draft: ['"IBM Plex Mono"', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: #FAFAFA;
+      background-image:
+        linear-gradient(rgba(37, 99, 235, 0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37, 99, 235, 0.10) 1px, transparent 1px),
+        linear-gradient(rgba(37, 99, 235, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37, 99, 235, 0.05) 1px, transparent 1px);
+      background-size: 96px 96px, 96px 96px, 12px 12px, 12px 12px;
+    }
+
+    /* ---------- drafting linework ---------- */
+    .ink  { stroke: #18181B; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .ink-bold { stroke-width: 9; }
+    .ctor { stroke: #94A3B8; fill: none; stroke-width: 1; stroke-dasharray: 5 5; }
+    .cline { stroke-dasharray: 12 4 3 4; }
+    .stn  { fill: #FAFAFA; stroke: #18181B; stroke-width: 2; }
+    .lbl  { fill: #3F3F46; font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+    .stamp-h { font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 22px; fill: #18181B; letter-spacing: 0.08em; }
+    .stamp-s { font-family: 'IBM Plex Mono', monospace; font-size: 10px; fill: #3F3F46; letter-spacing: 0.14em; }
+
+    /* ---------- THE mechanic: dimension lines + callouts ---------- */
+    .dims { opacity: 0; transition: opacity 0.18s ease-out; }
+    .dim-line {
+      stroke: #2563EB; fill: none; stroke-width: 1.4;
+      stroke-dasharray: 1; stroke-dashoffset: 1;
+      transition: stroke-dashoffset 0.3s ease-out 0.05s;
+    }
+    .dim-line.ext { stroke-width: 1; }
+    .dim-node { fill: #2563EB; }
+    .dim-text {
+      fill: #2563EB; font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; letter-spacing: 0.05em;
+      opacity: 0; transition: opacity 0.2s ease-out 0.18s;
+    }
+    .fig-hero .dim-text { font-size: 14px; }
+
+    @media (hover: hover) {
+      .schematic:hover .dims { opacity: 1; }
+      .schematic:hover .dim-line { stroke-dashoffset: 0; }
+      .schematic:hover .dim-text { opacity: 1; }
+    }
+    .schematic:focus-within .dims,
+    .schematic.is-revealed .dims { opacity: 1; }
+    .schematic:focus-within .dim-line,
+    .schematic.is-revealed .dim-line { stroke-dashoffset: 0; }
+    .schematic:focus-within .dim-text,
+    .schematic.is-revealed .dim-text { opacity: 1; }
+
+    .schematic svg.fig { cursor: crosshair; display: block; }
+
+    /* ---------- chrome ---------- */
+    .inspect-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.18em;
+      border: 1px solid #18181B; background: #FFFFFF; color: #18181B;
+      padding: 4px 10px; cursor: pointer;
+      transition: background-color 0.2s ease-out, color 0.2s ease-out, border-color 0.2s ease-out;
+    }
+    .inspect-btn:hover { background: #E8ECF0; }
+    .schematic.is-revealed .inspect-btn,
+    .inspect-btn[aria-pressed="true"] { background: #2563EB; border-color: #2563EB; color: #FFFFFF; }
+
+    .draft-link {
+      color: #2563EB; text-decoration: underline; text-underline-offset: 3px;
+      transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    }
+    .draft-link:hover { background: rgba(37, 99, 235, 0.12); }
+
+    :focus-visible {
+      outline: 2px solid #2563EB;
+      outline-offset: 3px;
+      border-radius: 1px;
+    }
+
+    /* ---------- reduced motion ---------- */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        transition-delay: 0ms !important;
+        animation: none !important;
+      }
+      .dim-line { stroke-dasharray: none; stroke-dashoffset: 0; }
+    }
+  </style>
+</head>
+<body class="font-body text-ink antialiased">
+
+  <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 font-draft text-[11px] tracking-widest bg-paper border border-ink px-3 py-2">SKIP TO CONTENT</a>
+
+  <a href="../index.html" class="fixed bottom-3 left-3 z-50 font-draft text-[11px] tracking-widest bg-paper border border-ink px-3 py-2 hover:bg-ink hover:text-white transition-colors duration-200">&larr; ALL VARIANTS</a>
+
+  <!-- drawing sheet frame -->
+  <div class="m-2 sm:m-4 border border-ink p-1">
+    <div class="border border-ink/40">
+
+      <!-- sheet header strip -->
+      <header class="border-b border-ink/60 px-4 sm:px-8 py-2 flex items-center justify-between font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite">
+        <span>AM-2026 &middot; PORTFOLIO &mdash; GENERAL ARRANGEMENT</span>
+        <span class="hidden sm:inline">SCALE 1:1 &middot; REV 4.2 &middot; 2026-07-02</span>
+      </header>
+
+      <main id="main">
+
+        <!-- ============ SHEET 01 / HERO ============ -->
+        <section id="top" class="px-4 sm:px-8 pt-12 pb-16">
+          <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-14 items-center min-h-[78vh]">
+            <div>
+              <p class="font-draft text-[11px] tracking-[0.25em] text-accent">DWG NO. AM-001 &mdash; GENERAL ARRANGEMENT</p>
+              <h1 class="font-head font-bold text-5xl sm:text-6xl xl:text-7xl tracking-tight mt-4">ALEX MORGAN</h1>
+              <p class="font-draft text-xs sm:text-sm tracking-[0.22em] text-graphite mt-4">SOFTWARE ENGINEER &amp; DESIGNER</p>
+              <p class="mt-6 max-w-md text-graphite leading-relaxed">
+                I draft, build, and stress-test digital structures. Every interface here is
+                drawn to spec &mdash; hover over any figure to check my measurements.
+              </p>
+
+              <nav aria-label="Index of sheets" class="mt-9 border border-ink divide-y divide-ink/40 max-w-md bg-white font-draft text-[11px] sm:text-[12px] tracking-[0.14em]">
+                <p class="px-3 py-2 bg-muted/60 text-graphite">INDEX OF SHEETS</p>
+                <a href="#top" class="flex justify-between gap-4 px-3 py-2 hover:bg-muted transition-colors duration-150"><span>01 &middot; GENERAL ARRANGEMENT</span><span class="text-accent">HERE</span></a>
+                <a href="#about" class="flex justify-between gap-4 px-3 py-2 hover:bg-muted transition-colors duration-150"><span>02 &middot; SPECIFICATION / ABOUT</span><span class="text-accent" aria-hidden="true">&darr;</span></a>
+                <a href="#work" class="flex justify-between gap-4 px-3 py-2 hover:bg-muted transition-colors duration-150"><span>03 &middot; DETAIL DRAWINGS / WORK</span><span class="text-accent" aria-hidden="true">&darr;</span></a>
+                <a href="#contact" class="flex justify-between gap-4 px-3 py-2 hover:bg-muted transition-colors duration-150"><span>04 &middot; TITLE BLOCK / CONTACT</span><span class="text-accent" aria-hidden="true">&darr;</span></a>
+              </nav>
+            </div>
+
+            <article class="schematic bg-white border border-ink shadow-[5px_5px_0_rgba(24,24,27,0.08)]">
+              <div class="flex items-center justify-between border-b border-ink px-4 py-2">
+                <span class="font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite">FIG. 01 &mdash; SUBJECT ELEVATION</span>
+                <button type="button" class="inspect-btn" aria-pressed="false" aria-label="Toggle dimension annotations on subject elevation">
+                  <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="3.2"/><path d="M6 0v2.5M6 9.5V12M0 6h2.5M9.5 6H12"/></svg>
+                  INSPECT
+                </button>
+              </div>
+              <div class="p-4 sm:p-5">
+                <svg class="fig fig-hero w-full h-auto" viewBox="0 0 560 380" role="img" aria-label="Drafting schematic of the initials A and M with construction lines, revealing dimensions and notes on inspection">
+                  <!-- construction lines -->
+                  <line class="ctor" x1="30" y1="90" x2="530" y2="90"/>
+                  <line class="ctor" x1="30" y1="280" x2="530" y2="280"/>
+                  <circle class="ctor" cx="150" cy="90" r="26"/>
+                  <circle class="ctor" cx="370" cy="240" r="20"/>
+                  <path class="ctor cline" d="M280 155v60M250 185h60"/>
+                  <!-- letters -->
+                  <path class="ink ink-bold" d="M90 280 L150 90 L210 280 M110 215 H190"/>
+                  <path class="ink ink-bold" d="M300 280 V90 L370 240 L440 90 V280"/>
+                  <!-- dimensions + notes (the mechanic) -->
+                  <g class="dims" aria-hidden="true">
+                    <line class="dim-line ext" pathLength="1" x1="446" y1="90" x2="492" y2="90"/>
+                    <line class="dim-line ext" pathLength="1" x1="446" y1="280" x2="492" y2="280"/>
+                    <line class="dim-line" pathLength="1" x1="484" y1="90" x2="484" y2="280"/>
+                    <line class="dim-line" pathLength="1" x1="480" y1="94" x2="488" y2="86"/>
+                    <line class="dim-line" pathLength="1" x1="480" y1="284" x2="488" y2="276"/>
+                    <text class="dim-text" transform="rotate(-90 504 185)" x="504" y="185" text-anchor="middle">CAP 190</text>
+
+                    <line class="dim-line ext" pathLength="1" x1="90" y1="286" x2="90" y2="332"/>
+                    <line class="dim-line ext" pathLength="1" x1="210" y1="286" x2="210" y2="332"/>
+                    <line class="dim-line" pathLength="1" x1="90" y1="324" x2="210" y2="324"/>
+                    <line class="dim-line" pathLength="1" x1="86" y1="328" x2="94" y2="320"/>
+                    <line class="dim-line" pathLength="1" x1="206" y1="328" x2="214" y2="320"/>
+                    <text class="dim-text" x="150" y="314" text-anchor="middle">BASE 120</text>
+
+                    <path class="dim-line" pathLength="1" d="M138 128 A40 40 0 0 0 162 128"/>
+                    <text class="dim-text" x="150" y="152" text-anchor="middle">35&#176;</text>
+
+                    <circle class="dim-node" cx="168" cy="74" r="2.5"/>
+                    <path class="dim-line" pathLength="1" d="M168 74 L230 40 L300 40"/>
+                    <text class="dim-text" x="306" y="44">SUBJECT: ALEX MORGAN</text>
+
+                    <circle class="dim-node" cx="370" cy="262" r="2.5"/>
+                    <path class="dim-line" pathLength="1" d="M370 262 L370 330 L400 330"/>
+                    <text class="dim-text" x="406" y="334">APEX JOINT &mdash; PINNED</text>
+                  </g>
+                </svg>
+                <p class="font-draft text-[10px] tracking-[0.2em] text-graphite mt-4">HOVER &middot; TAP &middot; FOCUS &mdash; DIMENSIONS &amp; NOTES REVEAL</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- ============ SHEET 02 / ABOUT ============ -->
+        <section id="about" class="px-4 sm:px-8 py-16 border-t border-ink/40">
+          <div class="max-w-6xl mx-auto">
+            <div class="flex items-end justify-between border-b-2 border-ink pb-2 mb-10">
+              <h2 class="font-head font-semibold text-2xl sm:text-3xl tracking-tight">FIG. 02 &mdash; SPECIFICATION <span class="text-graphite font-normal">/ ABOUT</span></h2>
+              <span class="font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite whitespace-nowrap pl-4">SHEET 2 / 4</span>
+            </div>
+
+            <div class="grid lg:grid-cols-5 gap-8 lg:gap-12 items-start">
+              <div class="lg:col-span-3 space-y-5 text-graphite leading-relaxed max-w-2xl">
+                <p>
+                  Placeholder paragraph one. I am a software engineer and designer who treats
+                  every product like a working drawing: measured twice, built once, and
+                  annotated so the next person can read exactly why each decision was made.
+                </p>
+                <p>
+                  Placeholder paragraph two. Over the last decade I have drafted design systems,
+                  load-bearing backend services, and interfaces tight enough to pass inspection.
+                  My tolerance for misaligned pixels is roughly &plusmn;0.02.
+                </p>
+                <p>
+                  Placeholder paragraph three. Off the drafting board I collect vintage
+                  drawing instruments, sharpen pencils to 2H, and believe the best documentation
+                  is a diagram with honest dimensions.
+                </p>
+              </div>
+
+              <article class="schematic lg:col-span-2 bg-white border border-ink shadow-[5px_5px_0_rgba(24,24,27,0.08)]">
+                <div class="flex items-center justify-between border-b border-ink px-4 py-2">
+                  <span class="font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite">FIG. 02-A &mdash; OPERATING ENVELOPE</span>
+                  <button type="button" class="inspect-btn" aria-pressed="false" aria-label="Toggle dimension annotations on operating envelope">
+                    <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="3.2"/><path d="M6 0v2.5M6 9.5V12M0 6h2.5M9.5 6H12"/></svg>
+                    INSPECT
+                  </button>
+                </div>
+                <div class="p-4">
+                  <svg class="fig w-full h-auto" viewBox="0 0 400 260" role="img" aria-label="Schematic of a rectangular operating envelope with centerlines, revealing width and height dimensions on inspection">
+                    <path class="ctor cline" d="M58 125 H342 M200 43 V207"/>
+                    <rect class="ink" x="70" y="55" width="260" height="140"/>
+                    <rect class="ctor" x="90" y="75" width="220" height="100"/>
+                    <g class="dims" aria-hidden="true">
+                      <line class="dim-line ext" pathLength="1" x1="70" y1="199" x2="70" y2="230"/>
+                      <line class="dim-line ext" pathLength="1" x1="330" y1="199" x2="330" y2="230"/>
+                      <line class="dim-line" pathLength="1" x1="70" y1="224" x2="330" y2="224"/>
+                      <line class="dim-line" pathLength="1" x1="66" y1="228" x2="74" y2="220"/>
+                      <line class="dim-line" pathLength="1" x1="326" y1="228" x2="334" y2="220"/>
+                      <text class="dim-text" x="200" y="216" text-anchor="middle">W 260</text>
+
+                      <line class="dim-line ext" pathLength="1" x1="334" y1="55" x2="362" y2="55"/>
+                      <line class="dim-line ext" pathLength="1" x1="334" y1="195" x2="362" y2="195"/>
+                      <line class="dim-line" pathLength="1" x1="356" y1="55" x2="356" y2="195"/>
+                      <line class="dim-line" pathLength="1" x1="352" y1="59" x2="360" y2="51"/>
+                      <line class="dim-line" pathLength="1" x1="352" y1="199" x2="360" y2="191"/>
+                      <text class="dim-text" transform="rotate(-90 372 125)" x="372" y="125" text-anchor="middle">H 140</text>
+
+                      <circle class="dim-node" cx="92" cy="73" r="2.5"/>
+                      <path class="dim-line" pathLength="1" d="M92 73 L120 38 L160 38"/>
+                      <text class="dim-text" x="166" y="42">TOLERANCE: HUMAN</text>
+
+                      <text class="dim-text" x="70" y="248">NOTE: DO NOT SCALE PERSONALITY</text>
+                    </g>
+                  </svg>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ SHEET 03 / PROJECTS ============ -->
+        <section id="work" class="px-4 sm:px-8 py-16 border-t border-ink/40">
+          <div class="max-w-6xl mx-auto">
+            <div class="flex items-end justify-between border-b-2 border-ink pb-2 mb-10">
+              <h2 class="font-head font-semibold text-2xl sm:text-3xl tracking-tight">FIG. 03 &mdash; DETAIL DRAWINGS <span class="text-graphite font-normal">/ SELECTED WORK</span></h2>
+              <span class="font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite whitespace-nowrap pl-4">SHEET 3 / 4</span>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 lg:gap-8">
+
+              <!-- Project 1: GRIDFORGE -->
+              <article class="schematic bg-white border border-ink shadow-[5px_5px_0_rgba(24,24,27,0.08)]">
+                <div class="flex items-center justify-between border-b border-ink px-4 py-2">
+                  <span class="font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite">DWG-101</span>
+                  <button type="button" class="inspect-btn" aria-pressed="false" aria-label="Toggle dimension annotations on Gridforge drawing">
+                    <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="3.2"/><path d="M6 0v2.5M6 9.5V12M0 6h2.5M9.5 6H12"/></svg>
+                    INSPECT
+                  </button>
+                </div>
+                <div class="p-4 sm:p-5">
+                  <svg class="fig w-full h-auto" viewBox="0 0 400 260" role="img" aria-label="Schematic of a Warren truss bridge with pin and roller supports, revealing span and rise dimensions on inspection">
+                    <path class="ink" d="M40 170 H320"/>
+                    <path class="ink" d="M75 105 H285"/>
+                    <path class="ink" d="M40 170 L75 105 L110 170 L145 105 L180 170 L215 105 L250 170 L285 105 L320 170"/>
+                    <path class="ink" d="M40 172 L28 192 H52 Z"/>
+                    <circle class="ink" cx="320" cy="181" r="7"/>
+                    <path class="ctor" d="M18 196 H62 M300 192 H340"/>
+                    <path class="ctor" d="M24 204l8-8M36 204l8-8M48 204l8-8M306 200l8-8M318 200l8-8M330 200l8-8"/>
+                    <g fill="#18181B">
+                      <circle cx="40" cy="170" r="2.5"/><circle cx="110" cy="170" r="2.5"/><circle cx="180" cy="170" r="2.5"/><circle cx="250" cy="170" r="2.5"/><circle cx="320" cy="170" r="2.5"/>
+                      <circle cx="75" cy="105" r="2.5"/><circle cx="145" cy="105" r="2.5"/><circle cx="215" cy="105" r="2.5"/><circle cx="285" cy="105" r="2.5"/>
+                    </g>
+                    <g class="dims" aria-hidden="true">
+                      <line class="dim-line ext" pathLength="1" x1="40" y1="208" x2="40" y2="238"/>
+                      <line class="dim-line ext" pathLength="1" x1="320" y1="208" x2="320" y2="238"/>
+                      <line class="dim-line" pathLength="1" x1="40" y1="232" x2="320" y2="232"/>
+                      <line class="dim-line" pathLength="1" x1="36" y1="236" x2="44" y2="228"/>
+                      <line class="dim-line" pathLength="1" x1="316" y1="236" x2="324" y2="228"/>
+                      <text class="dim-text" x="180" y="224" text-anchor="middle">SPAN 280</text>
+
+                      <line class="dim-line ext" pathLength="1" x1="290" y1="105" x2="368" y2="105"/>
+                      <line class="dim-line ext" pathLength="1" x1="330" y1="170" x2="368" y2="170"/>
+                      <line class="dim-line" pathLength="1" x1="362" y1="105" x2="362" y2="170"/>
+                      <line class="dim-line" pathLength="1" x1="358" y1="109" x2="366" y2="101"/>
+                      <line class="dim-line" pathLength="1" x1="358" y1="174" x2="366" y2="166"/>
+                      <text class="dim-text" transform="rotate(-90 378 138)" x="378" y="138" text-anchor="middle">RISE 65</text>
+
+                      <circle class="dim-node" cx="145" cy="103" r="2.5"/>
+                      <path class="dim-line" pathLength="1" d="M145 103 L145 56 L184 56"/>
+                      <text class="dim-text" x="190" y="60">PIN-JOINTED NODES</text>
+
+                      <text class="dim-text" x="40" y="252">LOAD CASE: WEEKEND TRAFFIC</text>
+                    </g>
+                  </svg>
+                  <h3 class="font-head font-semibold text-xl tracking-wide mt-4">GRIDFORGE</h3>
+                  <p class="text-sm text-graphite mt-1">Constraint-based layout engine that snaps generative UI into a load-bearing grid.</p>
+                  <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies used in Gridforge">
+                    <li class="font-draft text-[10px] tracking-widest border border-ink/50 bg-muted/60 px-2 py-1">TYPESCRIPT</li>
+                    <li class="font-draft text-[10px] tracking-widest border border-ink/50 bg-muted/60 px-2 py-1">WEBGL</li>
+                    <li class="font-draft text-[10px] tracking-widest border border-ink/50 bg-muted/60 px-2 py-1">RUST</li>
+                  </ul>
+                </div>
+              </article>
+
+              <!-- Project 2: VERNIER -->
+              <article class="schematic bg-white border border-ink shadow-[5px_5px_0_rgba(24,24,27,0.08)]">
+                <div class="flex items-center justify-between border-b border-ink px-4 py-2">
+                  <span class="font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite">DWG-102</span>
+                  <button type="button" class="inspect-btn" aria-pressed="false" aria-label="Toggle dimension annotations on Vernier drawing">
+                    <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="3.2"/><path d="M6 0v2.5M6 9.5V12M0 6h2.5M9.5 6H12"/></svg>
+                    INSPECT
+                  </button>
+                </div>
+                <div class="p-4 sm:p-5">
+                  <svg class="fig w-full h-auto" viewBox="0 0 400 260" role="img" aria-label="Schematic of a vernier caliper measuring a phantom part, revealing reading and jaw dimensions on inspection">
+                    <rect class="ink" x="60" y="88" width="300" height="24"/>
+                    <path class="ink" style="stroke-width:1" d="M75 88v12M90 88v7M105 88v7M120 88v7M135 88v7M150 88v12M165 88v7M180 88v7M195 88v7M210 88v7M225 88v12M240 88v7M255 88v7M270 88v7M285 88v7M300 88v12M315 88v7M330 88v7M345 88v7"/>
+                    <path class="ink" d="M70 112 V190 H84 V112"/>
+                    <rect class="ink" x="188" y="80" width="52" height="40"/>
+                    <path class="ink" d="M200 120 V190 H214 V120"/>
+                    <circle class="ink" cx="252" cy="116" r="6"/>
+                    <rect class="ctor" x="84" y="146" width="116" height="30"/>
+                    <g class="dims" aria-hidden="true">
+                      <line class="dim-line ext" pathLength="1" x1="84" y1="180" x2="84" y2="216"/>
+                      <line class="dim-line ext" pathLength="1" x1="200" y1="196" x2="200" y2="216"/>
+                      <line class="dim-line" pathLength="1" x1="84" y1="210" x2="200" y2="210"/>
+                      <line class="dim-line" pathLength="1" x1="80" y1="214" x2="88" y2="206"/>
+                      <line class="dim-line" pathLength="1" x1="196" y1="214" x2="204" y2="206"/>
+                      <text class="dim-text" x="142" y="202" text-anchor="middle">READ 41.30</text>
+
+                      <line class="dim-line ext" pathLength="1" x1="68" y1="112" x2="36" y2="112"/>
+                      <line class="dim-line ext" pathLength="1" x1="68" y1="190" x2="36" y2="190"/>
+                      <line class="dim-line" pathLength="1" x1="42" y1="112" x2="42" y2="190"/>
+                      <line class="dim-line" pathLength="1" x1="38" y1="116" x2="46" y2="108"/>
+                      <line class="dim-line" pathLength="1" x1="38" y1="194" x2="46" y2="186"/>
+                      <text class="dim-text" transform="rotate(-90 28 151)" x="28" y="151" text-anchor="middle">JAW 78</text>
+
+                      <circle class="dim-node" cx="214" cy="78" r="2.5"/>
+                      <path class="dim-line" pathLength="1" d="M214 78 L246 48 L282 48"/>
+                      <text class="dim-text" x="288" y="52">VERNIER &#177;0.02</text>
+
+                      <text class="dim-text" x="60" y="246">CALIBRATED: LAST TUESDAY</text>
+                    </g>
+                  </svg>
+                  <h3 class="font-head font-semibold text-xl tracking-wide mt-4">VERNIER</h3>
+                  <p class="text-sm text-graphite mt-1">Precision analytics dashboard that measures product funnels to a tenth of a pixel.</p>
+                  <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies used in Vernier">
+                    <li class="font-draft text-[10px] tracking-widest border border-ink/50 bg-muted/60 px-2 py-1">REACT</li>
+                    <li class="font-draft text-[10px] tracking-widest border border-ink/50 bg-muted/60 px-2 py-1">D3</li>
+                    <li class="font-draft text-[10px] tracking-widest border border-ink/50 bg-muted/60 px-2 py-1">POSTGRES</li>
+                  </ul>
+                </div>
+              </article>
+
+              <!-- Project 3: PLUMBLINE -->
+              <article class="schematic bg-white border border-ink shadow-[5px_5px_0_rgba(24,24,27,0.08)]">
+                <div class="flex items-center justify-between border-b border-ink px-4 py-2">
+                  <span class="font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite">DWG-103</span>
+                  <button type="button" class="inspect-btn" aria-pressed="false" aria-label="Toggle dimension annotations on Plumbline drawing">
+                    <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="3.2"/><path d="M6 0v2.5M6 9.5V12M0 6h2.5M9.5 6H12"/></svg>
+                    INSPECT
+                  </button>
+                </div>
+                <div class="p-4 sm:p-5">
+                  <svg class="fig w-full h-auto" viewBox="0 0 400 260" role="img" aria-label="Schematic of a plumb bob hanging from a ceiling over a floor target, revealing drop dimension and verticality notes on inspection">
+                    <path class="ink" d="M100 48 H300"/>
+                    <path class="ctor" d="M120 44l12-12M150 44l12-12M180 44l12-12M210 44l12-12M240 44l12-12M270 44l12-12"/>
+                    <line class="ink" x1="200" y1="48" x2="200" y2="158"/>
+                    <circle class="ink" cx="200" cy="158" r="3"/>
+                    <path class="ink" d="M186 158 H214 V184 L200 212 L186 184 Z"/>
+                    <path class="ink" d="M120 232 H280"/>
+                    <path class="ctor" d="M132 244l12-12M162 244l12-12M192 244l12-12M222 244l12-12M252 244l12-12"/>
+                    <path class="ctor" d="M200 222v20M190 232h20"/>
+                    <g class="dims" aria-hidden="true">
+                      <line class="dim-line ext" pathLength="1" x1="98" y1="48" x2="88" y2="48"/>
+                      <line class="dim-line ext" pathLength="1" x1="118" y1="232" x2="88" y2="232"/>
+                      <line class="dim-line" pathLength="1" x1="94" y1="48" x2="94" y2="232"/>
+                      <line class="dim-line" pathLength="1" x1="90" y1="52" x2="98" y2="44"/>
+                      <line class="dim-line" pathLength="1" x1="90" y1="236" x2="98" y2="228"/>
+                      <text class="dim-text" transform="rotate(-90 82 140)" x="82" y="140" text-anchor="middle">DROP 184</text>
+
+                      <path class="dim-line" pathLength="1" d="M208 232 V224 H200"/>
+                      <text class="dim-text" x="218" y="222">90.0&#176;</text>
+
+                      <circle class="dim-node" cx="216" cy="176" r="2.5"/>
+                      <path class="dim-line" pathLength="1" d="M216 176 L268 148 L300 148"/>
+                      <text class="dim-text" x="306" y="152">MASS 240 G</text>
+
+                      <text class="dim-text" x="120" y="256">DEVIATION 0.00 &mdash; TRUE VERTICAL</text>
+                    </g>
+                  </svg>
+                  <h3 class="font-head font-semibold text-xl tracking-wide mt-4">PLUMBLINE</h3>
+                  <p class="text-sm text-graphite mt-1">CI/CD alignment tool that keeps deploy pipelines hanging perfectly vertical.</p>
+                  <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies used in Plumbline">
+                    <li class="font-draft text-[10px] tracking-widest border border-ink/50 bg-muted/60 px-2 py-1">GO</li>
+                    <li class="font-draft text-[10px] tracking-widest border border-ink/50 bg-muted/60 px-2 py-1">KUBERNETES</li>
+                  </ul>
+                </div>
+              </article>
+
+              <!-- Project 4: TRAVERSE -->
+              <article class="schematic bg-white border border-ink shadow-[5px_5px_0_rgba(24,24,27,0.08)]">
+                <div class="flex items-center justify-between border-b border-ink px-4 py-2">
+                  <span class="font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite">DWG-104</span>
+                  <button type="button" class="inspect-btn" aria-pressed="false" aria-label="Toggle dimension annotations on Traverse drawing">
+                    <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="3.2"/><path d="M6 0v2.5M6 9.5V12M0 6h2.5M9.5 6H12"/></svg>
+                    INSPECT
+                  </button>
+                </div>
+                <div class="p-4 sm:p-5">
+                  <svg class="fig w-full h-auto" viewBox="0 0 400 260" role="img" aria-label="Schematic of a closed survey traverse with five stations and a north arrow, revealing leg length and bearing annotations on inspection">
+                    <path class="ink" d="M90 190 L150 80 L280 70 L330 170 L210 220 Z"/>
+                    <circle class="stn" cx="90" cy="190" r="4"/>
+                    <circle class="stn" cx="150" cy="80" r="4"/>
+                    <circle class="stn" cx="280" cy="70" r="4"/>
+                    <circle class="stn" cx="330" cy="170" r="4"/>
+                    <circle class="stn" cx="210" cy="220" r="4"/>
+                    <text class="lbl" x="72" y="206">A</text>
+                    <text class="lbl" x="140" y="70">B</text>
+                    <text class="lbl" x="288" y="62">C</text>
+                    <text class="lbl" x="340" y="178">D</text>
+                    <text class="lbl" x="204" y="240">E</text>
+                    <path class="ink" d="M356 62 V30"/>
+                    <path class="ink" d="M350 38 L356 28 L362 38"/>
+                    <text class="lbl" x="356" y="18" text-anchor="middle">N</text>
+                    <g class="dims" aria-hidden="true">
+                      <line class="dim-line ext" pathLength="1" x1="86" y1="188" x2="70" y2="179"/>
+                      <line class="dim-line ext" pathLength="1" x1="146" y1="78" x2="130" y2="69"/>
+                      <line class="dim-line" pathLength="1" x1="74" y1="181" x2="134" y2="71"/>
+                      <line class="dim-line" pathLength="1" x1="70" y1="185" x2="78" y2="177"/>
+                      <line class="dim-line" pathLength="1" x1="130" y1="75" x2="138" y2="67"/>
+                      <text class="dim-text" transform="rotate(-61 95 120)" x="95" y="120" text-anchor="middle">LEG 125.3</text>
+
+                      <text class="dim-text" transform="rotate(-4 215 60)" x="215" y="60" text-anchor="middle">BRG N 78&#176; E</text>
+
+                      <circle class="dim-node" cx="284" cy="66" r="2.5"/>
+                      <path class="dim-line" pathLength="1" d="M284 66 L252 38 L212 38"/>
+                      <text class="dim-text" x="206" y="42" text-anchor="end">CLOSURE 0.00</text>
+
+                      <text class="dim-text" x="40" y="252">DATUM: MEAN SEA LEVEL</text>
+                    </g>
+                  </svg>
+                  <h3 class="font-head font-semibold text-xl tracking-wide mt-4">TRAVERSE</h3>
+                  <p class="text-sm text-graphite mt-1">Offline-first mapping library for survey-grade route plotting in the field.</p>
+                  <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies used in Traverse">
+                    <li class="font-draft text-[10px] tracking-widest border border-ink/50 bg-muted/60 px-2 py-1">RUST</li>
+                    <li class="font-draft text-[10px] tracking-widest border border-ink/50 bg-muted/60 px-2 py-1">POSTGIS</li>
+                    <li class="font-draft text-[10px] tracking-widest border border-ink/50 bg-muted/60 px-2 py-1">WASM</li>
+                  </ul>
+                </div>
+              </article>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ SHEET 04 / CONTACT ============ -->
+        <section id="contact" class="px-4 sm:px-8 py-16 border-t border-ink/40">
+          <div class="max-w-6xl mx-auto">
+            <div class="flex items-end justify-between border-b-2 border-ink pb-2 mb-10">
+              <h2 class="font-head font-semibold text-2xl sm:text-3xl tracking-tight">FIG. 04 &mdash; TITLE BLOCK <span class="text-graphite font-normal">/ CONTACT</span></h2>
+              <span class="font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite whitespace-nowrap pl-4">SHEET 4 / 4</span>
+            </div>
+
+            <article class="schematic bg-white border border-ink shadow-[5px_5px_0_rgba(24,24,27,0.08)]">
+              <div class="flex items-center justify-between border-b border-ink px-4 py-2">
+                <span class="font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite">DWG-400 &mdash; APPROVAL &amp; ISSUE</span>
+                <button type="button" class="inspect-btn" aria-pressed="false" aria-label="Toggle dimension annotations on approval stamp">
+                  <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="3.2"/><path d="M6 0v2.5M6 9.5V12M0 6h2.5M9.5 6H12"/></svg>
+                  INSPECT
+                </button>
+              </div>
+
+              <div class="grid lg:grid-cols-2 gap-8 p-4 sm:p-6 items-center">
+                <div>
+                  <p class="text-graphite leading-relaxed max-w-md mb-6">
+                    Placeholder contact copy: this drawing set is issued for construction.
+                    Redlines, RFIs, and interesting problems are always accepted.
+                  </p>
+                  <dl class="border border-ink divide-y divide-ink/40 bg-white text-sm">
+                    <div class="grid grid-cols-[112px_1fr] divide-x divide-ink/40">
+                      <dt class="px-3 py-2.5 font-draft text-[10px] tracking-widest text-graphite bg-muted/50 flex items-center">EMAIL</dt>
+                      <dd class="px-3 py-2.5 break-all"><a class="draft-link" href="mailto:hello@alexmorgan.dev">hello@alexmorgan.dev</a></dd>
+                    </div>
+                    <div class="grid grid-cols-[112px_1fr] divide-x divide-ink/40">
+                      <dt class="px-3 py-2.5 font-draft text-[10px] tracking-widest text-graphite bg-muted/50 flex items-center">GITHUB</dt>
+                      <dd class="px-3 py-2.5 break-all"><a class="draft-link" href="#">github.com/alexmorgan</a></dd>
+                    </div>
+                    <div class="grid grid-cols-[112px_1fr] divide-x divide-ink/40">
+                      <dt class="px-3 py-2.5 font-draft text-[10px] tracking-widest text-graphite bg-muted/50 flex items-center">LINKEDIN</dt>
+                      <dd class="px-3 py-2.5 break-all"><a class="draft-link" href="#">linkedin.com/in/alexmorgan</a></dd>
+                    </div>
+                    <div class="grid grid-cols-[112px_1fr] divide-x divide-ink/40">
+                      <dt class="px-3 py-2.5 font-draft text-[10px] tracking-widest text-graphite bg-muted/50 flex items-center">DRAWN BY</dt>
+                      <dd class="px-3 py-2.5">Alex Morgan</dd>
+                    </div>
+                    <div class="grid grid-cols-[112px_1fr] divide-x divide-ink/40">
+                      <dt class="px-3 py-2.5 font-draft text-[10px] tracking-widest text-graphite bg-muted/50 flex items-center">CHECKED BY</dt>
+                      <dd class="px-3 py-2.5">You, hopefully</dd>
+                    </div>
+                    <div class="grid grid-cols-[112px_1fr] divide-x divide-ink/40">
+                      <dt class="px-3 py-2.5 font-draft text-[10px] tracking-widest text-graphite bg-muted/50 flex items-center">REV / DATE</dt>
+                      <dd class="px-3 py-2.5 font-draft text-xs tracking-wider">4.2 &middot; 2026-07-02</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <svg class="fig w-full h-auto max-w-md mx-auto" viewBox="0 0 400 260" role="img" aria-label="Schematic of a circular approval stamp, revealing diameter and response-time annotations on inspection">
+                  <g transform="rotate(-8 200 120)">
+                    <circle class="ink" cx="200" cy="120" r="70"/>
+                    <circle class="ink" style="stroke-width:1.4" cx="200" cy="120" r="52"/>
+                    <text class="stamp-h" x="200" y="116" text-anchor="middle">APPROVED</text>
+                    <text class="stamp-s" x="200" y="136" text-anchor="middle">FOR COLLABORATION</text>
+                    <text class="stamp-s" x="200" y="152" text-anchor="middle">REV 4.2 / 2026</text>
+                  </g>
+                  <g class="dims" aria-hidden="true">
+                    <circle class="dim-node" cx="247" cy="73" r="2.5"/>
+                    <path class="dim-line" pathLength="1" d="M247 73 L298 42 L330 42"/>
+                    <text class="dim-text" x="336" y="46">DIA 140</text>
+
+                    <circle class="dim-node" cx="200" cy="192" r="2.5"/>
+                    <path class="dim-line" pathLength="1" d="M200 192 L200 224 L252 224"/>
+                    <text class="dim-text" x="258" y="228">REPLY &lt; 24 HRS</text>
+
+                    <text class="dim-text" x="40" y="250">SIGNATURE ON FILE</text>
+                  </g>
+                </svg>
+              </div>
+            </article>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- sheet footer strip -->
+      <footer class="border-t border-ink/60 px-4 sm:px-8 py-3 flex flex-wrap gap-x-6 gap-y-1 items-center justify-between font-draft text-[10px] sm:text-[11px] tracking-widest text-graphite">
+        <span>DO NOT SCALE DRAWING</span>
+        <span>&copy; 2026 ALEX MORGAN &middot; SHEET SET AM-2026</span>
+      </footer>
+
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      function init() {
+        var cards = document.querySelectorAll('.schematic');
+        if (!cards.length) return;
+        Array.prototype.forEach.call(cards, function (card) {
+          var btn = card.querySelector('.inspect-btn');
+          card.addEventListener('click', function (e) {
+            var t = e.target;
+            if (!t || typeof t.closest !== 'function') return;
+            if (t.closest('a')) return;
+            // toggle only via the INSPECT button or the drawing itself
+            if (!t.closest('.inspect-btn') && !t.closest('svg.fig')) return;
+            var on = card.classList.toggle('is-revealed');
+            if (btn) btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+        });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>

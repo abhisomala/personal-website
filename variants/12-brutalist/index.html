@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Variant 12 - Raw brutalist, single accent color</title>
+<link rel="icon" href="data:,">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: 'var(--ink)',
+            paper: 'var(--paper)'
+          },
+          fontFamily: {
+            mono: ['"Space Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* ============================================================
+       ONE COLOR TOTAL: ink (#3B82F6) on paper (#000000).
+       Contrast either way: 5.7:1 (WCAG AA for body text).
+       THE ONE MECHANIC: instant foreground/background inversion
+       on hover / focus / active, and globally via [INVERT PAGE].
+       ============================================================ */
+    :root {
+      --ink: #3B82F6;
+      --paper: #000000;
+    }
+    html.flipped {
+      --ink: #000000;
+      --paper: #3B82F6;
+    }
+
+    html { background: var(--paper); }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    /* Invertible element: swaps ink/paper instantly. No easing —
+       brutalist state changes are binary. */
+    .inv {
+      background: var(--paper);
+      color: var(--ink);
+      transition: none;
+      cursor: pointer;
+    }
+    @media (hover: hover) {
+      .inv:hover {
+        background: var(--ink);
+        color: var(--paper);
+      }
+    }
+    .inv:active,
+    .inv:focus-visible {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    /* Visible focus for keyboard users: dashed ink ring offset onto
+       the paper gap, so it reads in both polarities. */
+    :focus-visible {
+      outline: 3px dashed var(--ink);
+      outline-offset: 4px;
+    }
+
+    .hero {
+      min-height: 100vh;
+      min-height: 100svh;
+    }
+
+    /* Inversion is a discrete color swap (no motion), but kill any
+       residual animation/transition for reduced-motion users. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="font-mono">
+
+  <!-- Skip link -->
+  <a href="#main"
+     class="inv sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 border-4 border-current font-bold uppercase text-sm">
+    Skip to content
+  </a>
+
+  <!-- Fixed back link -->
+  <a href="../index.html"
+     class="inv fixed bottom-3 left-3 z-50 border-4 border-current px-3 py-1.5 text-xs font-bold uppercase tracking-widest">
+    &larr; All variants
+  </a>
+
+  <div class="mx-auto max-w-[1100px] border-x-4 border-ink">
+
+    <!-- ================= HERO ================= -->
+    <header class="hero flex flex-col border-b-4 border-ink">
+
+      <div class="flex flex-wrap items-stretch justify-between border-b-4 border-ink text-xs uppercase tracking-widest">
+        <span class="p-3">index.html</span>
+        <span class="hidden sm:block border-l-4 border-ink p-3">1 color / 2 states</span>
+        <span class="border-l-4 border-ink p-3">v12 / brutalist</span>
+      </div>
+
+      <div class="flex-1 p-5 sm:p-8 flex flex-col justify-center gap-6">
+        <h1 class="uppercase font-bold leading-[0.9] text-[clamp(3rem,13vw,9rem)]">
+          Alex<br>Morgan
+        </h1>
+        <p class="inline-block self-start bg-ink text-paper px-3 py-2 text-sm sm:text-lg font-bold uppercase tracking-wide">
+          Software Engineer &amp; Designer
+        </p>
+        <p class="max-w-md text-sm uppercase leading-relaxed">
+          Raw HTML. Exposed grid. One color total.<br>
+          Hover or tab across anything &mdash; it inverts. That is the whole trick.
+        </p>
+      </div>
+
+      <dl class="grid grid-cols-[auto_1fr] border-t-4 border-ink text-xs sm:text-sm">
+        <dt class="border-b-2 border-r-2 border-ink p-3 font-bold uppercase">Status</dt>
+        <dd class="border-b-2 border-ink p-3 uppercase">Available for work</dd>
+        <dt class="border-b-2 border-r-2 border-ink p-3 font-bold uppercase">Base</dt>
+        <dd class="border-b-2 border-ink p-3 uppercase">Portland, OR / Remote</dd>
+        <dt class="border-r-2 border-ink p-3 font-bold uppercase">Palette</dt>
+        <dd class="p-3 uppercase">#3B82F6 on #000000 &mdash; nothing else</dd>
+      </dl>
+
+      <nav aria-label="Main" class="grid grid-cols-2 sm:grid-cols-4 border-t-4 border-ink font-bold uppercase text-center text-sm sm:text-base">
+        <a href="#about"    class="inv border-b-4 sm:border-b-0 border-r-4 border-current py-4 px-2">About</a>
+        <a href="#projects" class="inv border-b-4 sm:border-b-0 sm:border-r-4 border-current py-4 px-2">Projects</a>
+        <a href="#contact"  class="inv border-r-4 border-current py-4 px-2">Contact</a>
+        <button id="invert-toggle" type="button" aria-pressed="false"
+                class="inv cursor-pointer py-4 px-2 font-bold uppercase">
+          [ Invert page ]
+        </button>
+      </nav>
+    </header>
+
+    <main id="main">
+
+      <!-- ================= ABOUT ================= -->
+      <section id="about" aria-labelledby="about-h" class="grid md:grid-cols-[220px_1fr] border-b-4 border-ink">
+        <div class="border-b-4 md:border-b-0 md:border-r-4 border-ink p-5">
+          <h2 id="about-h" class="font-bold uppercase text-xl">01<br class="hidden md:block"> / About</h2>
+        </div>
+        <div class="p-5 sm:p-8 space-y-5 max-w-prose text-sm sm:text-base leading-relaxed">
+          <p>
+            Placeholder paragraph one. I build software the way this page is built:
+            no decoration, no ambiguity, every structural line left visible. If a
+            border does a job, it stays on screen at
+            <a href="#projects" class="inv underline font-bold px-1">full width</a>.
+          </p>
+          <p>
+            Placeholder paragraph two. Ten years across systems, tooling, and
+            interface work. I care about the parts users never praise &mdash; latency,
+            failure states, keyboard paths &mdash; because that is where products
+            actually live or die.
+          </p>
+          <p>
+            Placeholder paragraph three. Design principle: every state change should
+            be legible in one frame. Hence one color, two arrangements, and an
+            <a href="#contact" class="inv underline font-bold px-1">open inbox</a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- ================= PROJECTS ================= -->
+      <section id="projects" aria-labelledby="projects-h" class="border-b-4 border-ink">
+        <div class="border-b-4 border-ink p-5">
+          <h2 id="projects-h" class="font-bold uppercase text-xl">02 / Projects</h2>
+        </div>
+
+        <ul class="grid sm:grid-cols-2 list-none">
+          <li class="border-b-4 sm:border-r-4 border-ink">
+            <a href="#" class="inv block h-full p-5 sm:p-7">
+              <p class="text-xs uppercase tracking-widest mb-3">P.001</p>
+              <h3 class="font-bold uppercase text-2xl mb-2">Nullframe</h3>
+              <p class="text-sm leading-relaxed mb-4">A component library that ships zero kilobytes of CSS. The browser default is the design system.</p>
+              <p class="flex flex-wrap gap-2 text-xs uppercase">
+                <span class="border-2 border-current px-2 py-0.5">TypeScript</span>
+                <span class="border-2 border-current px-2 py-0.5">Web Components</span>
+              </p>
+            </a>
+          </li>
+          <li class="border-b-4 border-ink">
+            <a href="#" class="inv block h-full p-5 sm:p-7">
+              <p class="text-xs uppercase tracking-widest mb-3">P.002</p>
+              <h3 class="font-bold uppercase text-2xl mb-2">Gridleak</h3>
+              <p class="text-sm leading-relaxed mb-4">A devtools overlay that exposes every hidden layout grid on any page you visit.</p>
+              <p class="flex flex-wrap gap-2 text-xs uppercase">
+                <span class="border-2 border-current px-2 py-0.5">JavaScript</span>
+                <span class="border-2 border-current px-2 py-0.5">Chrome API</span>
+                <span class="border-2 border-current px-2 py-0.5">Canvas</span>
+              </p>
+            </a>
+          </li>
+          <li class="border-b-4 sm:border-b-0 sm:border-r-4 border-ink">
+            <a href="#" class="inv block h-full p-5 sm:p-7">
+              <p class="text-xs uppercase tracking-widest mb-3">P.003</p>
+              <h3 class="font-bold uppercase text-2xl mb-2">Monotype.sh</h3>
+              <p class="text-sm leading-relaxed mb-4">Terminal-first static site generator with exactly one theme, on purpose.</p>
+              <p class="flex flex-wrap gap-2 text-xs uppercase">
+                <span class="border-2 border-current px-2 py-0.5">Rust</span>
+                <span class="border-2 border-current px-2 py-0.5">CLI</span>
+              </p>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="inv block h-full p-5 sm:p-7">
+              <p class="text-xs uppercase tracking-widest mb-3">P.004</p>
+              <h3 class="font-bold uppercase text-2xl mb-2">Invert.css</h3>
+              <p class="text-sm leading-relaxed mb-4">A one-kilobyte stylesheet that renders the entire web in two colors. You are looking at it.</p>
+              <p class="flex flex-wrap gap-2 text-xs uppercase">
+                <span class="border-2 border-current px-2 py-0.5">CSS</span>
+                <span class="border-2 border-current px-2 py-0.5">PostCSS</span>
+              </p>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ================= CONTACT ================= -->
+      <section id="contact" aria-labelledby="contact-h" class="border-b-4 border-ink">
+        <div class="border-b-4 border-ink p-5">
+          <h2 id="contact-h" class="font-bold uppercase text-xl">03 / Contact</h2>
+        </div>
+
+        <a href="mailto:hello@alexmorgan.dev"
+           class="inv flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b-4 border-current p-5 sm:p-7 font-bold uppercase">
+          <span class="text-sm tracking-widest">Email</span>
+          <span class="text-lg sm:text-2xl break-all">hello@alexmorgan.dev &nbsp;&rarr;</span>
+        </a>
+        <a href="#"
+           class="inv flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b-4 border-current p-5 sm:p-7 font-bold uppercase">
+          <span class="text-sm tracking-widest">GitHub</span>
+          <span class="text-lg sm:text-2xl">github.com/alexmorgan &nbsp;&nearr;</span>
+        </a>
+        <a href="#"
+           class="inv flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-5 sm:p-7 font-bold uppercase">
+          <span class="text-sm tracking-widest">LinkedIn</span>
+          <span class="text-lg sm:text-2xl">linkedin.com/in/alexmorgan &nbsp;&nearr;</span>
+        </a>
+      </section>
+
+      <!-- ================= FOOTER ================= -->
+      <footer class="flex flex-wrap items-stretch justify-between text-xs uppercase tracking-widest">
+        <span class="p-3">&copy; 2026 Alex Morgan</span>
+        <span class="hidden sm:block border-l-4 border-ink p-3">No cookies. No tracking. One color.</span>
+        <a href="#" class="inv border-l-4 border-current p-3 font-bold" id="back-to-top">Top &uarr;</a>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Global inversion: same mechanic as hover, applied to the whole page.
+      // Gives touch/keyboard users a first-class way to trigger the motif.
+      var toggle = document.getElementById('invert-toggle');
+      if (toggle) {
+        toggle.addEventListener('click', function () {
+          var flipped = document.documentElement.classList.toggle('flipped');
+          toggle.setAttribute('aria-pressed', flipped ? 'true' : 'false');
+        });
+      }
+
+      var backToTop = document.getElementById('back-to-top');
+      if (backToTop) {
+        backToTop.addEventListener('click', function (e) {
+          e.preventDefault();
+          window.scrollTo(0, 0); // instant, brutalist
+        });
+      }
+    });
+  </script>
+</body>
+</html>

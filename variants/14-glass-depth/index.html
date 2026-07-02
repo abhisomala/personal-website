@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variant 14 - Glass depth stack</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --c-primary: #2563EB;
+    --c-secondary: #3B82F6;
+    --c-accent: #F97316;
+    --c-bg: #F8FAFC;
+    --c-fg: #1E293B;
+  }
+
+  html { scroll-behavior: smooth; }
+  html, body { overflow-x: clip; }
+
+  body {
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background-color: var(--c-bg);
+    color: var(--c-fg);
+  }
+
+  /* ---------- fixed vibrant backdrop the glass samples from ---------- */
+  .bg-scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+  .orb { position: absolute; border-radius: 9999px; filter: blur(70px); }
+  .orb-1 { width: 55vw; height: 55vw; min-width: 340px; min-height: 340px; top: -12%; left: -10%;
+           background: radial-gradient(circle, rgba(37,99,235,.5), rgba(37,99,235,0) 70%); }
+  .orb-2 { width: 46vw; height: 46vw; min-width: 300px; min-height: 300px; top: 28%; right: -14%;
+           background: radial-gradient(circle, rgba(249,115,22,.42), rgba(249,115,22,0) 70%); }
+  .orb-3 { width: 50vw; height: 50vw; min-width: 320px; min-height: 320px; bottom: -18%; left: 12%;
+           background: radial-gradient(circle, rgba(59,130,246,.45), rgba(59,130,246,0) 70%); }
+
+  /* ---------- glass materials ---------- */
+  .glass-panel {
+    background: linear-gradient(160deg, rgba(255,255,255,.66), rgba(255,255,255,.44));
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.4);
+    border: 1px solid rgba(255,255,255,.65);
+    border-radius: 28px;
+    box-shadow:
+      0 32px 64px -28px rgba(30,58,138,.28),
+      inset 0 1px 0 rgba(255,255,255,.85);
+    position: relative;
+  }
+  /* light reflection sweep */
+  .glass-panel::before {
+    content: "";
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(115deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 38%);
+    pointer-events: none;
+  }
+
+  .glass-chip {
+    background: rgba(255,255,255,.62);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.7);
+    box-shadow: 0 8px 24px -12px rgba(30,58,138,.3), inset 0 1px 0 rgba(255,255,255,.8);
+  }
+
+  .card-glass {
+    background: rgba(255,255,255,.58);
+    border: 1px solid rgba(255,255,255,.75);
+    box-shadow: 0 12px 28px -18px rgba(30,58,138,.25), inset 0 1px 0 rgba(255,255,255,.8);
+  }
+
+  /* ---------- the depth stack ---------- */
+  .layer {
+    position: relative;
+    min-height: 94vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10vh 1.25rem;
+  }
+  #hero { min-height: 100vh; min-height: 100svh; }
+  main > .layer:nth-child(1) { z-index: 1; }
+  main > .layer:nth-child(2) { z-index: 2; }
+  main > .layer:nth-child(3) { z-index: 3; }
+  main > .layer:nth-child(4) { z-index: 4; }
+
+  .depth-target { transform-origin: 50% 25%; width: 100%; display: flex; justify-content: center; }
+
+  /* hero back-stack: static layers already sitting deeper in the field */
+  .ghost {
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,.55);
+    background: rgba(255,255,255,.34);
+    pointer-events: none;
+  }
+  .ghost-a { inset: 0; transform: translate(clamp(10px, 3vw, 32px), -16px) scale(.965) rotate(1.1deg); filter: blur(3px); }
+  .ghost-b { inset: 0; transform: translate(clamp(18px, 5.5vw, 58px), -32px) scale(.93) rotate(2.3deg); filter: blur(7px); opacity: .8; }
+
+  /* only pull layers into an overlapping stack when motion is allowed */
+  @media (prefers-reduced-motion: no-preference) {
+    .layer + .layer { margin-top: -22vh; }
+    .depth-target { will-change: transform; }
+  }
+
+  /* ---------- focal-plane rail ---------- */
+  .rail-link {
+    display: flex; align-items: center; justify-content: center;
+    padding: .45rem; border-radius: 9999px; cursor: pointer;
+  }
+  .rail-dot {
+    display: block; width: 10px; height: 10px; border-radius: 9999px;
+    background: rgba(71,85,105,.55);
+    border: 1px solid rgba(255,255,255,.9);
+    transition: background-color 200ms ease-out, transform 200ms ease-out, box-shadow 200ms ease-out;
+  }
+  .rail-link:hover .rail-dot { background: #1D4ED8; transform: scale(1.2); }
+  .rail-link.is-active .rail-dot {
+    background: var(--c-accent);
+    transform: scale(1.35);
+    box-shadow: 0 0 0 4px rgba(249,115,22,.22);
+  }
+
+  /* ---------- focus visibility ---------- */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid #1D4ED8;
+    outline-offset: 3px;
+    border-radius: 10px;
+  }
+  .rail-link:focus-visible { outline: 2px solid #1D4ED8; outline-offset: 2px; }
+
+  .btn { transition: background-color 200ms ease-out, box-shadow 200ms ease-out, border-color 200ms ease-out; cursor: pointer; }
+
+  /* ---------- reduced motion: everything sharp, static flow, all content reachable ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .layer + .layer { margin-top: 0; }
+    .depth-target {
+      filter: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+      will-change: auto;
+    }
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+</style>
+</head>
+<body class="antialiased text-slate-800">
+
+  <!-- vibrant field behind the glass -->
+  <div class="bg-scene" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- back to variants -->
+  <a href="../index.html"
+     class="glass-chip btn fixed left-4 top-4 z-50 rounded-full px-4 py-2 text-sm font-medium text-slate-700 hover:bg-white/80">
+    &larr; All variants
+  </a>
+
+  <!-- focal-plane rail -->
+  <nav class="fixed right-2 sm:right-5 top-1/2 -translate-y-1/2 z-50" aria-label="Sections">
+    <ul class="glass-chip flex flex-col gap-1 rounded-full px-1 py-2">
+      <li><a href="#hero"    class="rail-link" aria-label="Layer 01 - Intro"><span class="rail-dot"></span></a></li>
+      <li><a href="#about"   class="rail-link" aria-label="Layer 02 - About"><span class="rail-dot"></span></a></li>
+      <li><a href="#work"    class="rail-link" aria-label="Layer 03 - Work"><span class="rail-dot"></span></a></li>
+      <li><a href="#contact" class="rail-link" aria-label="Layer 04 - Contact"><span class="rail-dot"></span></a></li>
+    </ul>
+  </nav>
+
+  <!-- depth HUD -->
+  <div class="glass-chip fixed left-4 bottom-4 z-50 hidden sm:flex items-center gap-2 rounded-full px-3.5 py-2 text-[11px] uppercase tracking-[0.18em] text-slate-600" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="m14.31 8 5.74 9.94"/><path d="M9.69 8h11.48"/><path d="m7.38 12 5.74-9.94"/><path d="M9.69 16 3.95 6.06"/><path d="M14.31 16H2.83"/><path d="m16.62 12-5.74 9.94"/>
+    </svg>
+    <span>Focus</span>
+    <span id="hud-index" class="font-medium text-slate-800">01</span>
+    <span>/ 04</span>
+  </div>
+
+  <main class="relative z-10">
+
+    <!-- ===================== LAYER 01 · HERO ===================== -->
+    <section id="hero" class="layer" data-layer>
+      <div class="depth-target max-w-3xl">
+        <div class="relative w-full">
+          <!-- panels already sitting deeper in the field -->
+          <div class="ghost ghost-b absolute" aria-hidden="true"></div>
+          <div class="ghost ghost-a absolute" aria-hidden="true"></div>
+
+          <div class="glass-panel w-full px-6 py-10 sm:px-12 sm:py-14">
+            <p class="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-[#C2410C]">
+              <span class="inline-block h-1.5 w-1.5 rounded-full bg-[#F97316]" aria-hidden="true"></span>
+              f/1.8 &middot; Layer 01 of 04
+            </p>
+            <h1 class="mt-5 text-4xl sm:text-6xl font-semibold tracking-tight text-slate-900">Alex Morgan</h1>
+            <p class="mt-3 text-lg sm:text-xl font-medium text-blue-700">Software Engineer &amp; Designer</p>
+            <p class="mt-5 max-w-xl text-slate-600 leading-relaxed">
+              I build interfaces in layers. Everything on this page sits at a different depth in the
+              field &mdash; as you scroll, the layer behind you falls out of focus while the next one
+              racks sharp.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a href="#work" class="btn rounded-full bg-blue-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-blue-600/25 hover:bg-blue-700">
+                View work
+              </a>
+              <a href="#contact" class="btn glass-chip rounded-full px-6 py-3 text-sm font-medium text-slate-700 hover:bg-white/85">
+                Get in touch
+              </a>
+            </div>
+            <p class="mt-10 flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-slate-600">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+              Scroll to rack focus
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== LAYER 02 · ABOUT ===================== -->
+    <section id="about" class="layer" data-layer>
+      <div class="depth-target max-w-2xl">
+        <div class="glass-panel w-full px-6 py-10 sm:px-12 sm:py-14">
+          <p class="text-[11px] font-medium uppercase tracking-[0.22em] text-[#C2410C]">Layer 02 &middot; About</p>
+          <h2 class="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">Working in shallow depth of field</h2>
+          <div class="mt-6 space-y-4 text-slate-600 leading-relaxed">
+            <p>
+              I&rsquo;m a software engineer and designer who cares about the plane between the two:
+              the point where a system&rsquo;s architecture becomes something a person can actually
+              see and touch. Most of my work lives in that focal zone.
+            </p>
+            <p>
+              For the last several years I&rsquo;ve shipped design systems, rendering pipelines, and
+              product surfaces for teams that treat polish as an engineering problem &mdash; not an
+              afterthought sprinkled on at the end.
+            </p>
+            <p>
+              When one thing is sharp, everything else should quietly recede. That&rsquo;s my rule
+              for interfaces, and roughly my rule for weeks: one layer in focus at a time.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== LAYER 03 · WORK ===================== -->
+    <section id="work" class="layer" data-layer>
+      <div class="depth-target max-w-4xl">
+        <div class="glass-panel w-full px-6 py-10 sm:px-12 sm:py-14">
+          <p class="text-[11px] font-medium uppercase tracking-[0.22em] text-[#C2410C]">Layer 03 &middot; Selected work</p>
+          <h2 class="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">Four projects, four focal planes</h2>
+
+          <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+
+            <article class="card-glass rounded-2xl p-5">
+              <div class="flex items-baseline justify-between gap-3">
+                <h3 class="text-lg font-semibold text-slate-900">Bokeh</h3>
+                <span class="text-[11px] uppercase tracking-[0.18em] text-slate-600">01</span>
+              </div>
+              <p class="mt-1.5 text-sm leading-relaxed text-slate-600">Real-time depth-of-field engine that renders photographic blur from single-lens depth maps.</p>
+              <ul class="mt-4 flex flex-wrap gap-1.5">
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">WebGL</li>
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">TypeScript</li>
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">GLSL</li>
+              </ul>
+            </article>
+
+            <article class="card-glass rounded-2xl p-5">
+              <div class="flex items-baseline justify-between gap-3">
+                <h3 class="text-lg font-semibold text-slate-900">Frostpane</h3>
+                <span class="text-[11px] uppercase tracking-[0.18em] text-slate-600">02</span>
+              </div>
+              <p class="mt-1.5 text-sm leading-relaxed text-slate-600">A layered glass component library with tokenized elevation, translucency, and light response.</p>
+              <ul class="mt-4 flex flex-wrap gap-1.5">
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">React</li>
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">CSS Houdini</li>
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">Storybook</li>
+              </ul>
+            </article>
+
+            <article class="card-glass rounded-2xl p-5">
+              <div class="flex items-baseline justify-between gap-3">
+                <h3 class="text-lg font-semibold text-slate-900">Aperture</h3>
+                <span class="text-[11px] uppercase tracking-[0.18em] text-slate-600">03</span>
+              </div>
+              <p class="mt-1.5 text-sm leading-relaxed text-slate-600">Focus-and-context analytics dashboard that keeps one metric sharp while the rest stay ambient.</p>
+              <ul class="mt-4 flex flex-wrap gap-1.5">
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">Next.js</li>
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">D3</li>
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">PostgreSQL</li>
+              </ul>
+            </article>
+
+            <article class="card-glass rounded-2xl p-5">
+              <div class="flex items-baseline justify-between gap-3">
+                <h3 class="text-lg font-semibold text-slate-900">Lightwell</h3>
+                <span class="text-[11px] uppercase tracking-[0.18em] text-slate-600">04</span>
+              </div>
+              <p class="mt-1.5 text-sm leading-relaxed text-slate-600">Ambient-light-aware theming engine that retunes glass materials to the room around the device.</p>
+              <ul class="mt-4 flex flex-wrap gap-1.5">
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">Swift</li>
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">Metal</li>
+                <li class="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-medium text-blue-900">Core ML</li>
+              </ul>
+            </article>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== LAYER 04 · CONTACT ===================== -->
+    <section id="contact" class="layer" data-layer>
+      <div class="depth-target max-w-2xl">
+        <div class="glass-panel w-full px-6 py-10 sm:px-12 sm:py-14">
+          <p class="text-[11px] font-medium uppercase tracking-[0.22em] text-[#C2410C]">Layer 04 &middot; Contact</p>
+          <h2 class="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">Bring something into focus</h2>
+          <p class="mt-5 max-w-xl text-slate-600 leading-relaxed">
+            The nearest layer of the stack. If you have a project that needs both engineering depth
+            and a sharp surface, my inbox is in focus.
+          </p>
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <a href="mailto:hello@alexmorgan.dev" class="btn inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-blue-600/25 hover:bg-blue-700">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+              hello@alexmorgan.dev
+            </a>
+            <a href="#" class="btn glass-chip inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-slate-700 hover:bg-white/85">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/>
+              </svg>
+              GitHub
+            </a>
+            <a href="#" class="btn glass-chip inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-slate-700 hover:bg-white/85">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4V8h4"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/>
+              </svg>
+              LinkedIn
+            </a>
+          </div>
+          <p class="mt-10 text-xs text-slate-600">&copy; 2026 Alex Morgan &middot; Built as a single pane of glass, stacked four layers deep.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+
+  var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var layers = Array.prototype.slice.call(document.querySelectorAll('[data-layer]'));
+  if (!layers.length) return;
+
+  var targets = layers.map(function (layer) {
+    return layer.querySelector('.depth-target');
+  });
+  var railLinks = Array.prototype.slice.call(document.querySelectorAll('.rail-link'));
+  var hudIndex = document.getElementById('hud-index');
+  var activeIndex = -1;
+
+  function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
+
+  function setActive(i) {
+    if (i === activeIndex) return;
+    activeIndex = i;
+    railLinks.forEach(function (link, j) {
+      if (j === i) {
+        link.classList.add('is-active');
+        link.setAttribute('aria-current', 'true');
+      } else {
+        link.classList.remove('is-active');
+        link.removeAttribute('aria-current');
+      }
+    });
+    if (hudIndex) hudIndex.textContent = '0' + (i + 1);
+  }
+
+  function resetStyles() {
+    targets.forEach(function (t) {
+      if (!t) return;
+      t.style.filter = '';
+      t.style.transform = '';
+      t.style.opacity = '';
+    });
+  }
+
+  /* THE mechanic: per-layer blur / scale / opacity interpolated from scroll position.
+     enter (0->1): layer rises from below the fold into the focal plane -> sharpens.
+     exit  (0->1): layer leaves through the top -> recedes into the blurred background. */
+  function update() {
+    var vh = window.innerHeight || 1;
+    var best = 0;
+    var bestDist = Infinity;
+
+    layers.forEach(function (layer, i) {
+      var rect = layer.getBoundingClientRect();
+      var dist = Math.abs((rect.top + rect.bottom) / 2 - vh / 2);
+      if (dist < bestDist) { bestDist = dist; best = i; }
+
+      if (motionQuery.matches) return; // reduced motion: leave everything sharp
+      var target = targets[i];
+      if (!target) return;
+
+      var enter = clamp01((vh - rect.top) / (vh * 0.55));
+      var exit = clamp01(((vh * 0.85) - rect.bottom) / (vh * 0.6));
+      if (i === 0) enter = 1;                    // first layer starts in focus
+      if (i === layers.length - 1) exit = 0;     // last layer never recedes
+
+      var blur = (1 - enter) * 7 + exit * 10;
+      var scale = 1 + (1 - enter) * 0.045 - exit * 0.075;
+      var opacity = 1 - (1 - enter) * 0.4 - exit * 0.55;
+      if (opacity < 0.3) opacity = 0.3;
+
+      target.style.filter = blur > 0.05 ? 'blur(' + blur.toFixed(2) + 'px)' : 'none';
+      target.style.transform = Math.abs(scale - 1) > 0.0005 ? 'scale(' + scale.toFixed(4) + ')' : 'none';
+      target.style.opacity = opacity.toFixed(3);
+    });
+
+    setActive(best);
+  }
+
+  var ticking = false;
+  function requestUpdate() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      ticking = false;
+      update();
+    });
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+
+  function onMotionChange() {
+    resetStyles();
+    update();
+  }
+  if (typeof motionQuery.addEventListener === 'function') {
+    motionQuery.addEventListener('change', onMotionChange);
+  } else if (typeof motionQuery.addListener === 'function') {
+    motionQuery.addListener(onMotionChange);
+  }
+
+  update();
+});
+</script>
+</body>
+</html>

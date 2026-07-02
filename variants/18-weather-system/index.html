@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variant 18 - Weather system</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['Orbitron', 'ui-sans-serif', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+        }
+      }
+    }
+  };
+</script>
+<style>
+  html { background: #F0F9FF; }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+  body { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+  /* ---- Weather layers (the one mechanic: scroll-driven weather) ---- */
+  .wx-layer { position: absolute; inset: 0; will-change: opacity; }
+  #sky-clear  { background: linear-gradient(180deg,#aee0fa 0%,#d9f0fe 40%,#f0f9ff 78%,#fdf3da 100%); }
+  #sky-fog    { background: linear-gradient(180deg,#b3c0cc 0%,#cfd9e2 45%,#e5ebf1 100%); }
+  #sky-storm  { background: linear-gradient(180deg,#0f172a 0%,#1e293b 45%,#3b4a5f 80%,#54657c 100%); }
+  #sky-sunset { background: linear-gradient(180deg,#241f4e 0%,#5b2a6e 30%,#a03a56 52%,#e2691f 74%,#fbbf24 92%,#fde68a 100%); }
+
+  /* Reduced motion: weather still changes per section, but as simple cross-fades */
+  html.rm .wx-layer,
+  html.rm .wx-extra { transition: opacity 400ms ease-out; }
+
+  .wx-extra { will-change: opacity; }
+
+  #sun {
+    position: absolute; top: 7%; right: 10%;
+    width: clamp(120px, 22vw, 230px); aspect-ratio: 1/1; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,236,170,.95) 0%, rgba(255,208,96,.55) 38%, rgba(255,200,80,0) 70%);
+  }
+  #sunset-sun {
+    position: absolute; bottom: 6%; left: 50%; transform: translateX(-50%);
+    width: clamp(220px, 46vw, 520px); aspect-ratio: 1/1; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,214,120,.9) 0%, rgba(250,150,60,.45) 40%, rgba(240,110,40,0) 70%);
+  }
+
+  .fog-band {
+    position: absolute; left: -12%; width: 124%; border-radius: 999px;
+    background: linear-gradient(180deg, rgba(241,245,249,0) 0%, rgba(241,245,249,.85) 45%, rgba(241,245,249,0) 100%);
+    filter: blur(18px);
+  }
+
+  @keyframes drift {
+    from { transform: translateX(-3.5%); }
+    to   { transform: translateX(3.5%); }
+  }
+  .drift-a { animation: drift 70s ease-in-out infinite alternate; }
+  .drift-b { animation: drift 95s ease-in-out infinite alternate-reverse; }
+
+  .rain-inner { position: absolute; inset: -18% -12%; transform: rotate(8deg); }
+  .drop {
+    position: absolute; top: 0; width: 2px; border-radius: 1px;
+    background: linear-gradient(to bottom, rgba(200,225,245,0), rgba(200,225,245,.75));
+    animation: fall 1s linear infinite;
+  }
+  @keyframes fall {
+    from { transform: translateY(-25vh); }
+    to   { transform: translateY(120vh); }
+  }
+
+  .flash {
+    position: absolute; inset: 0; opacity: 0;
+    background: radial-gradient(ellipse at 28% 8%, rgba(226,240,255,.85) 0%, rgba(226,240,255,0) 55%);
+    animation: flashAnim 9s linear infinite;
+  }
+  @keyframes flashAnim {
+    0%, 86%, 100% { opacity: 0; }
+    88% { opacity: .2; }
+    90% { opacity: 0; }
+    92% { opacity: .1; }
+    94% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drift-a, .drift-b, .flash { animation: none !important; }
+    #rain-wrap { display: none; }
+  }
+
+  /* ---- Accessibility ---- */
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid #B45309;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .skip-link {
+    position: fixed; top: -100px; left: 1rem; z-index: 60;
+    background: #0F172A; color: #FDE68A; padding: .5rem 1rem;
+    font-size: .8rem; border-radius: 6px;
+    transition: top 150ms ease-out;
+  }
+  .skip-link:focus { top: 1rem; }
+</style>
+</head>
+<body class="font-mono text-slate-900 bg-[#F0F9FF] overflow-x-hidden">
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ======= WEATHER SYSTEM (fixed background, scroll-driven) ======= -->
+<div id="wx" class="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
+  <!-- sky gradients, cross-faded by scroll depth -->
+  <div id="sky-clear"  class="wx-layer" style="opacity:1"></div>
+  <div id="sky-fog"    class="wx-layer" style="opacity:0"></div>
+  <div id="sky-storm"  class="wx-layer" style="opacity:0"></div>
+  <div id="sky-sunset" class="wx-layer" style="opacity:0"></div>
+
+  <!-- clear: sun -->
+  <div id="sun" class="wx-extra" style="opacity:1"></div>
+
+  <!-- fog: haze bands -->
+  <div id="fogbank" class="wx-extra absolute inset-0" style="opacity:0">
+    <div class="fog-band drift-a" style="top:14%; height:18%;"></div>
+    <div class="fog-band drift-b" style="top:42%; height:22%;"></div>
+    <div class="fog-band drift-a" style="top:72%; height:20%;"></div>
+  </div>
+
+  <!-- fog/storm: soft clouds -->
+  <div id="clouds-soft" class="wx-extra absolute inset-0" style="opacity:0">
+    <svg class="absolute -left-[20%] top-[4%] w-[150%] drift-a" viewBox="0 0 1200 260" fill="none">
+      <g filter="url(#blur-soft)" fill="#f1f5f9" fill-opacity="0.85">
+        <ellipse cx="220" cy="120" rx="190" ry="55"/>
+        <ellipse cx="360" cy="90"  rx="130" ry="45"/>
+        <ellipse cx="700" cy="140" rx="220" ry="60"/>
+        <ellipse cx="1000" cy="90" rx="170" ry="50"/>
+      </g>
+      <defs><filter id="blur-soft" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="26"/></filter></defs>
+    </svg>
+  </div>
+
+  <!-- storm: dark cloud deck -->
+  <div id="clouds-storm" class="wx-extra absolute inset-0" style="opacity:0">
+    <svg class="absolute -left-[25%] -top-[3%] w-[160%] drift-b" viewBox="0 0 1200 300" fill="none">
+      <g filter="url(#blur-storm)" fill="#233044" fill-opacity="0.9">
+        <ellipse cx="180" cy="90"  rx="230" ry="70"/>
+        <ellipse cx="520" cy="60"  rx="260" ry="80"/>
+        <ellipse cx="860" cy="100" rx="240" ry="70"/>
+        <ellipse cx="1120" cy="70" rx="200" ry="65"/>
+        <ellipse cx="380" cy="150" rx="180" ry="55"/>
+        <ellipse cx="760" cy="170" rx="200" ry="55"/>
+      </g>
+      <defs><filter id="blur-storm" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="24"/></filter></defs>
+    </svg>
+  </div>
+
+  <!-- storm: rain + distant lightning -->
+  <div id="rain-wrap" class="wx-extra absolute inset-0 overflow-hidden" style="opacity:0">
+    <div id="rain" class="rain-inner"></div>
+  </div>
+  <div id="lightning-wrap" class="wx-extra absolute inset-0" style="opacity:0">
+    <div class="flash"></div>
+  </div>
+
+  <!-- sunset: low sun glow -->
+  <div id="sunset-sun" class="wx-extra" style="opacity:0"></div>
+</div>
+
+<!-- ======= FIXED CHROME ======= -->
+<header class="fixed top-0 inset-x-0 z-30 flex items-center justify-between gap-2 p-3 sm:p-4 pointer-events-none">
+  <a href="../index.html"
+     class="pointer-events-auto inline-flex items-center gap-1 rounded-md border border-slate-900/15 bg-white/85 px-3 py-1.5 text-[11px] sm:text-xs font-medium text-slate-900 backdrop-blur transition-colors duration-200 hover:bg-white cursor-pointer">
+    <span aria-hidden="true">&larr;</span> All variants
+  </a>
+  <nav aria-label="Sections" class="pointer-events-auto flex items-center gap-1.5 sm:gap-2">
+    <a href="#about"   class="rounded-md border border-slate-900/15 bg-white/85 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium text-slate-900 backdrop-blur transition-colors duration-200 hover:bg-white cursor-pointer">About</a>
+    <a href="#work"    class="rounded-md border border-slate-900/15 bg-white/85 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium text-slate-900 backdrop-blur transition-colors duration-200 hover:bg-white cursor-pointer">Work</a>
+    <a href="#contact" class="rounded-md border border-slate-900/15 bg-white/85 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium text-slate-900 backdrop-blur transition-colors duration-200 hover:bg-white cursor-pointer">Contact</a>
+  </nav>
+</header>
+
+<!-- Weather HUD: condition readout + scroll progress -->
+<div id="hud" aria-hidden="true"
+     class="fixed bottom-4 left-4 z-30 flex items-center gap-2.5 rounded-md border border-slate-900/15 bg-white/85 px-3 py-2 backdrop-blur">
+  <span id="hud-ic-0" class="text-amber-600">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+  </span>
+  <span id="hud-ic-1" class="hidden text-slate-500">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h13M5 12h16M3 16h11M8 20h9"/></svg>
+  </span>
+  <span id="hud-ic-2" class="hidden text-slate-700">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16a4 4 0 1 1 .4-7.98A5 5 0 0 1 16 6a4.5 4.5 0 0 1 2 8.5"/><path d="M13 11l-3 5h4l-3 5"/></svg>
+  </span>
+  <span id="hud-ic-3" class="hidden text-orange-700">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 17a6 6 0 0 1 12 0"/><path d="M2 21h20M12 5V3M5 9 3.6 7.6M19 9l1.4-1.4"/></svg>
+  </span>
+  <span id="hud-label" class="text-[11px] font-bold tracking-widest">CLEAR SKIES</span>
+  <span class="block h-1 w-16 sm:w-24 overflow-hidden rounded-full bg-slate-900/15">
+    <span id="hud-bar" class="block h-full rounded-full bg-amber-600" style="width:0%"></span>
+  </span>
+</div>
+
+<!-- ======= CONTENT ======= -->
+<main id="main" class="relative z-10">
+
+  <!-- HERO — clear skies -->
+  <section id="top" class="flex min-h-[100svh] flex-col items-center justify-center px-5 pt-24 pb-16 text-center">
+    <p class="mb-6 inline-block rounded-md border border-slate-900/15 bg-white/70 px-3 py-1.5 text-[11px] sm:text-xs font-medium tracking-[0.2em] text-slate-800 backdrop-blur">
+      STATION ATMOS-18 &middot; CONDITIONS: CLEAR &middot; VISIBILITY UNLIMITED
+    </p>
+    <h1 class="font-display text-4xl font-black tracking-wide text-slate-900 sm:text-6xl lg:text-7xl">
+      ALEX MORGAN
+    </h1>
+    <p class="mt-4 text-base font-medium text-slate-800 sm:text-lg">
+      Software Engineer &amp; Designer
+    </p>
+    <p class="mt-6 max-w-md text-sm leading-relaxed text-slate-800">
+      Fair weather up here at the top of the page. It won&rsquo;t last &mdash; a front is moving in below.
+    </p>
+    <a href="#about"
+       class="mt-12 inline-flex items-center gap-2 rounded-md border border-slate-900/20 bg-white/70 px-4 py-2 text-xs font-bold tracking-[0.2em] text-slate-900 backdrop-blur transition-colors duration-200 hover:bg-white cursor-pointer">
+      SCROLL &mdash; WEATHER SHIFTS AHEAD
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+    </a>
+  </section>
+
+  <!-- ABOUT — fog bank -->
+  <section id="about" class="flex min-h-[100svh] items-center px-5 py-28">
+    <div class="mx-auto w-full max-w-2xl rounded-xl border border-slate-900/10 bg-white/90 p-6 backdrop-blur sm:p-10">
+      <p class="text-[11px] font-bold tracking-[0.25em] text-slate-600">FOG ROLLING IN &middot; VISIBILITY 0.4 MI</p>
+      <h2 class="mt-3 font-display text-2xl font-black tracking-wide text-slate-900 sm:text-4xl">ABOUT</h2>
+      <div class="mt-6 space-y-4 text-sm leading-relaxed text-slate-800 sm:text-base">
+        <p>
+          I&rsquo;m a software engineer and designer who works best in low visibility &mdash; ambiguous
+          problems, half-formed specs, systems nobody fully understands yet. I map the terrain,
+          then build a way through it.
+        </p>
+        <p>
+          For the past several years I&rsquo;ve shipped products across the stack: interface layers
+          people actually enjoy, and infrastructure that holds steady when conditions change
+          without warning.
+        </p>
+        <p>
+          When the instruments go quiet, I&rsquo;m usually outside &mdash; ideally somewhere with real
+          weather worth watching.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK — stormfront -->
+  <section id="work" class="min-h-[100svh] px-5 py-28">
+    <div class="mx-auto w-full max-w-4xl">
+      <div class="mb-8 inline-block rounded-xl border border-white/10 bg-slate-900/85 px-6 py-5 backdrop-blur">
+        <p class="text-[11px] font-bold tracking-[0.25em] text-slate-300">STORMFRONT &middot; GALE WARNING IN EFFECT</p>
+        <h2 class="mt-3 font-display text-2xl font-black tracking-wide text-white sm:text-4xl">SELECTED WORK</h2>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-slate-200">Four systems built to hold in heavy weather.</p>
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <article class="rounded-xl border border-white/10 bg-slate-900/90 p-6 backdrop-blur">
+          <h3 class="font-display text-lg font-bold tracking-wide text-white">NIMBUS QUEUE</h3>
+          <p class="mt-3 text-sm leading-relaxed text-slate-200">A distributed job scheduler that stays calm when everything upstream is not.</p>
+          <ul class="mt-5 flex flex-wrap gap-2" aria-label="Technologies">
+            <li class="rounded border border-slate-500/60 px-2 py-1 text-[11px] font-medium text-slate-200">Go</li>
+            <li class="rounded border border-slate-500/60 px-2 py-1 text-[11px] font-medium text-slate-200">Redis</li>
+            <li class="rounded border border-slate-500/60 px-2 py-1 text-[11px] font-medium text-slate-200">Kubernetes</li>
+          </ul>
+        </article>
+
+        <article class="rounded-xl border border-white/10 bg-slate-900/90 p-6 backdrop-blur">
+          <h3 class="font-display text-lg font-bold tracking-wide text-white">BAROMETER</h3>
+          <p class="mt-3 text-sm leading-relaxed text-slate-200">Real-time performance dashboards that sense pressure drops before they become incidents.</p>
+          <ul class="mt-5 flex flex-wrap gap-2" aria-label="Technologies">
+            <li class="rounded border border-slate-500/60 px-2 py-1 text-[11px] font-medium text-slate-200">TypeScript</li>
+            <li class="rounded border border-slate-500/60 px-2 py-1 text-[11px] font-medium text-slate-200">D3</li>
+            <li class="rounded border border-slate-500/60 px-2 py-1 text-[11px] font-medium text-slate-200">WebSockets</li>
+          </ul>
+        </article>
+
+        <article class="rounded-xl border border-white/10 bg-slate-900/90 p-6 backdrop-blur">
+          <h3 class="font-display text-lg font-bold tracking-wide text-white">SQUALL</h3>
+          <p class="mt-3 text-sm leading-relaxed text-slate-200">A chaos-testing toolkit that throws controlled storms at staging so production never meets a real one.</p>
+          <ul class="mt-5 flex flex-wrap gap-2" aria-label="Technologies">
+            <li class="rounded border border-slate-500/60 px-2 py-1 text-[11px] font-medium text-slate-200">Rust</li>
+            <li class="rounded border border-slate-500/60 px-2 py-1 text-[11px] font-medium text-slate-200">gRPC</li>
+          </ul>
+        </article>
+
+        <article class="rounded-xl border border-white/10 bg-slate-900/90 p-6 backdrop-blur">
+          <h3 class="font-display text-lg font-bold tracking-wide text-white">AFTERGLOW UI</h3>
+          <p class="mt-3 text-sm leading-relaxed text-slate-200">A design system that fades gracefully between themes, states, and screen sizes.</p>
+          <ul class="mt-5 flex flex-wrap gap-2" aria-label="Technologies">
+            <li class="rounded border border-slate-500/60 px-2 py-1 text-[11px] font-medium text-slate-200">React</li>
+            <li class="rounded border border-slate-500/60 px-2 py-1 text-[11px] font-medium text-slate-200">Tailwind</li>
+            <li class="rounded border border-slate-500/60 px-2 py-1 text-[11px] font-medium text-slate-200">Figma</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT — sunset -->
+  <section id="contact" class="flex min-h-[100svh] flex-col items-center justify-center px-5 py-28">
+    <div class="mx-auto w-full max-w-xl rounded-xl border border-slate-900/10 bg-white/90 p-6 text-center backdrop-blur sm:p-10">
+      <p class="text-[11px] font-bold tracking-[0.25em] text-orange-800">SKIES CLEARING &middot; SUNSET 19:42</p>
+      <h2 class="mt-3 font-display text-2xl font-black tracking-wide text-slate-900 sm:text-4xl">GET IN TOUCH</h2>
+      <p class="mt-4 text-sm leading-relaxed text-slate-800 sm:text-base">
+        The storm has passed and the air is clear. A good moment to start something new.
+      </p>
+      <a href="mailto:hello@alexmorgan.dev"
+         class="mt-8 inline-flex items-center gap-2 rounded-md bg-slate-900 px-5 py-3 text-sm font-bold text-amber-300 transition-colors duration-200 hover:bg-slate-800 cursor-pointer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7L22 7"/></svg>
+        hello@alexmorgan.dev
+      </a>
+      <div class="mt-6 flex items-center justify-center gap-3">
+        <a href="#" class="inline-flex items-center gap-2 rounded-md border border-slate-900/20 bg-white px-4 py-2 text-xs font-bold text-slate-900 transition-colors duration-200 hover:border-amber-700 cursor-pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2 0-.4-.5-1.6.2-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.6.2 2.8.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+          GitHub
+        </a>
+        <a href="#" class="inline-flex items-center gap-2 rounded-md border border-slate-900/20 bg-white px-4 py-2 text-xs font-bold text-slate-900 transition-colors duration-200 hover:border-amber-700 cursor-pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45Z"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+    <p class="mt-8 rounded-md bg-slate-900/80 px-4 py-2 text-[11px] font-medium tracking-widest text-amber-100 backdrop-blur">
+      &copy; 2026 ALEX MORGAN &middot; FORECAST SUBJECT TO CHANGE
+    </p>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- reduced motion ---------- */
+  var rmq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  function reducedMotion() { return !!(rmq && rmq.matches); }
+  function applyRM() {
+    document.documentElement.classList.toggle('rm', reducedMotion());
+  }
+  if (rmq) {
+    if (rmq.addEventListener) { rmq.addEventListener('change', function () { applyRM(); update(); }); }
+    else if (rmq.addListener) { rmq.addListener(function () { applyRM(); update(); }); }
+  }
+  applyRM();
+
+  /* ---------- build rain drops ---------- */
+  var rainEl = $('rain');
+  if (rainEl) {
+    for (var i = 0; i < 46; i++) {
+      var d = document.createElement('div');
+      d.className = 'drop';
+      d.style.left = (Math.random() * 104 - 2) + '%';
+      d.style.height = (9 + Math.random() * 8) + 'vh';
+      d.style.animationDuration = (0.65 + Math.random() * 0.6) + 's';
+      d.style.animationDelay = (-Math.random() * 2) + 's';
+      d.style.opacity = (0.35 + Math.random() * 0.4).toFixed(2);
+      rainEl.appendChild(d);
+    }
+  }
+
+  /* ---------- weather state ---------- */
+  var skies = [$('sky-clear'), $('sky-fog'), $('sky-storm'), $('sky-sunset')];
+  var sun = $('sun'), fogbank = $('fogbank'), cloudsSoft = $('clouds-soft'),
+      cloudsStorm = $('clouds-storm'), rainWrap = $('rain-wrap'),
+      lightningWrap = $('lightning-wrap'), sunsetSun = $('sunset-sun');
+  var hudLabel = $('hud-label'), hudBar = $('hud-bar');
+  var hudIcons = [$('hud-ic-0'), $('hud-ic-1'), $('hud-ic-2'), $('hud-ic-3')];
+  var names = ['CLEAR SKIES', 'FOG BANK', 'STORMFRONT', 'SUNSET'];
+  var sections = [$('top'), $('about'), $('work'), $('contact')];
+  var anchors = [0, 0.34, 0.66, 1];
+  var currentState = -1;
+
+  function maxScroll() {
+    var doc = document.documentElement;
+    return Math.max(1, doc.scrollHeight - window.innerHeight);
+  }
+
+  /* anchor = scroll progress at which each section is centered in the viewport */
+  function computeAnchors() {
+    var max = maxScroll();
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    for (var i = 0; i < sections.length; i++) {
+      var s = sections[i];
+      if (!s) { anchors[i] = i / 3; continue; }
+      var rect = s.getBoundingClientRect();
+      var center = rect.top + y + rect.height / 2 - window.innerHeight / 2;
+      anchors[i] = Math.min(1, Math.max(0, center / max));
+    }
+    anchors[0] = 0;
+    anchors[3] = Math.max(anchors[3], 0.98);
+    for (var j = 1; j < anchors.length; j++) {
+      if (anchors[j] <= anchors[j - 1]) anchors[j] = anchors[j - 1] + 0.001;
+    }
+  }
+
+  /* triangular "hat" weight: 1 at own anchor, 0 at neighbouring anchors */
+  function hat(p, i) {
+    var a = anchors;
+    if (p <= a[i]) {
+      if (i === 0) return 1;
+      var prev = a[i - 1];
+      if (p <= prev) return 0;
+      return (p - prev) / Math.max(0.001, a[i] - prev);
+    }
+    if (i === a.length - 1) return 1;
+    var next = a[i + 1];
+    if (p >= next) return 0;
+    return (next - p) / Math.max(0.001, next - a[i]);
+  }
+
+  function setOpacity(el, v) { if (el) el.style.opacity = String(Math.min(1, Math.max(0, v))); }
+
+  function update() {
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var p = Math.min(1, Math.max(0, y / maxScroll()));
+    var w = [hat(p, 0), hat(p, 1), hat(p, 2), hat(p, 3)];
+
+    var dominant = 0;
+    for (var i = 1; i < 4; i++) { if (w[i] > w[dominant]) dominant = i; }
+
+    /* reduced motion: snap to discrete states (CSS cross-fades between them) */
+    if (reducedMotion()) {
+      for (var k = 0; k < 4; k++) { w[k] = (k === dominant) ? 1 : 0; }
+    }
+
+    for (var s = 0; s < 4; s++) { setOpacity(skies[s], w[s]); }
+    setOpacity(sun, w[0]);
+    setOpacity(fogbank, w[1]);
+    setOpacity(cloudsSoft, Math.max(w[1], w[2] * 0.55));
+    setOpacity(cloudsStorm, w[2]);
+    setOpacity(rainWrap, w[2]);
+    setOpacity(lightningWrap, w[2]);
+    setOpacity(sunsetSun, w[3]);
+
+    if (hudBar) hudBar.style.width = (p * 100).toFixed(1) + '%';
+    if (dominant !== currentState) {
+      currentState = dominant;
+      if (hudLabel) hudLabel.textContent = names[dominant];
+      for (var h = 0; h < 4; h++) {
+        if (hudIcons[h]) hudIcons[h].classList.toggle('hidden', h !== dominant);
+      }
+    }
+  }
+
+  /* ---------- listeners (rAF-throttled, with trailing settle update) ---------- */
+  var ticking = false;
+  var settleTimer = null;
+  function onScroll() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(function () { ticking = false; update(); });
+    }
+    if (settleTimer) { clearTimeout(settleTimer); }
+    settleTimer = setTimeout(update, 160);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () { computeAnchors(); onScroll(); });
+  window.addEventListener('load', function () { computeAnchors(); update(); });
+
+  computeAnchors();
+  update();
+})();
+</script>
+</body>
+</html>
