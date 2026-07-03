@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Variant 01 - Terminal persona</title>
+<title>abhi@somala: ~</title>
 <link rel="icon" href="data:,">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -123,7 +123,7 @@
       <span class="dot" style="background:#2f4a3a;"></span>
       <span class="dot" style="background:var(--green);"></span>
     </span>
-    <span class="text-xs sm:text-sm t-dim truncate">alex@morgan: ~ — zsh</span>
+    <span class="text-xs sm:text-sm t-dim truncate">abhi@somala: ~ (zsh)</span>
     <a href="../index.html" class="ml-auto text-xs sm:text-sm t-link whitespace-nowrap">[&larr; all variants]</a>
   </header>
 
@@ -134,26 +134,26 @@
     <style>nav[aria-label="Command shortcuts"], #prompt-line{ display:none; }</style>
     <div class="px-3 sm:px-6 py-4 space-y-6" style="border-top:1px solid var(--border);">
       <section>
-        <h1 class="t-bright font-bold">Alex Morgan</h1>
-        <p class="t-green">Software Engineer &amp; Designer</p>
+        <h1 class="t-bright font-bold">Abhijit Somala</h1>
+        <p class="t-green">ML engineer. Builds things that ship.</p>
       </section>
       <section>
         <h2 class="t-green"># about</h2>
-        <p>I build tools that make other builders faster. Ten years of shipping systems where the seams do not show.</p>
-        <p>Equal parts engineer and designer: I care about the API and the pixel with the same intensity.</p>
-        <p>Currently exploring developer experience, terminal UIs, and the places they overlap.</p>
+        <p>ML engineer at a stealth EdTech startup and applied ML lead at Virginia Tech's NLP Research Lab, currently at Cornell. I build multi-agent systems, NLP pipelines, and ML infra that ships to production.</p>
+        <p>Focara: built a Canvas webhook plus LLM classifier that surfaces critical announcements before academic deadlines. Cut pipeline latency from 900ms to 500ms.</p>
+        <p>VT NLP Research Lab: led a 10-person team rebuilding a recommendation pipeline. Got a 40%+ MAP improvement, shipped to production for 45k users.</p>
       </section>
       <section>
         <h2 class="t-green"># projects</h2>
-        <p class="t-bright">pipeforge/</p><p>Terminal-native CI pipeline builder with zero YAML. — go · tview · docker</p>
-        <p class="t-bright">histgrep/</p><p>Fuzzy time-travel search across your shell history, synced between machines. — rust · sqlite · fzf</p>
-        <p class="t-bright">ttycast/</p><p>Record terminal sessions, replay them as scrubbable web embeds. — typescript · websockets · canvas</p>
-        <p class="t-bright">promptly/</p><p>A theming engine for shell prompts with live preview and one-line install. — zsh · python · ansi</p>
+        <p class="t-bright">opensight/</p>
+        <p>Real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users.</p>
+        <p>Top 10 finalist in North America out of 2,500+ teams, Google Developer Groups Solution Challenge 2026. Cuts a multi-step web task to under 60 seconds. Screen reader baseline is 5 to 10 minutes.</p>
+        <p><a class="t-link" href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026">github: OpenSight_GDGChallenge_2026</a></p>
       </section>
       <section>
         <h2 class="t-green"># contact</h2>
-        <p><a class="t-link" href="mailto:hello@alexmorgan.dev">hello@alexmorgan.dev</a></p>
-        <p><a class="t-link" href="#">github.com/alexmorgan</a> · <a class="t-link" href="#">linkedin.com/in/alexmorgan</a></p>
+        <p><a class="t-link" href="mailto:somala.abhi@gmail.com">somala.abhi@gmail.com</a></p>
+        <p><a class="t-link" href="https://github.com/abhisomala">github.com/abhisomala</a> · <a class="t-link" href="https://www.linkedin.com/in/abhijitsomala">linkedin.com/in/abhijitsomala</a></p>
       </section>
     </div>
   </noscript>
@@ -173,7 +173,7 @@
   <!-- live prompt -->
   <div id="prompt-line" class="relative flex items-baseline gap-2 px-3 sm:px-6 py-3 shrink-0 cursor-text"
        style="background:var(--panel); border-top:1px solid var(--border);">
-    <label for="cmd-input" class="t-green glow whitespace-nowrap select-none">alex@morgan:~$</label>
+    <label for="cmd-input" class="t-green glow whitespace-nowrap select-none">abhi@somala:~$</label>
     <span class="t-bright break-all" id="cmd-mirror" aria-hidden="true"></span><span class="cursor" id="cmd-cursor" aria-hidden="true"></span>
     <input id="cmd-input" type="text" autocomplete="off" autocapitalize="off" autocorrect="off"
            spellcheck="false" aria-label="Type a command and press Enter. Try help, about, projects, or contact.">
@@ -184,9 +184,9 @@
 
 <template id="tpl-boot">
   <div class="mb-4 text-sm">
-    <div class="ln">booting <span class="t-green">alexmorgan.dev</span> v3.2.1 ...</div>
+    <div class="ln">booting <span class="t-green">somala-os</span> v3.2.1 ...</div>
     <div class="ln">loading profile ............ <span class="t-green">ok</span></div>
-    <div class="ln">mounting /home/alex ........ <span class="t-green">ok</span></div>
+    <div class="ln">mounting /home/abhi ........ <span class="t-green">ok</span></div>
     <div class="ln">starting shell ............. <span class="t-green">ok</span></div>
   </div>
 </template>
@@ -194,11 +194,11 @@
 <template id="tpl-home">
   <section class="mb-6" aria-label="Intro">
     <div class="ln"><pre class="banner t-green glow" aria-hidden="true">
-▄▀█ █░░ █▀▀ ▀▄▀   █▀▄▀█ █▀█ █▀█ █▀▀ ▄▀█ █▄░█
-█▀█ █▄▄ ██▄ █░█   █░▀░█ █▄█ █▀▄ █▄█ █▀█ █░▀█</pre></div>
-    <div class="ln mt-3"><h1 class="inline t-bright font-bold">Alex Morgan</h1> <span class="t-dim">—</span> <span class="t-green">Software Engineer &amp; Designer</span></div>
-    <div class="ln t-dim">I build interfaces you can pipe things into.</div>
-    <div class="ln mt-3 t-dim text-sm">type <span class="t-green">help</span> and press enter — or click a command below.</div>
+▄▀█ █▄▄ █░█ █   █▀ █▀█ █▀▄▀█ ▄▀█ █░░ ▄▀█
+█▀█ █▄█ █▀█ █   ▄█ █▄█ █░▀░█ █▀█ █▄▄ █▀█</pre></div>
+    <div class="ln mt-3"><h1 class="inline t-bright font-bold">Abhijit Somala</h1> <span class="t-dim">·</span> <span class="t-green">ML engineer. Builds things that ship.</span></div>
+    <div class="ln t-dim">Cornell ORIE · Focara · Virginia Tech NLP Research Lab</div>
+    <div class="ln mt-3 t-dim text-sm">type <span class="t-green">help</span> and press enter, or click a command below.</div>
   </section>
 </template>
 
@@ -216,40 +216,31 @@
 <template id="tpl-about">
   <section class="mb-6" aria-label="About">
     <div class="ln"><h2 class="inline t-green glow font-medium"># about</h2></div>
-    <div class="ln mt-2 max-w-prose">I build tools that make other builders faster. Ten years of shipping systems where the seams do not show — compilers of convenience, dashboards that stay out of the way, CLIs that feel inevitable.</div>
-    <div class="ln mt-2 max-w-prose">Equal parts engineer and designer: I care about the API and the pixel with the same intensity, and I think the best interface is usually the one you already know how to use.</div>
-    <div class="ln mt-2 max-w-prose">Currently exploring developer experience, terminal UIs, and the strange places where they overlap.</div>
+    <div class="ln mt-2 max-w-prose">ML engineer at a stealth EdTech startup and applied ML lead at Virginia Tech's NLP Research Lab, currently at Cornell. I build multi-agent systems, NLP pipelines, and ML infra that ships to production.</div>
+    <div class="ln mt-2 max-w-prose"><span class="t-bright">focara</span> <span class="t-dim">Built a Canvas webhook plus LLM classifier that surfaces critical announcements before academic deadlines. Cut pipeline latency from 900ms to 500ms.</span></div>
+    <div class="ln mt-2 max-w-prose"><span class="t-bright">vt nlp lab</span> <span class="t-dim">Led a 10-person team rebuilding a recommendation pipeline. Got a 40%+ MAP improvement, shipped to production for 45k users.</span></div>
   </section>
 </template>
 
 <template id="tpl-projects">
   <section class="mb-6" aria-label="Projects">
-    <div class="ln"><h2 class="inline t-green glow font-medium"># projects</h2> <span class="t-dim text-sm">— 4 entries</span></div>
+    <div class="ln"><h2 class="inline t-green glow font-medium"># projects</h2> <span class="t-dim text-sm">1 entry</span></div>
 
-    <div class="ln mt-3"><span class="t-bright font-medium">pipeforge/</span></div>
-    <div class="ln pl-4 t-dim">Terminal-native CI pipeline builder with zero YAML in sight.</div>
-    <div class="ln pl-4 text-sm"><span class="t-green"># go · tview · docker</span></div>
-
-    <div class="ln mt-3"><span class="t-bright font-medium">histgrep/</span></div>
-    <div class="ln pl-4 t-dim">Fuzzy time-travel search across your shell history, synced between machines.</div>
-    <div class="ln pl-4 text-sm"><span class="t-green"># rust · sqlite · fzf</span></div>
-
-    <div class="ln mt-3"><span class="t-bright font-medium">ttycast/</span></div>
-    <div class="ln pl-4 t-dim">Record terminal sessions and replay them as scrubbable, shareable web embeds.</div>
-    <div class="ln pl-4 text-sm"><span class="t-green"># typescript · websockets · canvas</span></div>
-
-    <div class="ln mt-3"><span class="t-bright font-medium">promptly/</span></div>
-    <div class="ln pl-4 t-dim">A theming engine for shell prompts with live preview and one-line install.</div>
-    <div class="ln pl-4 text-sm"><span class="t-green"># zsh · python · ansi</span></div>
+    <div class="ln mt-3"><span class="t-bright font-medium">opensight/</span></div>
+    <div class="ln pl-4 t-dim">Real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users.</div>
+    <div class="ln pl-4 t-dim">Top 10 finalist in North America out of 2,500+ teams, Google Developer Groups Solution Challenge 2026.</div>
+    <div class="ln pl-4 t-dim">Cuts a multi-step web task to under 60 seconds. Screen reader baseline is 5 to 10 minutes.</div>
+    <div class="ln pl-4 text-sm"><span class="t-green"># fastapi · websockets · gemini on vertex ai · deepgram</span></div>
+    <div class="ln pl-4 text-sm"><a class="t-link" href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026">github: OpenSight_GDGChallenge_2026</a></div>
   </section>
 </template>
 
 <template id="tpl-contact">
   <section class="mb-6" aria-label="Contact">
     <div class="ln"><h2 class="inline t-green glow font-medium"># contact</h2></div>
-    <div class="ln mt-2"><span class="t-dim inline-block w-28">email</span><a class="t-link" href="mailto:hello@alexmorgan.dev">hello@alexmorgan.dev</a></div>
-    <div class="ln"><span class="t-dim inline-block w-28">github</span><a class="t-link" href="#">github.com/alexmorgan</a></div>
-    <div class="ln"><span class="t-dim inline-block w-28">linkedin</span><a class="t-link" href="#">linkedin.com/in/alexmorgan</a></div>
+    <div class="ln mt-2"><span class="t-dim inline-block w-20">email</span><a class="t-link" href="mailto:somala.abhi@gmail.com">somala.abhi@gmail.com</a></div>
+    <div class="ln"><span class="t-dim inline-block w-20">github</span><a class="t-link" href="https://github.com/abhisomala">github.com/abhisomala</a></div>
+    <div class="ln"><span class="t-dim inline-block w-20">linkedin</span><a class="t-link" href="https://www.linkedin.com/in/abhijitsomala">linkedin.com/in/abhijitsomala</a></div>
     <div class="ln mt-2 t-dim text-sm">inbox checked more often than my CI status.</div>
   </section>
 </template>
@@ -280,7 +271,7 @@
     line.className = 'mb-1';
     var p = document.createElement('span');
     p.className = 't-green';
-    p.textContent = 'alex@morgan:~$ ';
+    p.textContent = 'abhi@somala:~$ ';
     var c = document.createElement('span');
     c.className = 't-bright';
     c.textContent = raw;
@@ -298,7 +289,7 @@
     e.textContent = 'zsh: command not found: ' + cmd;
     var hint = document.createElement('span');
     hint.className = 't-dim';
-    hint.textContent = "  — try 'help'";
+    hint.textContent = "  (try 'help')";
     line.appendChild(e);
     line.appendChild(hint);
     out.appendChild(line);

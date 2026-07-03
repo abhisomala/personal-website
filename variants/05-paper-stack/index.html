@@ -141,7 +141,7 @@
   /* ---------- The draggable stack ---------- */
   .stack {
     position: relative;
-    height: clamp(440px, 120vw, 540px);
+    height: clamp(480px, 135vw, 560px);
     outline-offset: 8px;
   }
   .sheet {
@@ -300,19 +300,23 @@
               stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
       </svg>
 
-      <p class="doc-meta">File: Portfolio / A. Morgan &middot; 2026</p>
+      <p class="doc-meta">File: Portfolio / A. Somala &middot; 2026</p>
       <hr class="doc-rule">
 
       <h1 class="font-display font-black text-ink" style="font-size:clamp(2.7rem,9vw,4.8rem); line-height:1.02;">
-        Alex Morgan
+        Abhijit Somala
       </h1>
       <p class="font-display italic text-inkmid mt-3" style="font-size:clamp(1.15rem,3.4vw,1.6rem);">
-        Software Engineer &amp; Designer
+        I build ML systems, from research pipelines to production agents.
       </p>
 
       <p class="doc-desc mt-6">
-        A portfolio kept in paper form. Every project is a sheet on this desk &mdash;
-        scroll down and shuffle the stack to read them all.
+        ML engineer at a stealth EdTech startup and applied ML lead at Virginia Tech's
+        NLP Research Lab, currently at Cornell. I build multi-agent systems, NLP
+        pipelines, and ML infra that ships to production.
+      </p>
+      <p class="doc-desc mt-3">
+        Every project below is a sheet on this desk. Shuffle the stack to read them.
       </p>
 
       <div class="mt-8 flex flex-wrap items-end justify-between gap-6">
@@ -329,12 +333,12 @@
 
 <!-- ============ ABOUT ============ -->
 <section id="about" class="px-5 pb-28" aria-labelledby="about-heading">
-  <p class="desk-label text-center mb-6">Exhibit A &mdash; About</p>
+  <p class="desk-label text-center mb-6">Exhibit A &middot; About</p>
   <div class="w-full mx-auto" style="max-width:680px; transform:rotate(-.6deg);">
   <div class="paper paper-pile">
     <div style="padding:clamp(1.75rem,6vw,3rem);">
       <dl class="space-y-1.5">
-        <div class="memo-line"><dt>From</dt><dd>Alex Morgan</dd></div>
+        <div class="memo-line"><dt>From</dt><dd>Abhijit Somala</dd></div>
         <div class="memo-line"><dt>To</dt><dd>The reader</dd></div>
         <div class="memo-line"><dt>Re</dt><dd>Who keeps this desk</dd></div>
       </dl>
@@ -342,19 +346,37 @@
       <h2 id="about-heading" class="font-display font-bold text-ink mb-4" style="font-size:clamp(1.6rem,4.5vw,2.1rem);">A short memo</h2>
       <div class="space-y-4 doc-desc" style="max-width:60ch;">
         <p>
-          Placeholder paragraph one. I build software the way I keep this desk: everything
-          on paper first, sketched in the margins, then typed up carefully and filed where
-          it can be found again.
+          I've worked across the ML stack, from unsupervised clustering on data with
+          no labels to inference pipelines running in production for tens of thousands
+          of users.
         </p>
         <p>
-          Placeholder paragraph two. By day I work across the full stack &mdash; interfaces,
-          APIs, and the infrastructure underneath &mdash; with a soft spot for tools that make
-          other people's work lighter.
+          Right now I'm building at Focara, an EdTech startup, and leading applied ML
+          work at Virginia Tech's NLP Research Lab. Before that I built embedding
+          visualization infrastructure at Nomic AI.
         </p>
-        <p>
-          Placeholder paragraph three. Off the clock I collect typewriters, annotate
-          everything in blue ink, and believe most problems shrink once written down.
-        </p>
+      </div>
+      <hr class="doc-rule">
+      <p class="doc-meta mb-5">Employment record</p>
+      <div class="space-y-6">
+        <div>
+          <p class="font-semibold text-ink" style="font-size:1.05rem;">ML Engineer, Focara</p>
+          <p class="doc-meta mt-1">Stealth EdTech startup &middot; May 2026 to present</p>
+          <p class="doc-desc mt-2">
+            Built a Canvas webhook plus LLM classifier that surfaces critical
+            announcements before academic deadlines. Cut pipeline latency from
+            900ms to 500ms.
+          </p>
+        </div>
+        <div>
+          <p class="font-semibold text-ink" style="font-size:1.05rem;">Applied ML Engineering Lead, Virginia Tech NLP Research Lab</p>
+          <p class="doc-meta mt-1">Dec 2025 to present</p>
+          <p class="doc-desc mt-2">
+            Led a 10-person team rebuilding a recommendation pipeline with no baseline
+            to start from, reaching a 40%+ MAP improvement. Shipped clustering,
+            sentiment, and LLM inference pipelines serving 45k users.
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -363,20 +385,20 @@
 
 <!-- ============ PROJECTS: THE STACK ============ -->
 <section id="work" class="px-5 pb-28" aria-labelledby="work-heading">
-  <p class="desk-label text-center mb-3">Exhibit B &mdash; The papers</p>
-  <h2 id="work-heading" class="font-display font-bold text-ink text-center mb-3" style="font-size:clamp(1.7rem,5vw,2.3rem);">Selected work, four sheets deep</h2>
+  <p class="desk-label text-center mb-3">Exhibit B &middot; The papers</p>
+  <h2 id="work-heading" class="font-display font-bold text-ink text-center mb-3" style="font-size:clamp(1.7rem,5vw,2.3rem);">Selected work, three sheets deep</h2>
   <p class="text-center font-mono text-inksoft mb-10" style="font-size:.74rem; letter-spacing:.14em; text-transform:uppercase;">
-    Drag the top sheet aside &mdash; or use the buttons below
+    Drag the top sheet aside, or use the buttons below
   </p>
 
   <div class="mx-auto" style="max-width:640px;">
     <div id="paper-stack" class="stack" tabindex="0" role="group"
-         aria-label="Stack of four project documents. Press the right arrow key to slide the top sheet aside, or the left arrow key to bring one back. The buttons below the stack do the same.">
+         aria-label="Stack of three project documents. Press the right arrow key to slide the top sheet aside, or the left arrow key to bring one back. The buttons below the stack do the same.">
 
-      <article class="sheet" data-title="Foolscap">
+      <article class="sheet" data-title="OpenSight">
         <div class="sheet-inner">
           <div class="flex items-start justify-between gap-4">
-            <p class="doc-meta">Doc 01 / 04 &middot; Editor</p>
+            <p class="doc-meta">Doc 01 / 03 &middot; Multi-agent</p>
             <div class="doc-stamp" aria-hidden="true">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                 <path d="M4 6h16M4 12h11M4 18h7"/>
@@ -384,21 +406,24 @@
             </div>
           </div>
           <hr class="doc-rule">
-          <h3 class="doc-title">Foolscap</h3>
-          <p class="doc-desc mt-4">Real-time collaborative writing that resolves every edit without a single merge conflict.</p>
+          <h3 class="doc-title">OpenSight</h3>
+          <p class="doc-desc mt-4">A multi-agent voice assistant that executes web tasks for blind and low-vision users. Cuts a multi-step task to under 60 seconds from a 5 to 10 minute screen reader baseline.</p>
           <ul class="flex flex-wrap gap-2 mt-6" aria-label="Technologies">
-            <li class="tag">TypeScript</li>
-            <li class="tag">CRDTs</li>
+            <li class="tag">FastAPI</li>
             <li class="tag">WebSockets</li>
+            <li class="tag">Gemini</li>
           </ul>
-          <p class="doc-meta mt-auto pt-6">Filed under: side projects</p>
+          <div class="mt-auto pt-6">
+            <p class="doc-meta">Top 10 of 2,500+ teams &middot; GDG 2026</p>
+            <p class="mt-2"><a class="letter-link" href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026">OpenSight repo on GitHub &rarr;</a></p>
+          </div>
         </div>
       </article>
 
-      <article class="sheet" data-title="Manila">
+      <article class="sheet" data-title="Algae bloom prediction">
         <div class="sheet-inner">
           <div class="flex items-start justify-between gap-4">
-            <p class="doc-meta">Doc 02 / 04 &middot; Pipeline</p>
+            <p class="doc-meta">Doc 02 / 03 &middot; Remote sensing</p>
             <div class="doc-stamp" aria-hidden="true">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
                 <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/>
@@ -406,44 +431,21 @@
             </div>
           </div>
           <hr class="doc-rule">
-          <h3 class="doc-title">Manila</h3>
-          <p class="doc-desc mt-4">A folder-first asset pipeline that keeps design teams' files sorted, versioned, and findable.</p>
+          <h3 class="doc-title">Algae bloom prediction</h3>
+          <p class="doc-desc mt-4">Autonomous bloom detection across 50k+ satellite images at 92% detection accuracy, deployed to AWS Lambda for real-time monitoring.</p>
           <ul class="flex flex-wrap gap-2 mt-6" aria-label="Technologies">
-            <li class="tag">Go</li>
-            <li class="tag">gRPC</li>
-            <li class="tag">S3</li>
+            <li class="tag">Python</li>
+            <li class="tag">scikit-learn</li>
+            <li class="tag">AWS Lambda</li>
           </ul>
-          <p class="doc-meta mt-auto pt-6">Filed under: client work</p>
+          <p class="doc-meta mt-auto pt-6">Filed under: environmental ML</p>
         </div>
       </article>
 
-      <article class="sheet" data-title="Dead Letter">
+      <article class="sheet" data-title="Wildfire spread prediction">
         <div class="sheet-inner">
           <div class="flex items-start justify-between gap-4">
-            <p class="doc-meta">Doc 03 / 04 &middot; Observability</p>
-            <div class="doc-stamp" aria-hidden="true">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
-                <rect x="3" y="5" width="18" height="14" rx="2"/>
-                <path d="M3 7l9 6 9-6"/>
-              </svg>
-            </div>
-          </div>
-          <hr class="doc-rule">
-          <h3 class="doc-title">Dead Letter</h3>
-          <p class="doc-desc mt-4">An inspector for stuck queues &mdash; it opens the messages nobody else could deliver.</p>
-          <ul class="flex flex-wrap gap-2 mt-6" aria-label="Technologies">
-            <li class="tag">Rust</li>
-            <li class="tag">Kafka</li>
-            <li class="tag">WASM</li>
-          </ul>
-          <p class="doc-meta mt-auto pt-6">Filed under: open source</p>
-        </div>
-      </article>
-
-      <article class="sheet" data-title="Onionskin">
-        <div class="sheet-inner">
-          <div class="flex items-start justify-between gap-4">
-            <p class="doc-meta">Doc 04 / 04 &middot; Tooling</p>
+            <p class="doc-meta">Doc 03 / 03 &middot; Deep learning</p>
             <div class="doc-stamp" aria-hidden="true">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
                 <path d="M12 3l9 5-9 5-9-5 9-5z"/>
@@ -452,14 +454,14 @@
             </div>
           </div>
           <hr class="doc-rule">
-          <h3 class="doc-title">Onionskin</h3>
-          <p class="doc-desc mt-4">Layered visual diffs for UI review &mdash; flip changes over each other sheet by sheet.</p>
+          <h3 class="doc-title">Wildfire spread prediction</h3>
+          <p class="doc-desc mt-4">A deep learning pipeline trained on 100k+ NASA environmental datapoints from VIIRS and MODIS, containerized with Kubernetes and Helm.</p>
           <ul class="flex flex-wrap gap-2 mt-6" aria-label="Technologies">
-            <li class="tag">React</li>
-            <li class="tag">Canvas</li>
-            <li class="tag">Node</li>
+            <li class="tag">PyTorch</li>
+            <li class="tag">Kubernetes</li>
+            <li class="tag">Helm</li>
           </ul>
-          <p class="doc-meta mt-auto pt-6">Filed under: side projects</p>
+          <p class="doc-meta mt-auto pt-6">Filed under: prediction models</p>
         </div>
       </article>
     </div>
@@ -469,7 +471,7 @@
         <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m6-7l-7 7 7 7"/></svg>
         Bring back
       </button>
-      <p id="stack-counter" class="font-mono text-inkmid" style="font-size:.8rem; letter-spacing:.18em;">01 / 04</p>
+      <p id="stack-counter" class="font-mono text-inkmid" style="font-size:.8rem; letter-spacing:.18em;">01 / 03</p>
       <button id="btn-next" type="button" class="stack-btn" aria-label="Slide the top sheet aside to reveal the next one">
         Slide aside
         <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-7l7 7-7 7"/></svg>
@@ -481,7 +483,7 @@
 
 <!-- ============ CONTACT ============ -->
 <section id="contact" class="px-5 pb-24" aria-labelledby="contact-heading">
-  <p class="desk-label text-center mb-6">Exhibit C &mdash; Correspondence</p>
+  <p class="desk-label text-center mb-6">Exhibit C &middot; Correspondence</p>
   <div class="w-full mx-auto" style="max-width:620px; transform:rotate(.5deg);">
   <div class="paper paper-pile">
     <div style="padding:clamp(1.75rem,6vw,3rem);">
@@ -489,12 +491,12 @@
       <hr class="doc-rule">
       <h2 id="contact-heading" class="font-display font-bold text-ink" style="font-size:clamp(1.7rem,5vw,2.3rem);">Drop a line</h2>
       <p class="doc-desc mt-4">
-        For work, collaborations, or a good paper recommendation &mdash; my tray is always open.
+        For work, collaborations, or a good paper recommendation. My tray is always open.
       </p>
       <ul class="mt-7 space-y-3">
-        <li><a class="letter-link" href="mailto:hello@alexmorgan.dev">hello@alexmorgan.dev</a></li>
-        <li><a class="letter-link" href="#">github.com/alexmorgan</a></li>
-        <li><a class="letter-link" href="#">linkedin.com/in/alexmorgan</a></li>
+        <li><a class="letter-link" href="mailto:somala.abhi@gmail.com">somala.abhi@gmail.com</a></li>
+        <li><a class="letter-link" href="https://github.com/abhisomala">github.com/abhisomala</a></li>
+        <li><a class="letter-link" href="https://www.linkedin.com/in/abhijitsomala">linkedin.com/in/abhijitsomala</a></li>
       </ul>
       <div class="mt-9">
         <p class="doc-desc italic">Yours sincerely,</p>
@@ -502,7 +504,7 @@
           <path d="M8 42 C 30 8, 46 10, 44 30 C 42 48, 24 52, 34 38 C 48 18, 66 14, 78 26 C 88 36, 96 22, 108 20 C 126 17, 118 40, 134 32 C 150 24, 168 20, 210 26"
                 stroke="#18181B" stroke-width="2.5" stroke-linecap="round"/>
         </svg>
-        <p class="doc-meta mt-1">Alex Morgan</p>
+        <p class="doc-meta mt-1">Abhijit Somala</p>
       </div>
     </div>
   </div>
@@ -511,7 +513,7 @@
 
 <footer class="px-5 pb-10">
   <p class="text-center font-mono" style="font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:#52525B;">
-    &copy; 2026 Alex Morgan &mdash; typed, stamped &amp; filed
+    &copy; 2026 Abhijit Somala &middot; typed, stamped &amp; filed
   </p>
 </footer>
 

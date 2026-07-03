@@ -87,12 +87,13 @@
   <header class="fixed top-0 inset-x-0 z-40 bg-scope-bg/90 backdrop-blur border-b border-scope-deep">
     <nav aria-label="Primary" class="mx-auto max-w-5xl h-14 px-4 sm:px-6 flex items-center justify-between">
       <a href="#top" class="font-display font-black tracking-widest text-sm sm:text-base text-scope-ink hover:text-scope-accent transition-colors duration-200">
-        AM<span class="text-scope-accent">·</span>SCOPE
+        AS<span class="text-scope-accent">·</span>SCOPE
       </a>
       <ul class="flex items-center gap-4 sm:gap-8 text-xs sm:text-sm">
-        <li><a href="#about"   class="text-scope-dim hover:text-scope-accent transition-colors duration-200">About</a></li>
-        <li><a href="#work"    class="text-scope-dim hover:text-scope-accent transition-colors duration-200">Work</a></li>
-        <li><a href="#contact" class="text-scope-dim hover:text-scope-accent transition-colors duration-200">Contact</a></li>
+        <li><a href="#about"      class="text-scope-dim hover:text-scope-accent transition-colors duration-200">About</a></li>
+        <li><a href="#experience" class="text-scope-dim hover:text-scope-accent transition-colors duration-200">Experience</a></li>
+        <li><a href="#work"       class="text-scope-dim hover:text-scope-accent transition-colors duration-200">Work</a></li>
+        <li><a href="#contact"    class="text-scope-dim hover:text-scope-accent transition-colors duration-200">Contact</a></li>
       </ul>
     </nav>
     <canvas class="scope block w-full h-6" data-freq="8" data-amp="0.85" aria-hidden="true"></canvas>
@@ -102,8 +103,9 @@
   <main id="top">
     <section class="min-h-screen flex flex-col justify-center mx-auto max-w-5xl px-4 sm:px-6 pt-28 pb-12" style="scroll-margin-top: 6rem;">
       <p class="text-xs sm:text-sm text-scope-accent glow-accent tracking-[0.3em] mb-4">CH1 // SIGNAL ACQUIRED</p>
-      <h1 class="font-display font-black text-4xl sm:text-6xl lg:text-7xl tracking-wide glow-ink mb-3">ALEX MORGAN</h1>
-      <p class="text-scope-dim text-sm sm:text-base mb-10">Software Engineer <span class="text-scope-accent">&amp;</span> Designer &mdash; tracing clean signals through noisy systems.</p>
+      <h1 class="font-display font-black text-4xl sm:text-6xl lg:text-7xl tracking-wide glow-ink mb-3">ABHIJIT SOMALA</h1>
+      <p class="text-scope-ink text-sm sm:text-base mb-4">Machine learning engineer<span class="text-scope-accent">.</span> Agents, NLP, infra that scales<span class="text-scope-accent">.</span></p>
+      <p class="text-scope-dim text-sm sm:text-base max-w-2xl leading-relaxed mb-10">ML engineer at a stealth EdTech startup and applied ML lead at Virginia Tech&rsquo;s NLP Research Lab, currently at Cornell. I build multi-agent systems, NLP pipelines, and ML infra that ships to production.</p>
 
       <div class="scope-frame relative rounded-sm">
         <div class="absolute top-2 left-3 text-[10px] sm:text-xs text-scope-dim leading-relaxed select-none" aria-hidden="true">
@@ -127,18 +129,13 @@
       </h2>
       <div class="max-w-2xl space-y-5 text-sm sm:text-base leading-relaxed text-scope-dim">
         <p>
-          I build software the way an oscilloscope reads a circuit: probe the system, isolate the
-          signal, and make what matters visible. A decade across frontend, infrastructure, and
-          interface design taught me that clarity is an engineering discipline, not a garnish.
+          I&rsquo;ve worked across the ML stack, from unsupervised clustering on data with no labels
+          to inference pipelines running in production for tens of thousands of users.
         </p>
         <p>
-          My work sits where engineering meets instrumentation &mdash; dashboards that behave like lab
-          equipment, tools that surface anomalies before they become outages, and interfaces with
-          a favorable signal-to-noise ratio.
-        </p>
-        <p>
-          When I&rsquo;m not shipping, I&rsquo;m usually restoring vintage test gear, sketching waveform
-          typography, or tuning a synth patch until the trace on the scope looks as good as it sounds.
+          Right now I&rsquo;m building at Focara, an EdTech startup, and leading applied ML work at
+          Virginia Tech&rsquo;s NLP Research Lab. Before that I built embedding visualization
+          infrastructure at Nomic AI.
         </p>
       </div>
     </section>
@@ -147,53 +144,63 @@
       <canvas class="scope block w-full h-12" data-freq="6" data-amp="0.8"></canvas>
     </div>
 
-    <!-- ===== WORK / CH3 ===== -->
+    <!-- ===== EXPERIENCE / CH3 ===== -->
+    <section id="experience" class="mx-auto max-w-5xl px-4 sm:px-6 py-16 sm:py-24" style="scroll-margin-top: 6rem;">
+      <h2 class="font-display font-bold text-2xl sm:text-3xl tracking-wide mb-10">
+        <span class="text-scope-accent glow-accent text-sm sm:text-base align-middle mr-3">CH3 //</span>EXPERIENCE
+      </h2>
+      <div class="space-y-5">
+
+        <article class="bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 p-5 sm:p-6 rounded-sm">
+          <p class="text-[10px] text-scope-dim tracking-[0.25em] mb-2">FOCARA <span class="text-scope-accent">&middot;</span> MAY 2026 - PRESENT</p>
+          <h3 class="font-display font-bold text-lg sm:text-xl mb-2">ML ENGINEER</h3>
+          <p class="text-sm text-scope-dim leading-relaxed max-w-2xl">Stealth EdTech startup. Built a Canvas webhook plus LLM classifier that surfaces critical announcements before academic deadlines. Cut pipeline latency from 900ms to 500ms. Architected the multi-tenant chat-to-migration system.</p>
+        </article>
+
+        <article class="bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 p-5 sm:p-6 rounded-sm">
+          <p class="text-[10px] text-scope-dim tracking-[0.25em] mb-2">VIRGINIA TECH NLP RESEARCH LAB <span class="text-scope-accent">&middot;</span> DEC 2025 - PRESENT</p>
+          <h3 class="font-display font-bold text-lg sm:text-xl mb-2">APPLIED ML ENGINEERING LEAD</h3>
+          <p class="text-sm text-scope-dim leading-relaxed max-w-2xl">Led a 10-person team rebuilding a recommendation pipeline with no baseline to start from. Got a 40%+ MAP improvement. Shipped clustering, sentiment, and LLM inference pipelines to production, serving 45k users.</p>
+        </article>
+
+      </div>
+    </section>
+
+    <div aria-hidden="true" class="mx-auto max-w-5xl px-4 sm:px-6">
+      <canvas class="scope block w-full h-12" data-freq="7" data-amp="0.8"></canvas>
+    </div>
+
+    <!-- ===== WORK / CH4 ===== -->
     <section id="work" class="mx-auto max-w-5xl px-4 sm:px-6 py-16 sm:py-24" style="scroll-margin-top: 6rem;">
       <h2 class="font-display font-bold text-2xl sm:text-3xl tracking-wide mb-10">
-        <span class="text-scope-accent glow-accent text-sm sm:text-base align-middle mr-3">CH3 //</span>SELECTED WORK
+        <span class="text-scope-accent glow-accent text-sm sm:text-base align-middle mr-3">CH4 //</span>SELECTED WORK
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-        <article class="bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 p-5 sm:p-6 rounded-sm">
-          <p class="text-[10px] text-scope-dim tracking-[0.25em] mb-2">TRACE 01</p>
-          <h3 class="font-display font-bold text-lg sm:text-xl mb-2">LISSAJOUS</h3>
-          <p class="text-sm text-scope-dim leading-relaxed mb-4">Generative art engine that plots live audio input as evolving XY phase figures.</p>
-          <ul class="flex flex-wrap gap-2 text-[11px]">
-            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">WebGL</li>
-            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">TypeScript</li>
-            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">Web Audio</li>
+        <article class="md:col-span-2 bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 p-5 sm:p-6 rounded-sm">
+          <p class="text-[10px] text-scope-dim tracking-[0.25em] mb-2">TRACE 01 <span class="text-scope-accent">&middot;</span> FEATURED</p>
+          <h3 class="font-display font-bold text-lg sm:text-xl mb-2">OPENSIGHT</h3>
+          <p class="text-sm text-scope-dim leading-relaxed mb-4 max-w-3xl">Real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. Top 10 finalist in North America out of 2,500+ teams in the Google Developer Groups Solution Challenge 2026. Cuts a multi-step web task to under 60 seconds, against a screen reader baseline of 5 to 10 minutes. Validated directly with the Blind Institute of Technology and the Virginia Department for the Blind and Vision Impaired.</p>
+          <ul class="flex flex-wrap gap-2 text-[11px] mb-4">
+            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">FastAPI</li>
+            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">WebSockets</li>
+            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">Gemini on Vertex AI</li>
+            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">Deepgram</li>
+            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">Google Cloud TTS</li>
           </ul>
+          <a href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026" class="inline-flex items-center gap-2 text-sm text-scope-accent glow-accent hover:text-scope-ink transition-colors duration-200 cursor-pointer">
+            <span aria-hidden="true">&gt;</span> VIEW REPO ON GITHUB
+          </a>
         </article>
 
         <article class="bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 p-5 sm:p-6 rounded-sm">
           <p class="text-[10px] text-scope-dim tracking-[0.25em] mb-2">TRACE 02</p>
-          <h3 class="font-display font-bold text-lg sm:text-xl mb-2">TRIGGERHOLD</h3>
-          <p class="text-sm text-scope-dim leading-relaxed mb-4">Edge-triggered deploy pipeline that freezes rollouts the instant an anomaly crosses threshold.</p>
+          <h3 class="font-display font-bold text-lg sm:text-xl mb-2">ALGAE BLOOM PREDICTION</h3>
+          <p class="text-sm text-scope-dim leading-relaxed mb-4">Autonomous bloom detection across 50k+ satellite images at 92% detection accuracy, deployed to AWS Lambda for real-time monitoring.</p>
           <ul class="flex flex-wrap gap-2 text-[11px]">
-            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">Go</li>
-            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">Kubernetes</li>
-            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">Grafana</li>
-          </ul>
-        </article>
-
-        <article class="bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 p-5 sm:p-6 rounded-sm">
-          <p class="text-[10px] text-scope-dim tracking-[0.25em] mb-2">TRACE 03</p>
-          <h3 class="font-display font-bold text-lg sm:text-xl mb-2">PHOSPHOR</h3>
-          <p class="text-sm text-scope-dim leading-relaxed mb-4">Terminal UI library with CRT-style persistence rendering for long-running process logs.</p>
-          <ul class="flex flex-wrap gap-2 text-[11px]">
-            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">Rust</li>
-            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">WASM</li>
-          </ul>
-        </article>
-
-        <article class="bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 p-5 sm:p-6 rounded-sm">
-          <p class="text-[10px] text-scope-dim tracking-[0.25em] mb-2">TRACE 04</p>
-          <h3 class="font-display font-bold text-lg sm:text-xl mb-2">SWEEPLINE</h3>
-          <p class="text-sm text-scope-dim leading-relaxed mb-4">Real-time metrics console sampling production telemetry at 60Hz with sub-frame rendering.</p>
-          <ul class="flex flex-wrap gap-2 text-[11px]">
-            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">React</li>
-            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">D3</li>
-            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">WebSockets</li>
+            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">AWS Lambda</li>
+            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">50k+ images</li>
+            <li class="border border-scope-line text-scope-dim px-2 py-0.5 rounded-sm">92% accuracy</li>
           </ul>
         </article>
 
@@ -204,42 +211,41 @@
       <canvas class="scope block w-full h-12" data-freq="6" data-amp="0.8"></canvas>
     </div>
 
-    <!-- ===== CONTACT / CH4 ===== -->
+    <!-- ===== CONTACT / CH5 ===== -->
     <section id="contact" class="mx-auto max-w-5xl px-4 sm:px-6 py-16 sm:py-24" style="scroll-margin-top: 6rem;">
       <h2 class="font-display font-bold text-2xl sm:text-3xl tracking-wide mb-6">
-        <span class="text-scope-accent glow-accent text-sm sm:text-base align-middle mr-3">CH4 //</span>CONTACT
+        <span class="text-scope-accent glow-accent text-sm sm:text-base align-middle mr-3">CH5 //</span>CONTACT
       </h2>
       <p class="max-w-2xl text-sm sm:text-base text-scope-dim leading-relaxed mb-10">
-        Open channel. Probe attached. If you have a signal worth tracing &mdash; a project, a role,
-        or a strange waveform &mdash; send it through.
+        Open channel. Probe attached. If you have a project or a role worth tracing, send it through.
       </p>
       <ul class="flex flex-col sm:flex-row flex-wrap gap-4">
         <li>
-          <a href="mailto:hello@alexmorgan.dev" class="inline-flex items-center gap-3 bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 px-4 py-3 rounded-sm text-sm cursor-pointer">
+          <a href="mailto:somala.abhi@gmail.com" class="inline-flex items-center gap-3 bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 px-4 py-3 rounded-sm text-sm cursor-pointer">
             <span class="text-scope-accent glow-accent" aria-hidden="true">&gt;</span>
             <span class="text-scope-dim">EMAIL</span>
-            <span class="text-scope-ink">hello@alexmorgan.dev</span>
+            <span class="text-scope-ink">somala.abhi@gmail.com</span>
           </a>
         </li>
         <li>
-          <a href="#" class="inline-flex items-center gap-3 bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 px-4 py-3 rounded-sm text-sm cursor-pointer">
+          <a href="https://github.com/abhisomala" class="inline-flex items-center gap-3 bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 px-4 py-3 rounded-sm text-sm cursor-pointer">
             <span class="text-scope-accent glow-accent" aria-hidden="true">&gt;</span>
             <span class="text-scope-dim">GITHUB</span>
-            <span class="text-scope-ink">/alexmorgan</span>
+            <span class="text-scope-ink">/abhisomala</span>
           </a>
         </li>
         <li>
-          <a href="#" class="inline-flex items-center gap-3 bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 px-4 py-3 rounded-sm text-sm cursor-pointer">
+          <a href="https://www.linkedin.com/in/abhijitsomala" class="inline-flex items-center gap-3 bg-scope-panel border border-scope-deep hover:border-scope-accent transition-colors duration-200 px-4 py-3 rounded-sm text-sm cursor-pointer">
             <span class="text-scope-accent glow-accent" aria-hidden="true">&gt;</span>
             <span class="text-scope-dim">LINKEDIN</span>
-            <span class="text-scope-ink">/in/alexmorgan</span>
+            <span class="text-scope-ink">/in/abhijitsomala</span>
           </a>
         </li>
       </ul>
     </section>
 
     <footer class="mx-auto max-w-5xl px-4 sm:px-6 pb-24 pt-4">
-      <p class="text-[11px] text-scope-dim tracking-[0.2em]">ALEX MORGAN &mdash; TRACE ENDS &mdash; 2026</p>
+      <p class="text-[11px] text-scope-dim tracking-[0.2em]">ABHIJIT SOMALA &middot; TRACE ENDS &middot; 2026</p>
     </footer>
   </main>
 

@@ -109,9 +109,9 @@
 <!-- ================= HERO / ROOM ================= -->
 <header class="mx-auto w-full max-w-4xl px-4 pt-16 pb-4 sm:pt-14">
   <div class="text-center">
-    <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-secondary">Portfolio &mdash; one small studio</p>
-    <h1 class="mt-2 font-head text-4xl font-bold tracking-tight text-primary sm:text-5xl">Alex Morgan</h1>
-    <p class="mt-2 text-base text-secondary sm:text-lg">Software Engineer &amp; Designer</p>
+    <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-secondary">Portfolio. One small studio</p>
+    <h1 class="mt-2 font-head text-4xl font-bold tracking-tight text-primary sm:text-5xl">Abhijit Somala</h1>
+    <p class="mt-2 text-base text-secondary sm:text-lg">Machine learning engineer. Agents, NLP, infra that scales.</p>
     <p class="mt-3 text-sm text-secondary">This is my desk. <span class="font-semibold text-primary">Click an object</span> to look around.</p>
   </div>
 
@@ -317,9 +317,9 @@
       <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">The studio</p>
       <h2 id="h-intro" tabindex="-1" class="mt-2 font-head text-2xl font-bold tracking-tight text-primary sm:text-3xl">Make yourself at home.</h2>
       <p class="mt-3 max-w-prose leading-relaxed text-secondary">
-        Everything I make happens in this one small room. The <strong class="font-semibold text-primary">laptop</strong> holds my projects,
+        Everything I build happens in this one small room. The <strong class="font-semibold text-primary">laptop</strong> holds my projects,
         the <strong class="font-semibold text-primary">bookshelf</strong> keeps the story so far, and the
-        <strong class="font-semibold text-primary">phone</strong> is how you reach me. Click around &mdash; nothing here bites.
+        <strong class="font-semibold text-primary">phone</strong> is how you reach me. Click around. Nothing here bites.
       </p>
       <div class="mt-5 flex flex-wrap gap-2">
         <button type="button" data-panel="projects" aria-controls="panel-projects" aria-expanded="false"
@@ -343,59 +343,66 @@
       <h2 id="h-about" tabindex="-1" class="mt-2 font-head text-2xl font-bold tracking-tight text-primary sm:text-3xl">About</h2>
       <div class="mt-4 max-w-prose space-y-4 leading-relaxed text-secondary">
         <p>
-          Placeholder paragraph one. I'm Alex, a software engineer and designer who likes small rooms,
-          small tools, and software that feels hand-built. Most of what's on these shelves started as a
-          weekend sketch that refused to stay a sketch.
-        </p>
-        <p>
-          Placeholder paragraph two. By day I build interfaces and the systems behind them; by night I
-          redraw this room one polygon at a time. I care about the details you only notice when they're
-          missing &mdash; focus states, empty states, and the third state nobody planned for.
-        </p>
-        <p>
-          Placeholder paragraph three. When I'm away from the desk you'll find me rearranging actual
-          bookshelves, over-watering the plant in the corner, and defending the mug's permanent spot
-          next to the laptop.
+          I've worked across the ML stack, from unsupervised clustering on data with no labels to
+          inference pipelines running in production for tens of thousands of users. Right now I'm
+          building at Focara, an EdTech startup, and leading applied ML work at Virginia Tech's NLP
+          Research Lab. Before that I built embedding visualization infrastructure at Nomic AI. My
+          biggest project so far is OpenSight, a real-time multi-agent voice assistant for blind and
+          low-vision users. It placed top 10 out of 2,500+ teams nationally.
         </p>
       </div>
+      <h3 class="mt-6 text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Experience</h3>
+      <ul class="mt-3 max-w-prose space-y-4">
+        <li class="rounded-xl border border-line bg-paper p-5">
+          <p class="font-head text-base font-semibold text-primary">ML Engineer, Focara</p>
+          <p class="mt-0.5 text-xs font-medium uppercase tracking-wide text-secondary">Stealth EdTech startup, May 2026 to present</p>
+          <p class="mt-2 text-sm leading-relaxed text-secondary">Built a Canvas webhook plus LLM classifier that surfaces critical announcements before academic deadlines. Cut pipeline latency from 900ms to 500ms. Architected the multi-tenant chat-to-migration system.</p>
+        </li>
+        <li class="rounded-xl border border-line bg-paper p-5">
+          <p class="font-head text-base font-semibold text-primary">Applied ML Engineering Lead, Virginia Tech NLP Research Lab</p>
+          <p class="mt-0.5 text-xs font-medium uppercase tracking-wide text-secondary">Dec 2025 to present</p>
+          <p class="mt-2 text-sm leading-relaxed text-secondary">Led a 10-person team rebuilding a recommendation pipeline with no baseline to start from. Got a 40%+ MAP improvement. Shipped clustering, sentiment, and LLM inference pipelines to production, serving 45k users.</p>
+        </li>
+        <li class="rounded-xl border border-line bg-paper p-5">
+          <p class="font-head text-base font-semibold text-primary">AI Data Engineering Intern, Nomic AI</p>
+          <p class="mt-0.5 text-xs font-medium uppercase tracking-wide text-secondary">Summer 2024</p>
+          <p class="mt-2 text-sm leading-relaxed text-secondary">Built embedding visualization and ETL infrastructure for 250k+ monthly users.</p>
+        </li>
+      </ul>
     </section>
 
     <!-- Projects -->
     <section id="panel-projects" class="panel rounded-2xl border border-line bg-white p-6 sm:p-8" aria-labelledby="h-projects" hidden>
       <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">On the laptop</p>
       <h2 id="h-projects" tabindex="-1" class="mt-2 font-head text-2xl font-bold tracking-tight text-primary sm:text-3xl">Projects</h2>
-      <div class="mt-5 grid gap-4 sm:grid-cols-2">
-        <article class="rounded-xl border border-line bg-paper p-5">
-          <h3 class="font-head text-lg font-semibold text-primary">Isogrid</h3>
-          <p class="mt-1.5 text-sm leading-relaxed text-secondary">A CSS toolkit for building isometric layouts without doing the projection math by hand.</p>
-          <ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Technologies">
-            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">CSS</li>
-            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">TypeScript</li>
+      <div class="mt-5 grid gap-4">
+        <article class="rounded-xl border border-line bg-paper p-5 sm:p-6">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Flagship</p>
+          <h3 class="mt-1 font-head text-lg font-semibold text-primary">OpenSight</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-secondary">A real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. I built it because screen readers describe a page, they don't act on it.</p>
+          <ul class="mt-3 space-y-1.5 text-sm leading-relaxed text-secondary">
+            <li>Top 10 finalist in North America out of 2,500+ teams, Google Developer Groups Solution Challenge 2026.</li>
+            <li>Cuts a multi-step web task down to under 60 seconds. Screen reader baseline is 5 to 10 minutes.</li>
+            <li>Validated directly with the Blind Institute of Technology and the Virginia Department for the Blind and Vision Impaired.</li>
           </ul>
+          <ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Technologies">
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">FastAPI</li>
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">WebSockets</li>
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Gemini on Vertex AI</li>
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Deepgram</li>
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Google Cloud TTS</li>
+          </ul>
+          <a href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026"
+             class="mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            OpenSight on GitHub
+          </a>
         </article>
         <article class="rounded-xl border border-line bg-paper p-5">
-          <h3 class="font-head text-lg font-semibold text-primary">Shelfmark</h3>
-          <p class="mt-1.5 text-sm leading-relaxed text-secondary">A personal library tracker that remembers which shelf, which row, and which mood every book belongs to.</p>
+          <h3 class="font-head text-lg font-semibold text-primary">Algae bloom prediction model</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-secondary">Autonomous detection across 50k+ satellite images with 92% detection accuracy, deployed to AWS Lambda for real-time monitoring.</p>
           <ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Technologies">
-            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">React</li>
-            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">SQLite</li>
-          </ul>
-        </article>
-        <article class="rounded-xl border border-line bg-paper p-5">
-          <h3 class="font-head text-lg font-semibold text-primary">Deskset</h3>
-          <p class="mt-1.5 text-sm leading-relaxed text-secondary">A drag-and-drop desk configurator for planning your dream setup before buying a single cable.</p>
-          <ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Technologies">
-            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Svelte</li>
-            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Three.js</li>
-            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Vite</li>
-          </ul>
-        </article>
-        <article class="rounded-xl border border-line bg-paper p-5">
-          <h3 class="font-head text-lg font-semibold text-primary">Roomtone</h3>
-          <p class="mt-1.5 text-sm leading-relaxed text-secondary">A tiny ambient-sound app tuned to the hum of a quiet studio at 2 a.m.</p>
-          <ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Technologies">
-            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Web Audio</li>
-            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">Vue</li>
+            <li class="rounded-full bg-mutedbg px-2.5 py-0.5 text-xs font-medium text-secondary">AWS Lambda</li>
           </ul>
         </article>
       </div>
@@ -406,21 +413,20 @@
       <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">By the phone</p>
       <h2 id="h-contact" tabindex="-1" class="mt-2 font-head text-2xl font-bold tracking-tight text-primary sm:text-3xl">Contact</h2>
       <p class="mt-3 max-w-prose leading-relaxed text-secondary">
-        The phone on the desk is mostly for show &mdash; email works better. I read everything,
-        usually with the mug in hand.
+        The phone on the desk is mostly for show. Email works better, and I read everything.
       </p>
       <div class="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-        <a href="mailto:hello@alexmorgan.dev"
+        <a href="mailto:somala.abhi@gmail.com"
            class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
-          hello@alexmorgan.dev
+          somala.abhi@gmail.com
         </a>
-        <a href="#"
+        <a href="https://github.com/abhisomala"
            class="inline-flex items-center justify-center gap-2 rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
           GitHub
         </a>
-        <a href="#"
+        <a href="https://www.linkedin.com/in/abhijitsomala"
            class="inline-flex items-center justify-center gap-2 rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
           LinkedIn
@@ -440,7 +446,7 @@
 
 <footer class="border-t border-line bg-white">
   <div class="mx-auto max-w-3xl px-5 py-6 text-center text-xs text-secondary">
-    &copy; 2026 Alex Morgan &mdash; drawn in SVG, one room at a time.
+    &copy; 2026 Abhijit Somala. Drawn in SVG, one room at a time.
   </div>
 </footer>
 

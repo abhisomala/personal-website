@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Variant 08 - Cartography</title>
+<title>Abhijit Somala | Variant 08 - Cartography</title>
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -130,6 +130,8 @@
     box-shadow: inset 0 0 0 4px #FBF9F4, inset 0 0 0 5px #3F3F46, 0 18px 40px -18px rgba(9,9,11,.45);
     border-radius: 16px;
     padding: 1.5rem 1.5rem 1.35rem;
+    max-height: calc(100% - 1.5rem);
+    overflow-y: auto;
     opacity: 0;
     transform: translateY(-50%) scale(.97);
     transition: opacity .25s ease, transform .25s ease;
@@ -208,12 +210,12 @@
 
   <div class="relative z-10 max-w-2xl w-full text-center cartouche px-6 py-10 md:px-14 md:py-14 my-24">
     <p class="font-body text-xs md:text-sm smallcaps text-inksoft mb-4">A General Atlas &middot; Surveyed 2026</p>
-    <h1 class="font-display text-4xl sm:text-5xl md:text-6xl text-fg leading-tight">Alex Morgan</h1>
-    <p class="font-body text-sm md:text-base smallcaps text-inksoft mt-4">Software Engineer &amp; Designer</p>
+    <h1 class="font-display text-4xl sm:text-5xl md:text-6xl text-fg leading-tight">Abhijit Somala</h1>
+    <p class="font-body text-sm md:text-base smallcaps text-inksoft mt-4">ML Engineer &middot; Cornell University</p>
     <div class="w-24 h-px bg-inksoft mx-auto my-6" aria-hidden="true"></div>
     <p class="font-body text-sm md:text-base text-inksoft leading-relaxed max-w-md mx-auto">
-      Charting software from first survey to shipped shore. Every project below is a
-      region on the map &mdash; select one to zoom in.
+      I build ML systems, from research pipelines to production agents.
+      The regions below chart my projects and experience. Select one to zoom in.
     </p>
     <nav aria-label="Site sections" class="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 font-body text-xs smallcaps">
       <a href="#about" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">Legend</a>
@@ -236,18 +238,19 @@
     <div class="grid md:grid-cols-5 gap-10">
       <div class="md:col-span-3 space-y-5 font-body text-sm md:text-base leading-relaxed text-ink">
         <p>
-          Placeholder paragraph one. I am a software engineer and designer who treats every
-          product like unexplored territory: survey the terrain, sketch the coastline, then
-          draw the roads people will actually travel.
+          I've worked across the ML stack, from unsupervised clustering on data with no
+          labels to inference pipelines running in production for tens of thousands of users.
         </p>
         <p>
-          Placeholder paragraph two. Over the past several years I have charted design systems,
-          data platforms, and realtime infrastructure &mdash; usually somewhere between the
-          engineering interior and the design coast, where the interesting borders are.
+          Right now I'm building at Focara, an EdTech startup, and leading applied ML work
+          at Virginia Tech's NLP Research Lab. Before that I built embedding visualization
+          infrastructure at Nomic AI. I'm currently at Cornell University (ORIE), based
+          between Ithaca, NY and Richmond, VA.
         </p>
         <p>
-          Placeholder paragraph three. When I am not mapping software I am probably annotating
-          an actual map, arguing about projections, or planning the next expedition.
+          My biggest project so far is OpenSight, a real-time multi-agent voice assistant
+          for blind and low-vision users. It placed top 10 out of 2,500+ teams nationally.
+          You'll find it on Plate I of the atlas below.
         </p>
       </div>
       <div class="md:col-span-2">
@@ -258,19 +261,19 @@
               <svg class="legend-swatch" width="34" height="20" viewBox="0 0 34 20" aria-hidden="true">
                 <path d="M4 12 C3 6, 12 3, 20 5 C28 7, 32 11, 28 15 C23 19, 8 18, 4 12 Z" fill="#FBF9F4" stroke="#3F3F46" stroke-width="1.5"/>
               </svg>
-              <span>Solid land &mdash; shipped, production work</span>
+              <span>Solid land. Shipped, production work.</span>
             </li>
             <li class="flex items-start gap-3">
               <svg class="legend-swatch" width="34" height="20" viewBox="0 0 34 20" aria-hidden="true">
                 <path d="M2 14 C12 4, 22 16, 32 6" fill="none" stroke="#2563EB" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
               </svg>
-              <span>Dashed route &mdash; collaboration across teams</span>
+              <span>Dashed route. Pipelines connecting systems and teams.</span>
             </li>
             <li class="flex items-start gap-3">
               <svg class="legend-swatch" width="34" height="20" viewBox="0 0 34 20" aria-hidden="true">
                 <path d="M12 16 L17 6 L22 16 Z" fill="none" stroke="#3F3F46" stroke-width="1.5" stroke-linejoin="round"/>
               </svg>
-              <span>Peak &mdash; deep technical specialty</span>
+              <span>Peak. Deep technical specialty.</span>
             </li>
           </ul>
         </div>
@@ -283,8 +286,9 @@
     <p class="font-body text-xs smallcaps text-inksoft mb-3">Plates I&ndash;IV &middot; Selected Work</p>
     <h2 class="font-display text-3xl md:text-4xl text-fg mb-3">The Charted Regions</h2>
     <p class="font-body text-sm md:text-base text-inksoft leading-relaxed max-w-2xl mb-10">
-      Four regions have been surveyed so far. Select a region on the map &mdash; or in the
-      index below it &mdash; and the chart zooms in to reveal its record. Press
+      Four regions are charted so far, three projects and one experience territory. Select
+      a region on the map, or in the index below it, and the chart zooms in to reveal its
+      record. Press
       <kbd class="border border-line rounded px-1.5 py-0.5 text-xs bg-white">Esc</kbd> or choose
       &ldquo;Back to the atlas&rdquo; to sail back out.
     </p>
@@ -292,7 +296,7 @@
     <figure class="map-frame" role="group" aria-label="Interactive atlas of projects">
       <div class="map-inner">
         <svg id="atlas-svg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet"
-             role="img" aria-label="Stylized map with four project regions: Terra Forma, Port Query, Signal Strait, and Isle of Render">
+             role="img" aria-label="Stylized map with four regions: OpenSight, Algae Bloom, Wildfire, and Experience">
 
           <!-- sea + graticule -->
           <rect id="sea-bg" x="-400" y="-300" width="1800" height="1300" fill="#DEE7EE"/>
@@ -340,33 +344,33 @@
             <text y="-38" text-anchor="middle" font-size="11" fill="#18181B" font-family="Merriweather, serif">N</text>
           </g>
 
-          <!-- REGION I : Terra Forma (NW) -->
+          <!-- REGION I : OpenSight (NW) -->
           <g id="region-terra" class="region" data-region="terra" tabindex="0" role="button"
-             aria-label="Terra Forma, plate one: a living design system. Activate to zoom in and view details."
+             aria-label="OpenSight, plate one: a real-time multi-agent voice assistant for blind and low-vision users. Activate to zoom in and view details."
              aria-expanded="false">
             <path class="shoal" d="M 160 210 C 150 160, 200 110, 260 120 C 320 128, 380 150, 375 205 C 370 260, 320 290, 255 285 C 195 280, 170 255, 160 210 Z"/>
             <path class="land"  d="M 160 210 C 150 160, 200 110, 260 120 C 320 128, 380 150, 375 205 C 370 260, 320 290, 255 285 C 195 280, 170 255, 160 210 Z"/>
             <path d="M232 182 L246 158 L260 182 Z M254 186 L266 166 L278 186 Z" fill="none" stroke="#3F3F46" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"/>
             <circle cx="215" cy="228" r="3.5" fill="#18181B" aria-hidden="true"/>
-            <text class="region-name" x="264" y="222" text-anchor="middle">Terra Forma</text>
-            <text class="region-sub" x="264" y="244" text-anchor="middle">Plate I &middot; design system</text>
+            <text class="region-name" x="264" y="222" text-anchor="middle">OpenSight</text>
+            <text class="region-sub" x="264" y="244" text-anchor="middle">Plate I &middot; multi-agent voice</text>
           </g>
 
-          <!-- REGION II : Port Query (NE) -->
+          <!-- REGION II : Algae Bloom (NE) -->
           <g id="region-query" class="region" data-region="query" tabindex="0" role="button"
-             aria-label="Port Query, plate two: a self-serve analytics platform. Activate to zoom in and view details."
+             aria-label="Algae Bloom, plate two: an autonomous algae bloom detection model for satellite imagery. Activate to zoom in and view details."
              aria-expanded="false">
             <path class="shoal" d="M 640 190 C 630 140, 690 100, 750 105 C 810 110, 880 130, 885 185 C 890 235, 850 270, 790 268 C 760 267, 745 245, 720 250 C 685 258, 650 235, 640 190 Z"/>
             <path class="land"  d="M 640 190 C 630 140, 690 100, 750 105 C 810 110, 880 130, 885 185 C 890 235, 850 270, 790 268 C 760 267, 745 245, 720 250 C 685 258, 650 235, 640 190 Z"/>
             <circle cx="695" cy="150" r="3.5" fill="#18181B" aria-hidden="true"/>
             <path d="M812 145 L826 121 L840 145 Z" fill="none" stroke="#3F3F46" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"/>
-            <text class="region-name" x="762" y="192" text-anchor="middle">Port Query</text>
-            <text class="region-sub" x="762" y="214" text-anchor="middle">Plate II &middot; data platform</text>
+            <text class="region-name" x="762" y="192" text-anchor="middle">Algae Bloom</text>
+            <text class="region-sub" x="762" y="214" text-anchor="middle">Plate II &middot; satellite detection</text>
           </g>
 
-          <!-- REGION III : Signal Strait (SW, two islets) -->
+          <!-- REGION III : Wildfire (SW, two islets) -->
           <g id="region-signal" class="region" data-region="signal" tabindex="0" role="button"
-             aria-label="Signal Strait, plate three: realtime messaging infrastructure. Activate to zoom in and view details."
+             aria-label="Wildfire, plate three: a deep learning pipeline for wildfire spread prediction. Activate to zoom in and view details."
              aria-expanded="false">
             <path class="shoal" d="M 140 500 C 135 455, 180 420, 230 428 C 275 435, 300 465, 292 505 C 284 548, 240 575, 195 565 C 158 557, 145 540, 140 500 Z"/>
             <path class="land"  d="M 140 500 C 135 455, 180 420, 230 428 C 275 435, 300 465, 292 505 C 284 548, 240 575, 195 565 C 158 557, 145 540, 140 500 Z"/>
@@ -375,20 +379,20 @@
             <path d="M298 540 C 306 528, 312 528, 318 518" fill="none" stroke="#2563EB" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" aria-hidden="true"/>
             <circle cx="205" cy="465" r="3.5" fill="#18181B" aria-hidden="true"/>
             <circle cx="398" cy="562" r="3.5" fill="#18181B" aria-hidden="true"/>
-            <text class="region-name" x="296" y="418" text-anchor="middle">Signal Strait</text>
-            <text class="region-sub" x="296" y="620" text-anchor="middle">Plate III &middot; realtime infra</text>
+            <text class="region-name" x="296" y="418" text-anchor="middle">Wildfire</text>
+            <text class="region-sub" x="296" y="620" text-anchor="middle">Plate III &middot; spread prediction</text>
           </g>
 
-          <!-- REGION IV : Isle of Render (SE) -->
+          <!-- REGION IV : Experience (SE) -->
           <g id="region-render" class="region" data-region="render" tabindex="0" role="button"
-             aria-label="Isle of Render, plate four: an experimental WebGL terrain project. Activate to zoom in and view details."
+             aria-label="Experience, plate four: work history at Focara, Virginia Tech NLP Research Lab, and Nomic AI. Activate to zoom in and view details."
              aria-expanded="false">
             <path class="shoal" d="M 620 520 C 612 465, 665 425, 730 432 C 795 440, 880 460, 885 520 C 890 575, 835 610, 765 605 C 700 600, 628 575, 620 520 Z"/>
             <path class="land"  d="M 620 520 C 612 465, 665 425, 730 432 C 795 440, 880 460, 885 520 C 890 575, 835 610, 765 605 C 700 600, 628 575, 620 520 Z"/>
             <path d="M690 505 L706 477 L722 505 Z M716 510 L730 486 L744 510 Z" fill="none" stroke="#3F3F46" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"/>
             <circle cx="830" cy="560" r="3.5" fill="#18181B" aria-hidden="true"/>
-            <text class="region-name" x="756" y="545" text-anchor="middle">Isle of Render</text>
-            <text class="region-sub" x="756" y="567" text-anchor="middle">Plate IV &middot; WebGL terrain</text>
+            <text class="region-name" x="756" y="545" text-anchor="middle">Experience</text>
+            <text class="region-sub" x="756" y="567" text-anchor="middle">Plate IV &middot; field record</text>
           </g>
         </svg>
 
@@ -396,47 +400,64 @@
         <div id="atlas-overlay">
           <article class="region-panel" id="panel-terra" data-side="right" role="dialog" aria-labelledby="panel-terra-title" hidden>
             <button type="button" class="panel-close font-body text-xs smallcaps text-ink border border-inksoft rounded-full px-3 py-1.5 hover:bg-mist transition-colors cursor-pointer" data-close>&larr; Back to the atlas</button>
-            <p class="font-body text-xs smallcaps text-inksoft mt-5">Plate I &middot; 43&#176;N, 71&#176;W</p>
-            <h3 id="panel-terra-title" class="font-display text-2xl text-fg mt-1">Terra Forma</h3>
-            <p class="font-body text-sm leading-relaxed text-ink mt-3">A living design system charted for a fintech product suite &mdash; tokens, components, and the roads between them.</p>
+            <p class="font-body text-xs smallcaps text-inksoft mt-5">Plate I &middot; Flagship &middot; 43&#176;N, 71&#176;W</p>
+            <h3 id="panel-terra-title" class="font-display text-2xl text-fg mt-1">OpenSight</h3>
+            <p class="font-body text-sm leading-relaxed text-ink mt-3">A real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. I built it because screen readers describe a page, they don't act on it. It cuts a multi-step web task to under 60 seconds. The screen reader baseline is 5 to 10 minutes.</p>
+            <p class="font-body text-sm leading-relaxed text-ink mt-3">Top 10 finalist in North America out of 2,500+ teams, Google Developer Groups Solution Challenge 2026. Validated directly with the Blind Institute of Technology and the Virginia Department for the Blind and Vision Impaired.</p>
             <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies">
-              <li class="tag">Design Tokens</li><li class="tag">React</li><li class="tag">Figma</li>
+              <li class="tag">FastAPI</li><li class="tag">WebSockets</li><li class="tag">Gemini on Vertex AI</li><li class="tag">Deepgram</li><li class="tag">Google Cloud TTS</li>
             </ul>
+            <p class="font-body text-sm mt-4">
+              <a href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">OpenSight on GitHub &rarr;</a>
+            </p>
           </article>
 
           <article class="region-panel" id="panel-query" data-side="left" role="dialog" aria-labelledby="panel-query-title" hidden>
             <button type="button" class="panel-close font-body text-xs smallcaps text-ink border border-inksoft rounded-full px-3 py-1.5 hover:bg-mist transition-colors cursor-pointer" data-close>&larr; Back to the atlas</button>
             <p class="font-body text-xs smallcaps text-inksoft mt-5">Plate II &middot; 43&#176;N, 65&#176;W</p>
-            <h3 id="panel-query-title" class="font-display text-2xl text-fg mt-1">Port Query</h3>
-            <p class="font-body text-sm leading-relaxed text-ink mt-3">A self-serve analytics harbor where product teams dock their data and sail away with answers.</p>
-            <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies">
-              <li class="tag">TypeScript</li><li class="tag">PostgreSQL</li><li class="tag">GraphQL</li>
+            <h3 id="panel-query-title" class="font-display text-2xl text-fg mt-1">Algae Bloom</h3>
+            <p class="font-body text-sm leading-relaxed text-ink mt-3">An algae bloom prediction model with autonomous detection across 50k+ satellite images at 92% detection accuracy, deployed to AWS Lambda for real-time monitoring.</p>
+            <ul class="flex flex-wrap gap-2 mt-4" aria-label="Highlights">
+              <li class="tag">50k+ images</li><li class="tag">92% accuracy</li><li class="tag">AWS Lambda</li>
             </ul>
           </article>
 
           <article class="region-panel" id="panel-signal" data-side="right" role="dialog" aria-labelledby="panel-signal-title" hidden>
             <button type="button" class="panel-close font-body text-xs smallcaps text-ink border border-inksoft rounded-full px-3 py-1.5 hover:bg-mist transition-colors cursor-pointer" data-close>&larr; Back to the atlas</button>
             <p class="font-body text-xs smallcaps text-inksoft mt-5">Plate III &middot; 40&#176;N, 71&#176;W</p>
-            <h3 id="panel-signal-title" class="font-display text-2xl text-fg mt-1">Signal Strait</h3>
-            <p class="font-body text-sm leading-relaxed text-ink mt-3">Realtime messaging channels navigated at sub-second latency, across a strait of ten million daily crossings.</p>
+            <h3 id="panel-signal-title" class="font-display text-2xl text-fg mt-1">Wildfire</h3>
+            <p class="font-body text-sm leading-relaxed text-ink mt-3">A wildfire spread prediction pipeline. Deep learning trained on 100k+ NASA environmental datapoints (VIIRS, MODIS), containerized with Kubernetes and Helm.</p>
             <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies">
-              <li class="tag">WebSockets</li><li class="tag">Go</li><li class="tag">Redis</li>
+              <li class="tag">NASA VIIRS</li><li class="tag">MODIS</li><li class="tag">Kubernetes</li><li class="tag">Helm</li>
             </ul>
           </article>
 
           <article class="region-panel" id="panel-render" data-side="left" role="dialog" aria-labelledby="panel-render-title" hidden>
             <button type="button" class="panel-close font-body text-xs smallcaps text-ink border border-inksoft rounded-full px-3 py-1.5 hover:bg-mist transition-colors cursor-pointer" data-close>&larr; Back to the atlas</button>
             <p class="font-body text-xs smallcaps text-inksoft mt-5">Plate IV &middot; 40&#176;N, 65&#176;W</p>
-            <h3 id="panel-render-title" class="font-display text-2xl text-fg mt-1">Isle of Render</h3>
-            <p class="font-body text-sm leading-relaxed text-ink mt-3">An experimental WebGL island of generative terrain &mdash; heightmaps grown from noise and lit by shader weather.</p>
-            <ul class="flex flex-wrap gap-2 mt-4" aria-label="Technologies">
-              <li class="tag">WebGL</li><li class="tag">Three.js</li><li class="tag">GLSL</li>
+            <h3 id="panel-render-title" class="font-display text-2xl text-fg mt-1">Experience</h3>
+            <ul class="font-body text-sm leading-relaxed text-ink mt-3 space-y-3">
+              <li>
+                <span class="font-bold">ML Engineer, Focara</span> <span class="italic text-inksoft">(May 2026 to present)</span><br>
+                Built a Canvas webhook plus LLM classifier that surfaces critical announcements before academic deadlines. Cut pipeline latency from 900ms to 500ms.
+              </li>
+              <li>
+                <span class="font-bold">Applied ML Engineering Lead, Virginia Tech NLP Research Lab</span> <span class="italic text-inksoft">(Dec 2025 to present)</span><br>
+                Led a 10-person team rebuilding a recommendation pipeline with no baseline to start from. Got a 40%+ MAP improvement. Shipped clustering, sentiment, and LLM inference pipelines serving 45k users.
+              </li>
+              <li>
+                <span class="font-bold">AI Data Engineering Intern, Nomic AI</span> <span class="italic text-inksoft">(Summer 2024)</span><br>
+                Built embedding visualization and ETL infrastructure for 250k+ monthly users.
+              </li>
+            </ul>
+            <ul class="flex flex-wrap gap-2 mt-4" aria-label="Skills">
+              <li class="tag">PyTorch</li><li class="tag">Python</li><li class="tag">AWS</li><li class="tag">Docker</li>
             </ul>
           </article>
         </div>
       </div>
       <figcaption class="font-body text-xs text-inksoft italic text-center pt-3">
-        Fig. 1 &mdash; General chart of selected work. Not to scale; here be refactors.
+        Fig. 1. General chart of selected work and experience. Not to scale, here be refactors.
       </figcaption>
     </figure>
 
@@ -446,20 +467,20 @@
     <h3 class="font-body text-xs smallcaps text-inksoft mt-12 mb-4">Atlas Index</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <button type="button" class="index-btn" data-region="terra" aria-expanded="false" aria-controls="panel-terra">
-        <span class="font-display text-lg text-fg block">I &middot; Terra Forma</span>
-        <span class="font-body text-sm text-inksoft block mt-1">A living design system charted for a fintech product suite.</span>
+        <span class="font-display text-lg text-fg block">I &middot; OpenSight</span>
+        <span class="font-body text-sm text-inksoft block mt-1">Real-time multi-agent voice assistant for blind and low-vision users. Top 10 of 2,500+ teams.</span>
       </button>
       <button type="button" class="index-btn" data-region="query" aria-expanded="false" aria-controls="panel-query">
-        <span class="font-display text-lg text-fg block">II &middot; Port Query</span>
-        <span class="font-body text-sm text-inksoft block mt-1">A self-serve analytics harbor where teams dock their data.</span>
+        <span class="font-display text-lg text-fg block">II &middot; Algae Bloom</span>
+        <span class="font-body text-sm text-inksoft block mt-1">Autonomous detection across 50k+ satellite images at 92% accuracy.</span>
       </button>
       <button type="button" class="index-btn" data-region="signal" aria-expanded="false" aria-controls="panel-signal">
-        <span class="font-display text-lg text-fg block">III &middot; Signal Strait</span>
-        <span class="font-body text-sm text-inksoft block mt-1">Realtime messaging channels navigated at sub-second latency.</span>
+        <span class="font-display text-lg text-fg block">III &middot; Wildfire</span>
+        <span class="font-body text-sm text-inksoft block mt-1">Spread prediction trained on 100k+ NASA environmental datapoints.</span>
       </button>
       <button type="button" class="index-btn" data-region="render" aria-expanded="false" aria-controls="panel-render">
-        <span class="font-display text-lg text-fg block">IV &middot; Isle of Render</span>
-        <span class="font-body text-sm text-inksoft block mt-1">An experimental WebGL island of generative terrain.</span>
+        <span class="font-display text-lg text-fg block">IV &middot; Experience</span>
+        <span class="font-body text-sm text-inksoft block mt-1">Focara, Virginia Tech NLP Research Lab, and Nomic AI.</span>
       </button>
     </div>
   </section>
@@ -470,18 +491,17 @@
       <p class="font-body text-xs smallcaps text-inksoft mb-3">Final plate &middot; Correspondence</p>
       <h2 class="font-display text-3xl md:text-4xl text-fg mb-4">Send a Dispatch</h2>
       <p class="font-body text-sm md:text-base text-inksoft leading-relaxed max-w-md mx-auto mb-8">
-        New expeditions, collaborations, and interesting coastlines welcome.
-        Coordinates below; response within one tide.
+        New expeditions and collaborations welcome. Coordinates below.
       </p>
       <ul class="space-y-3 font-body text-sm md:text-base">
         <li>
-          <a href="mailto:hello@alexmorgan.dev" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">hello@alexmorgan.dev</a>
+          <a href="mailto:somala.abhi@gmail.com" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">somala.abhi@gmail.com</a>
         </li>
         <li>
-          <a href="#" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">GitHub &mdash; charted commits</a>
+          <a href="https://github.com/abhisomala" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">github.com/abhisomala</a>
         </li>
         <li>
-          <a href="#" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">LinkedIn &mdash; the official gazetteer</a>
+          <a href="https://www.linkedin.com/in/abhijitsomala" class="text-ink underline decoration-dotted underline-offset-4 hover:text-accent transition-colors">linkedin.com/in/abhijitsomala</a>
         </li>
       </ul>
     </div>
@@ -489,7 +509,7 @@
 </main>
 
 <footer class="border-t border-line py-8 text-center">
-  <p class="font-body text-xs text-inksoft smallcaps">&copy; 2026 Alex Morgan &mdash; surveyed &amp; drawn by hand</p>
+  <p class="font-body text-xs text-inksoft smallcaps">&copy; 2026 Abhijit Somala. Surveyed &amp; drawn by hand.</p>
 </footer>
 
 <script>
@@ -507,10 +527,10 @@
 
   var HOME = [0, 0, 1000, 700];
   var REGIONS = {
-    terra:  { box: [55, 53, 420, 294],  name: 'Terra Forma' },
-    query:  { box: [550, 43, 420, 294], name: 'Port Query' },
-    signal: { box: [55, 363, 420, 294], name: 'Signal Strait' },
-    render: { box: [545, 368, 420, 294], name: 'Isle of Render' }
+    terra:  { box: [55, 53, 420, 294],  name: 'OpenSight' },
+    query:  { box: [550, 43, 420, 294], name: 'Algae Bloom' },
+    signal: { box: [55, 363, 420, 294], name: 'Wildfire' },
+    render: { box: [545, 368, 420, 294], name: 'Experience' }
   };
 
   var activeId = null;

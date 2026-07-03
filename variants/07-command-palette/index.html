@@ -151,7 +151,7 @@
       #panels .panel[hidden] { display: block !important; opacity: 1 !important; transform: none !important; }
       #palette-wrap { transform: none !important; }
     </style>
-    <p class="max-w-2xl mx-auto mt-16 px-4 text-sm text-slate-300">JavaScript is off &mdash; the palette is inert, so every section is shown below.</p>
+    <p class="max-w-2xl mx-auto mt-16 px-4 text-sm text-slate-300">JavaScript is off. The palette is inert, so every section is shown below.</p>
   </noscript>
 
   <main class="min-h-screen flex flex-col items-center px-4 pt-16 sm:pt-20 pb-24">
@@ -159,9 +159,9 @@
     <!-- ============ HERO / PALETTE ============ -->
     <div id="palette-wrap" class="w-full max-w-2xl">
       <header class="mb-6">
-        <p class="text-xs sm:text-sm text-green-400 mb-2" aria-hidden="true">alex@morgan:~$ whoami</p>
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Alex Morgan</h1>
-        <p class="text-sm text-slate-400 mt-1">Software Engineer &amp; Designer &mdash; everything on this site is one command away.</p>
+        <p class="text-xs sm:text-sm text-green-400 mb-2" aria-hidden="true">abhi@somala:~$ whoami</p>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Abhijit Somala</h1>
+        <p class="text-sm text-slate-400 mt-1">ML engineer. Builds things that ship. Everything on this site is one command away.</p>
       </header>
 
       <div class="rounded-lg border border-slate-700 bg-[#0B1526] shadow-2xl shadow-black/40">
@@ -198,9 +198,11 @@
                   aria-label="Close panel and return to the palette"><kbd>esc</kbd> close</button>
         </div>
         <div class="space-y-4 text-sm leading-relaxed text-slate-300">
-          <p>I&rsquo;m Alex &mdash; an engineer and designer who believes the fastest interface is the one you can type at. I build keyboard-first tools, developer platforms, and interfaces that get out of the way.</p>
-          <p>For the last eight years I&rsquo;ve shipped design systems, CLI tooling, and product UI at startups of every size. My happy place is the seam between engineering and design, where a good abstraction and a good affordance turn out to be the same thing.</p>
-          <p>Off the clock: mechanical keyboards, bouldering, and an ever-growing collection of dotfiles that I swear is almost done.</p>
+          <p>I&rsquo;m Abhi. ML engineer at a stealth EdTech startup and applied ML lead at Virginia Tech&rsquo;s NLP Research Lab, currently at Cornell. I build multi-agent systems, NLP pipelines, and ML infra that ships to production.</p>
+          <ul class="space-y-2">
+            <li class="flex gap-3"><span class="text-green-400 flex-none" aria-hidden="true">&#10095;</span><span>Focara: built a Canvas webhook plus LLM classifier that surfaces critical announcements before academic deadlines. Cut pipeline latency from 900ms to 500ms.</span></li>
+            <li class="flex gap-3"><span class="text-green-400 flex-none" aria-hidden="true">&#10095;</span><span>Virginia Tech NLP Research Lab: led a 10-person team rebuilding a recommendation pipeline, got a 40%+ MAP improvement, and shipped pipelines serving 45k users.</span></li>
+          </ul>
         </div>
       </section>
 
@@ -213,39 +215,20 @@
                   class="text-xs text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 rounded px-2 py-1 cursor-pointer transition-colors"
                   aria-label="Close panel and return to the palette"><kbd>esc</kbd> close</button>
         </div>
-        <div class="grid gap-4 sm:grid-cols-2">
-          <article id="card-fuzzcat" tabindex="-1" class="card rounded-md border border-slate-700 bg-[#0F172A] p-4">
-            <h3 class="text-green-400 font-bold text-sm mb-1.5">fuzzcat</h3>
-            <p class="text-sm text-slate-300 leading-relaxed">Sub-10kB fuzzy-matching engine &mdash; the same one filtering this palette.</p>
+        <div class="grid gap-4">
+          <article id="card-opensight" tabindex="-1" class="card rounded-md border border-slate-700 bg-[#0F172A] p-4">
+            <h3 class="text-green-400 font-bold text-sm mb-1.5">OpenSight</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">Real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. Top 10 finalist in North America out of 2,500+ teams in the Google Developer Groups Solution Challenge 2026. Cuts a multi-step web task to under 60 seconds against a 5 to 10 minute screen reader baseline.</p>
             <ul class="flex flex-wrap gap-1.5 mt-3" aria-label="Tech tags">
-              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">TypeScript</li>
-              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">WASM</li>
+              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">FastAPI</li>
+              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">WebSockets</li>
+              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">Gemini on Vertex AI</li>
+              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">Deepgram</li>
             </ul>
-          </article>
-          <article id="card-promptline" tabindex="-1" class="card rounded-md border border-slate-700 bg-[#0F172A] p-4">
-            <h3 class="text-green-400 font-bold text-sm mb-1.5">promptline</h3>
-            <p class="text-sm text-slate-300 leading-relaxed">Zero-dependency toolkit for building command-line style UIs on the web.</p>
-            <ul class="flex flex-wrap gap-1.5 mt-3" aria-label="Tech tags">
-              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">JavaScript</li>
-              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">Web Components</li>
-              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">CSS</li>
-            </ul>
-          </article>
-          <article id="card-keychord" tabindex="-1" class="card rounded-md border border-slate-700 bg-[#0F172A] p-4">
-            <h3 class="text-green-400 font-bold text-sm mb-1.5">keychord</h3>
-            <p class="text-sm text-slate-300 leading-relaxed">Shortcut manager that maps multi-key chords to actions in any desktop app.</p>
-            <ul class="flex flex-wrap gap-1.5 mt-3" aria-label="Tech tags">
-              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">Electron</li>
-              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">TypeScript</li>
-            </ul>
-          </article>
-          <article id="card-grepfruit" tabindex="-1" class="card rounded-md border border-slate-700 bg-[#0F172A] p-4">
-            <h3 class="text-green-400 font-bold text-sm mb-1.5">grepfruit</h3>
-            <p class="text-sm text-slate-300 leading-relaxed">Regex playground with live matching, explained token by token.</p>
-            <ul class="flex flex-wrap gap-1.5 mt-3" aria-label="Tech tags">
-              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">React</li>
-              <li class="text-[11px] text-slate-300 border border-slate-600 rounded px-1.5 py-0.5">Node.js</li>
-            </ul>
+            <a href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026"
+               class="inline-flex items-baseline gap-2 mt-3 text-sm text-green-400 hover:text-green-300 transition-colors">
+              <span aria-hidden="true">&#10095;</span><span>view repo on GitHub</span>
+            </a>
           </article>
         </div>
       </section>
@@ -262,27 +245,27 @@
         <p class="text-sm text-slate-300 mb-4">The inbox is the original command line. Pick a channel:</p>
         <ul class="space-y-2 text-sm">
           <li>
-            <a href="mailto:hello@alexmorgan.dev"
+            <a href="mailto:somala.abhi@gmail.com"
                class="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-md border border-slate-700 hover:border-green-500 bg-[#0F172A] px-4 py-3 transition-colors cursor-pointer">
               <span class="text-green-400" aria-hidden="true">&#10095;</span>
               <span class="text-slate-50">mail</span>
-              <span class="text-slate-400 break-all">hello@alexmorgan.dev</span>
+              <span class="text-slate-400 break-all">somala.abhi@gmail.com</span>
             </a>
           </li>
           <li>
-            <a href="#"
+            <a href="https://github.com/abhisomala"
                class="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-md border border-slate-700 hover:border-green-500 bg-[#0F172A] px-4 py-3 transition-colors cursor-pointer">
               <span class="text-green-400" aria-hidden="true">&#10095;</span>
               <span class="text-slate-50">github</span>
-              <span class="text-slate-400">github.com/alexmorgan</span>
+              <span class="text-slate-400 break-all">github.com/abhisomala</span>
             </a>
           </li>
           <li>
-            <a href="#"
+            <a href="https://www.linkedin.com/in/abhijitsomala"
                class="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-md border border-slate-700 hover:border-green-500 bg-[#0F172A] px-4 py-3 transition-colors cursor-pointer">
               <span class="text-green-400" aria-hidden="true">&#10095;</span>
               <span class="text-slate-50">linkedin</span>
-              <span class="text-slate-400">linkedin.com/in/alexmorgan</span>
+              <span class="text-slate-400 break-all">linkedin.com/in/abhijitsomala</span>
             </a>
           </li>
         </ul>
@@ -293,7 +276,7 @@
 
   <footer class="fixed bottom-0 inset-x-0 z-20 pb-3 pt-6 text-center pointer-events-none bg-gradient-to-t from-[#0F172A] via-[#0F172AE6] to-transparent">
     <p class="text-xs text-slate-400 px-4">
-      <kbd>&uarr;</kbd><kbd>&darr;</kbd> navigate &middot; <kbd>&#8629;</kbd> select &middot; <kbd>esc</kbd> back &mdash; or tap a command
+      <kbd>&uarr;</kbd><kbd>&darr;</kbd> navigate &middot; <kbd>&#8629;</kbd> select &middot; <kbd>esc</kbd> back, or tap a command
     </p>
   </footer>
 
@@ -312,14 +295,11 @@
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     var COMMANDS = [
-      { id: 'about',       name: 'about',              hint: 'whoami — bio & background',            kind: 'section', keywords: 'bio me who alex morgan story',        panel: 'panel-about' },
-      { id: 'projects',    name: 'projects',           hint: 'ls ./work — 4 selected builds',        kind: 'section', keywords: 'work portfolio builds ls',            panel: 'panel-projects' },
-      { id: 'contact',     name: 'contact',            hint: 'ping alex — email & links',            kind: 'section', keywords: 'email reach github linkedin hire',    panel: 'panel-contact' },
-      { id: 'p-fuzzcat',   name: 'projects/fuzzcat',   hint: 'fuzzy-matching engine',                kind: 'project', keywords: 'search matcher typescript wasm',      panel: 'panel-projects', card: 'card-fuzzcat' },
-      { id: 'p-promptline',name: 'projects/promptline',hint: 'command-line UIs for the web',         kind: 'project', keywords: 'cli toolkit web components',          panel: 'panel-projects', card: 'card-promptline' },
-      { id: 'p-keychord',  name: 'projects/keychord',  hint: 'multi-key shortcut manager',           kind: 'project', keywords: 'keyboard hotkeys electron',           panel: 'panel-projects', card: 'card-keychord' },
-      { id: 'p-grepfruit', name: 'projects/grepfruit', hint: 'live regex playground',                kind: 'project', keywords: 'regex regexp react node',             panel: 'panel-projects', card: 'card-grepfruit' },
-      { id: 'clear',       name: 'clear',              hint: 'close panel — back to blank screen',   kind: 'action',  keywords: 'home close reset start esc',          panel: null }
+      { id: 'about',       name: 'about',              hint: 'whoami. bio and experience',                    kind: 'section', keywords: 'bio me who abhi abhijit somala cornell focara ml',  panel: 'panel-about' },
+      { id: 'projects',    name: 'projects',           hint: 'ls ./work. the flagship build',                 kind: 'section', keywords: 'work portfolio builds ls opensight',                panel: 'panel-projects' },
+      { id: 'contact',     name: 'contact',            hint: 'ping abhi. email and links',                    kind: 'section', keywords: 'email reach github linkedin hire',                  panel: 'panel-contact' },
+      { id: 'p-opensight', name: 'projects/opensight', hint: 'multi-agent voice assistant, top 10 of 2,500+ teams', kind: 'project', keywords: 'voice assistant accessibility agents gemini fastapi blind screen reader', panel: 'panel-projects', card: 'card-opensight' },
+      { id: 'clear',       name: 'clear',              hint: 'close panel, back to blank screen',             kind: 'action',  keywords: 'home close reset start esc',                        panel: null }
     ];
 
     var results = [];
@@ -406,7 +386,7 @@
         var empty = document.createElement('li');
         empty.className = 'opt-empty';
         empty.setAttribute('role', 'presentation');
-        empty.textContent = 'no match for "' + q + '" — press esc to clear';
+        empty.textContent = 'no match for "' + q + '". press esc to clear';
         list.appendChild(empty);
         input.removeAttribute('aria-activedescendant');
         announce('no matching commands');
@@ -477,7 +457,7 @@
       }
       clearCardHits();
       document.body.classList.remove('palette-docked');
-      announce('cleared — back to the palette');
+      announce('cleared, back to the palette');
       input.focus();
       input.select();
     }

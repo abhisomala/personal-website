@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Variant 04 - Orbit system</title>
+  <title>Abhijit Somala &middot; Orbit system</title>
 <link rel="icon" href="data:,">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -75,28 +75,29 @@
     <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
       <div class="-translate-y-[7%] px-6 text-center">
         <p class="mb-3 text-[11px] font-medium uppercase tracking-[0.35em] text-cyan-300">You are here &middot; center node</p>
-        <h1 class="font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">Alex Morgan</h1>
-        <p class="mt-2 text-sm text-white/70 sm:text-base">Software Engineer &amp; Designer</p>
+        <h1 class="font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">Abhijit Somala</h1>
+        <p class="mt-2 text-sm text-white/70 sm:text-base">Machine learning engineer. Agents, NLP, infra that scales.</p>
+        <p class="mx-auto mt-3 max-w-md text-sm text-white/60">
+          ML engineer at a stealth EdTech startup and applied ML lead at Virginia Tech's NLP Research Lab,
+          currently at Cornell. I build multi-agent systems, NLP pipelines, and ML infra that ships to production.
+        </p>
       </div>
     </div>
 
     <!-- Accessible / touch / reduced-motion path to every satellite -->
     <div class="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-4 px-4 pb-6">
       <p class="max-w-md text-center text-sm text-white/60">
-        Click, tap, or drag a satellite out of its orbit to open the project &mdash; or use the list below.
+        Click, tap, or drag a satellite out of its orbit to open the project, or use the list below.
       </p>
       <div id="orbit-chips" role="group" aria-label="Projects in orbit" class="pointer-events-auto flex flex-wrap items-center justify-center gap-2">
         <button type="button" data-project="0" class="flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/80 transition-colors duration-200 hover:border-violet2/60 hover:text-white active:scale-95">
-          <span class="h-2.5 w-2.5 rounded-full" style="background:#A78BFA" aria-hidden="true"></span>Perihelion
+          <span class="h-2.5 w-2.5 rounded-full" style="background:#A78BFA" aria-hidden="true"></span>OpenSight
         </button>
         <button type="button" data-project="1" class="flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/80 transition-colors duration-200 hover:border-teal2/60 hover:text-white active:scale-95">
-          <span class="h-2.5 w-2.5 rounded-full" style="background:#22D3EE" aria-hidden="true"></span>Lagrange
+          <span class="h-2.5 w-2.5 rounded-full" style="background:#22D3EE" aria-hidden="true"></span>Algae bloom prediction
         </button>
         <button type="button" data-project="2" class="flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/80 transition-colors duration-200 hover:border-primary/70 hover:text-white active:scale-95">
-          <span class="h-2.5 w-2.5 rounded-full" style="background:#8B5CF6" aria-hidden="true"></span>Apogee
-        </button>
-        <button type="button" data-project="3" class="flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/80 transition-colors duration-200 hover:border-white/50 hover:text-white active:scale-95">
-          <span class="h-2.5 w-2.5 rounded-full" style="background:#E7E5E4" aria-hidden="true"></span>Ionosphere
+          <span class="h-2.5 w-2.5 rounded-full" style="background:#8B5CF6" aria-hidden="true"></span>Wildfire spread prediction
         </button>
       </div>
       <a href="#about" class="pointer-events-auto mt-1 text-sm text-white/60 transition-colors duration-200 hover:text-white">
@@ -112,58 +113,84 @@
       <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">The center node</h2>
       <div class="mt-8 space-y-5 text-base leading-relaxed text-white/80 sm:text-lg">
         <p>
-          Placeholder paragraph one. I'm Alex, a software engineer and designer who builds systems where every
-          moving part has a clear, predictable path. I care about interfaces that feel inevitable &mdash; the kind
-          you understand the moment they start moving.
+          I've worked across the ML stack, from unsupervised clustering on data with no labels to inference
+          pipelines running in production for tens of thousands of users.
         </p>
         <p>
-          Placeholder paragraph two. Over the last few years I've shipped tooling, dashboards, and design systems
-          for teams of every size. My favorite work sits in the gravity well between engineering and design,
-          where the two disciplines pull on each other constantly.
+          Right now I'm building at Focara, an EdTech startup, and leading applied ML work at Virginia Tech's
+          NLP Research Lab. Before that I built embedding visualization infrastructure at Nomic AI.
         </p>
-        <p>
-          Placeholder paragraph three. When I'm not writing code, I'm sketching orbital mechanics for fun,
-          collecting typefaces, and slowly restoring a telescope that has seen better decades.
-        </p>
+      </div>
+    </section>
+
+    <!-- ===================== EXPERIENCE ===================== -->
+    <section id="experience" class="mx-auto max-w-3xl px-6 py-24 sm:py-32">
+      <p class="text-[11px] font-medium uppercase tracking-[0.35em] text-cyan-300">02 &middot; Experience</p>
+      <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">Current orbits</h2>
+      <div class="mt-10 space-y-10">
+        <article>
+          <h3 class="font-display text-xl font-semibold text-white">ML Engineer &middot; Focara</h3>
+          <p class="mt-1 text-sm text-white/60">Stealth EdTech startup &middot; May 2026 to present</p>
+          <p class="mt-3 leading-relaxed text-white/80">
+            Built a Canvas webhook plus LLM classifier that surfaces critical announcements before academic
+            deadlines. Cut pipeline latency from 900ms to 500ms. Architected the multi-tenant
+            chat-to-migration system.
+          </p>
+        </article>
+        <article>
+          <h3 class="font-display text-xl font-semibold text-white">Applied ML Engineering Lead &middot; Virginia Tech NLP Research Lab</h3>
+          <p class="mt-1 text-sm text-white/60">Dec 2025 to present</p>
+          <p class="mt-3 leading-relaxed text-white/80">
+            Led a 10-person team rebuilding a recommendation pipeline with no baseline to start from. Got a
+            40%+ MAP improvement. Shipped clustering, sentiment, and LLM inference pipelines to production,
+            serving 45k users.
+          </p>
+        </article>
       </div>
     </section>
 
     <!-- ===================== PROJECTS ===================== -->
     <section id="projects" class="mx-auto max-w-5xl px-6 py-24 sm:py-32">
-      <p class="text-[11px] font-medium uppercase tracking-[0.35em] text-cyan-300">02 &middot; Projects</p>
+      <p class="text-[11px] font-medium uppercase tracking-[0.35em] text-cyan-300">03 &middot; Projects</p>
       <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">Currently in orbit</h2>
-      <p class="mt-4 max-w-xl text-white/60">Four projects, four orbits, four speeds. Open one from the system above or right here.</p>
+      <p class="mt-4 max-w-xl text-white/60">Three projects, three orbits, three speeds. Open one from the system above or right here.</p>
 
       <div class="mt-12 grid gap-6 sm:grid-cols-2">
         <article class="rounded-2xl border border-white/10 bg-white/5 p-6 transition-colors duration-200 hover:border-violet2/50">
           <p class="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.25em] text-white/60">
             <span class="h-2.5 w-2.5 rounded-full" style="background:#A78BFA" aria-hidden="true"></span>Orbit I &middot; inner &middot; fastest
           </p>
-          <h3 class="mt-3 font-display text-xl font-semibold text-white">Perihelion</h3>
-          <p class="mt-2 text-white/70">A real-time analytics dashboard that keeps the hottest metrics closest to the sun.</p>
+          <h3 class="mt-3 font-display text-xl font-semibold text-white">OpenSight</h3>
+          <p class="mt-2 text-white/70">A real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. Top 10 finalist in North America out of 2,500+ teams, Google Developer Groups Solution Challenge 2026. Cuts a multi-step web task to under 60 seconds against a screen reader baseline of 5 to 10 minutes.</p>
           <ul class="mt-4 flex flex-wrap gap-2" aria-label="Technologies">
-            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">TypeScript</li>
-            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">D3.js</li>
+            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">FastAPI</li>
             <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">WebSockets</li>
+            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">Gemini on Vertex AI</li>
+            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">Deepgram</li>
           </ul>
-          <button type="button" data-project="0" aria-label="Open Perihelion details"
-                  class="mt-5 cursor-pointer rounded-full border border-white/15 px-4 py-2 text-sm text-white/80 transition-colors duration-200 hover:border-violet2/60 hover:text-white active:scale-95">
-            Open detail
-          </button>
+          <div class="mt-5 flex flex-wrap items-center gap-3">
+            <button type="button" data-project="0" aria-label="Open OpenSight details"
+                    class="cursor-pointer rounded-full border border-white/15 px-4 py-2 text-sm text-white/80 transition-colors duration-200 hover:border-violet2/60 hover:text-white active:scale-95">
+              Open detail
+            </button>
+            <a href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026"
+               class="rounded-full border border-white/15 px-4 py-2 text-sm text-white/80 transition-colors duration-200 hover:border-violet2/60 hover:text-white active:scale-95">
+              View repo &nearr;
+            </a>
+          </div>
         </article>
 
         <article class="rounded-2xl border border-white/10 bg-white/5 p-6 transition-colors duration-200 hover:border-teal2/50">
           <p class="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.25em] text-white/60">
             <span class="h-2.5 w-2.5 rounded-full" style="background:#22D3EE" aria-hidden="true"></span>Orbit II &middot; mid &middot; steady
           </p>
-          <h3 class="mt-3 font-display text-xl font-semibold text-white">Lagrange</h3>
-          <p class="mt-2 text-white/70">A scheduling engine that finds the one stable point between five competing calendars.</p>
+          <h3 class="mt-3 font-display text-xl font-semibold text-white">Algae bloom prediction</h3>
+          <p class="mt-2 text-white/70">Autonomous algae bloom detection across 50k+ satellite images with 92% detection accuracy. Deployed to AWS Lambda for real-time monitoring.</p>
           <ul class="mt-4 flex flex-wrap gap-2" aria-label="Technologies">
-            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">Go</li>
-            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">gRPC</li>
-            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">Redis</li>
+            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">AWS Lambda</li>
+            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">Satellite imagery</li>
           </ul>
-          <button type="button" data-project="1" aria-label="Open Lagrange details"
+          <button type="button" data-project="1" aria-label="Open Algae bloom prediction details"
                   class="mt-5 cursor-pointer rounded-full border border-white/15 px-4 py-2 text-sm text-white/80 transition-colors duration-200 hover:border-teal2/60 hover:text-white active:scale-95">
             Open detail
           </button>
@@ -173,32 +200,15 @@
           <p class="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.25em] text-white/60">
             <span class="h-2.5 w-2.5 rounded-full" style="background:#8B5CF6" aria-hidden="true"></span>Orbit III &middot; outer &middot; slow
           </p>
-          <h3 class="mt-3 font-display text-xl font-semibold text-white">Apogee</h3>
-          <p class="mt-2 text-white/70">A release-tracking tool that charts every deploy at the highest point of its arc.</p>
+          <h3 class="mt-3 font-display text-xl font-semibold text-white">Wildfire spread prediction</h3>
+          <p class="mt-2 text-white/70">A deep learning pipeline trained on 100k+ NASA environmental datapoints from VIIRS and MODIS. Containerized with Kubernetes and Helm.</p>
           <ul class="mt-4 flex flex-wrap gap-2" aria-label="Technologies">
-            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">React</li>
-            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">Node.js</li>
-            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">Postgres</li>
+            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">Kubernetes</li>
+            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">Helm</li>
+            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">VIIRS + MODIS</li>
           </ul>
-          <button type="button" data-project="2" aria-label="Open Apogee details"
+          <button type="button" data-project="2" aria-label="Open Wildfire spread prediction details"
                   class="mt-5 cursor-pointer rounded-full border border-white/15 px-4 py-2 text-sm text-white/80 transition-colors duration-200 hover:border-primary/70 hover:text-white active:scale-95">
-            Open detail
-          </button>
-        </article>
-
-        <article class="rounded-2xl border border-white/10 bg-white/5 p-6 transition-colors duration-200 hover:border-white/40">
-          <p class="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.25em] text-white/60">
-            <span class="h-2.5 w-2.5 rounded-full" style="background:#E7E5E4" aria-hidden="true"></span>Orbit IV &middot; far &middot; slowest
-          </p>
-          <h3 class="mt-3 font-display text-xl font-semibold text-white">Ionosphere</h3>
-          <p class="mt-2 text-white/70">A design-system layer that every product signal has to bounce off before it ships.</p>
-          <ul class="mt-4 flex flex-wrap gap-2" aria-label="Technologies">
-            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">Figma API</li>
-            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">CSS</li>
-            <li class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">Storybook</li>
-          </ul>
-          <button type="button" data-project="3" aria-label="Open Ionosphere details"
-                  class="mt-5 cursor-pointer rounded-full border border-white/15 px-4 py-2 text-sm text-white/80 transition-colors duration-200 hover:border-white/50 hover:text-white active:scale-95">
             Open detail
           </button>
         </article>
@@ -207,23 +217,23 @@
 
     <!-- ===================== CONTACT ===================== -->
     <section id="contact" class="mx-auto max-w-3xl px-6 py-24 sm:py-32">
-      <p class="text-[11px] font-medium uppercase tracking-[0.35em] text-cyan-300">03 &middot; Contact</p>
+      <p class="text-[11px] font-medium uppercase tracking-[0.35em] text-cyan-300">04 &middot; Contact</p>
       <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">Make contact</h2>
       <p class="mt-4 max-w-xl text-white/70">
-        Placeholder outreach line: if you'd like to pull a project into your own orbit, send a signal.
+        If you want to talk agents, NLP pipelines, or ML infra, send a signal.
       </p>
       <div class="mt-8 flex flex-wrap items-center gap-3">
-        <a href="mailto:hello@alexmorgan.dev"
+        <a href="mailto:somala.abhi@gmail.com"
            class="flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-violet2 hover:text-ink active:scale-95">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          hello@alexmorgan.dev
+          somala.abhi@gmail.com
         </a>
-        <a href="#"
+        <a href="https://github.com/abhisomala"
            class="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm text-white/80 transition-colors duration-200 hover:border-white/40 hover:text-white active:scale-95">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
           GitHub
         </a>
-        <a href="#"
+        <a href="https://www.linkedin.com/in/abhijitsomala"
            class="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm text-white/80 transition-colors duration-200 hover:border-white/40 hover:text-white active:scale-95">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
           LinkedIn
@@ -233,7 +243,7 @@
   </main>
 
   <footer class="border-t border-white/10 px-6 py-10 text-center text-sm text-white/60">
-    &copy; 2026 Alex Morgan &mdash; placeholder footer. Everything above is in a stable orbit.
+    &copy; 2026 Abhijit Somala. Everything above is in a stable orbit.
   </footer>
 
   <!-- ===================== PROJECT DETAIL DIALOG ===================== -->
@@ -248,13 +258,13 @@
       <p id="dialog-desc" class="mt-3 leading-relaxed text-white/80"></p>
       <ul id="dialog-tags" class="mt-5 flex flex-wrap gap-2" aria-label="Technologies"></ul>
       <div class="mt-7 flex flex-wrap items-center gap-3">
-        <a id="dialog-link" href="#"
+        <a id="dialog-link" href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026"
            class="rounded-full bg-primary px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-violet2 hover:text-ink active:scale-95">
           Visit project &nearr;
         </a>
         <button id="dialog-close" type="button"
                 class="cursor-pointer rounded-full border border-white/15 px-4 py-2 text-sm text-white/80 transition-colors duration-200 hover:border-white/40 hover:text-white active:scale-95">
-          Close &mdash; return to orbit
+          Close, return to orbit
         </button>
       </div>
     </div>
@@ -267,18 +277,16 @@
     function $(id) { return document.getElementById(id); }
 
     var PROJECTS = [
-      { name: 'Perihelion', color: '#A78BFA', orbit: 'Orbit I · inner · fastest',
-        desc: 'A real-time analytics dashboard that keeps the hottest metrics closest to the sun. Placeholder detail copy for this pass.',
-        tags: ['TypeScript', 'D3.js', 'WebSockets'] },
-      { name: 'Lagrange', color: '#22D3EE', orbit: 'Orbit II · mid · steady',
-        desc: 'A scheduling engine that finds the one stable point between five competing calendars. Placeholder detail copy for this pass.',
-        tags: ['Go', 'gRPC', 'Redis'] },
-      { name: 'Apogee', color: '#8B5CF6', orbit: 'Orbit III · outer · slow',
-        desc: 'A release-tracking tool that charts every deploy at the highest point of its arc. Placeholder detail copy for this pass.',
-        tags: ['React', 'Node.js', 'Postgres'] },
-      { name: 'Ionosphere', color: '#E7E5E4', orbit: 'Orbit IV · far · slowest',
-        desc: 'A design-system layer that every product signal has to bounce off before it ships. Placeholder detail copy for this pass.',
-        tags: ['Figma API', 'CSS', 'Storybook'] }
+      { name: 'OpenSight', color: '#A78BFA', orbit: 'Orbit I · inner · fastest',
+        desc: 'A real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. Top 10 finalist in North America out of 2,500+ teams, Google Developer Groups Solution Challenge 2026. Cuts a multi-step web task to under 60 seconds against a screen reader baseline of 5 to 10 minutes. Validated directly with the Blind Institute of Technology and the Virginia Department for the Blind and Vision Impaired.',
+        tags: ['FastAPI', 'WebSockets', 'Gemini on Vertex AI', 'Deepgram', 'Google Cloud TTS'],
+        link: 'https://github.com/abhisomala/OpenSight_GDGChallenge_2026' },
+      { name: 'Algae bloom prediction', color: '#22D3EE', orbit: 'Orbit II · mid · steady',
+        desc: 'Autonomous algae bloom detection across 50k+ satellite images with 92% detection accuracy. Deployed to AWS Lambda for real-time monitoring.',
+        tags: ['AWS Lambda', 'Satellite imagery'], link: null },
+      { name: 'Wildfire spread prediction', color: '#8B5CF6', orbit: 'Orbit III · outer · slow',
+        desc: 'A deep learning pipeline trained on 100k+ NASA environmental datapoints from VIIRS and MODIS. Containerized with Kubernetes and Helm.',
+        tags: ['Kubernetes', 'Helm', 'VIIRS + MODIS'], link: null }
     ];
 
     var reducedQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
@@ -307,6 +315,15 @@
       var title = $('dialog-title');
       var desc = $('dialog-desc');
       var tags = $('dialog-tags');
+      var link = $('dialog-link');
+      if (link) {
+        if (p.link) {
+          link.href = p.link;
+          link.classList.remove('hidden');
+        } else {
+          link.classList.add('hidden');
+        }
+      }
       if (dot) dot.style.background = p.color;
       if (orbitText) orbitText.textContent = p.orbit;
       if (title) title.textContent = p.name;
@@ -390,7 +407,7 @@
     // Minimal focus trap inside the dialog.
     document.addEventListener('keydown', function (e) {
       if (!dialogOpen || e.key !== 'Tab' || !panel) return;
-      var focusables = panel.querySelectorAll('a[href], button');
+      var focusables = panel.querySelectorAll('a[href]:not(.hidden), button');
       if (!focusables.length) return;
       var first = focusables[0];
       var lastEl = focusables[focusables.length - 1];
@@ -403,9 +420,9 @@
 
     if (!hero || !canvas || !ctx) return; // Sections + dialog still fully work without canvas.
 
-    var RADIUS_FACTORS = [0.42, 0.62, 0.81, 1.0];
-    var SPEEDS = [0.26, 0.19, 0.13, 0.09]; // rad/s - each orbit at a different speed
-    var START_ANGLES = [-Math.PI / 2, 0.4, Math.PI * 0.78, Math.PI * 1.32];
+    var RADIUS_FACTORS = [0.45, 0.72, 1.0];
+    var SPEEDS = [0.26, 0.17, 0.11]; // rad/s - each orbit at a different speed
+    var START_ANGLES = [-Math.PI / 2, 0.4, Math.PI * 1.15];
     var DOT_R = 7;
     var LAUNCH = 56; // px past the orbit ring = "escape velocity"
 

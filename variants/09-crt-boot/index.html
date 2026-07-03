@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Variant 09 - CRT boot sequence</title>
+<title>Abhijit Somala - CRT boot sequence</title>
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -182,7 +182,7 @@
     <header id="top" class="min-h-screen flex flex-col max-w-5xl mx-auto px-5 sm:px-8">
       <!-- terminal menu bar -->
       <nav aria-label="Sections" class="mt-16 sm:mt-8 border border-crt-border bg-crt-panel flex flex-wrap items-center gap-x-5 gap-y-1 px-4 py-2 text-sm">
-        <span class="font-display text-xl text-crt-greenlt glow-green select-none">ALEXOS v2.6</span>
+        <span class="font-display text-xl text-crt-greenlt glow-green select-none">SOMALA-OS v2.6</span>
         <span class="text-crt-border select-none" aria-hidden="true">|</span>
         <a href="#about"    class="text-crt-muted hover:text-crt-greenlt transition-colors duration-200">/about</a>
         <a href="#projects" class="text-crt-muted hover:text-crt-greenlt transition-colors duration-200">/projects</a>
@@ -191,8 +191,8 @@
 
       <div class="flex-1 flex flex-col justify-center py-14">
         <p class="text-crt-green text-sm sm:text-base uppercase tracking-[0.3em] mb-3">Boot complete &middot; session 001</p>
-        <h1 class="font-display text-6xl sm:text-8xl leading-none text-crt-fg glow-soft">ALEX MORGAN</h1>
-        <p class="font-display text-2xl sm:text-4xl text-crt-greenlt glow-green mt-2">SOFTWARE ENGINEER &amp; DESIGNER</p>
+        <h1 class="font-display text-6xl sm:text-8xl leading-none text-crt-fg glow-soft">ABHIJIT SOMALA</h1>
+        <p class="font-display text-2xl sm:text-4xl text-crt-greenlt glow-green mt-2">ML ENGINEER. BUILDS THINGS THAT SHIP.</p>
 
         <!-- terminal window -->
         <div class="mt-10 border border-crt-border bg-crt-panel max-w-2xl">
@@ -200,14 +200,14 @@
             <span class="w-2.5 h-2.5 bg-crt-red inline-block" aria-hidden="true"></span>
             <span class="w-2.5 h-2.5 bg-crt-border inline-block" aria-hidden="true"></span>
             <span class="w-2.5 h-2.5 bg-crt-green inline-block" aria-hidden="true"></span>
-            <span class="ml-2 text-xs text-crt-muted uppercase tracking-widest">tty1 &mdash; alex@crt</span>
+            <span class="ml-2 text-xs text-crt-muted uppercase tracking-widest">tty1 &middot; abhi@crt</span>
           </div>
           <div class="px-4 py-4 text-sm sm:text-base leading-relaxed overflow-x-auto">
-            <p><span class="text-crt-green">alex@crt:~$</span> whoami</p>
-            <p class="text-crt-fg mb-3">Alex Morgan &mdash; I build fast, humane software and design the interfaces it deserves.</p>
-            <p><span class="text-crt-green">alex@crt:~$</span> ls /sections</p>
+            <p><span class="text-crt-green">abhi@crt:~$</span> whoami</p>
+            <p class="text-crt-fg mb-3">Abhi Somala. ML engineer at Cornell University (ORIE). I build multi-agent systems, NLP pipelines, and ML infra that ships to production.</p>
+            <p><span class="text-crt-green">abhi@crt:~$</span> ls /sections</p>
             <p class="text-crt-muted mb-3">about/&nbsp;&nbsp;projects/&nbsp;&nbsp;contact/</p>
-            <p><span class="text-crt-green">alex@crt:~$</span> <span class="cursor-block" aria-hidden="true"></span></p>
+            <p><span class="text-crt-green">abhi@crt:~$</span> <span class="cursor-block" aria-hidden="true"></span></p>
           </div>
         </div>
 
@@ -232,18 +232,17 @@
         <h2 id="about-h" class="font-display text-4xl sm:text-5xl text-crt-greenlt glow-green mb-8">ABOUT.TXT</h2>
         <div class="grid gap-6 max-w-3xl text-crt-fg leading-relaxed text-sm sm:text-base">
           <p>
-            I&rsquo;m a software engineer and designer with a soft spot for machines that boot with a hum.
-            I spend my days building web platforms &mdash; design systems, data-heavy dashboards, tools
-            that other engineers rely on &mdash; and my evenings sketching the interfaces they should have had all along.
+            <span class="text-crt-greenlt">Focara</span> (stealth EdTech startup): built a Canvas webhook plus LLM
+            classifier that surfaces critical announcements before academic deadlines. Cut pipeline latency
+            from 900ms to 500ms.
           </p>
           <p>
-            My work sits at the seam between engineering and design: close enough to the metal to care
-            about milliseconds, close enough to people to care about what the milliseconds feel like.
-            Placeholder copy, sure &mdash; but the sentiment ships.
+            <span class="text-crt-greenlt">Virginia Tech NLP Research Lab</span>: led a 10-person team rebuilding a
+            recommendation pipeline with no baseline to start from. Got a 40%+ MAP improvement and shipped
+            pipelines serving 45k users.
           </p>
           <p class="text-crt-muted">
-            Currently: senior engineer at Placeholder Systems, Inc. Previously: two startups, one agency,
-            and a garage full of lovingly restored CRTs.
+            Currently: ML engineer at Cornell University (ORIE).
           </p>
         </div>
       </section>
@@ -253,48 +252,19 @@
         <p class="text-crt-muted text-xs uppercase tracking-[0.3em] mb-2">&gt; ls -la /sections/projects/</p>
         <h2 id="projects-h" class="font-display text-4xl sm:text-5xl text-crt-greenlt glow-green mb-10">PROJECTS.DAT</h2>
 
-        <div class="grid gap-5 sm:grid-cols-2">
+        <div class="grid gap-5 max-w-2xl">
 
           <article class="border border-crt-border bg-crt-panel p-5 hover:border-crt-green transition-colors duration-200">
             <p class="text-xs text-crt-muted uppercase tracking-widest mb-2">drwxr-xr-x &middot; 01</p>
-            <h3 class="font-display text-3xl text-crt-fg glow-soft mb-2">PHOSPHOR-UI</h3>
-            <p class="text-sm text-crt-muted leading-relaxed mb-4">A component library that renders every widget with authentic CRT glow and zero layout shift.</p>
+            <h3 class="font-display text-3xl text-crt-fg glow-soft mb-2">OPENSIGHT</h3>
+            <p class="text-sm text-crt-muted leading-relaxed mb-3">A real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. Cuts a multi-step web task down to under 60 seconds, against a screen reader baseline of 5 to 10 minutes. Top 10 finalist in North America out of 2,500+ teams in the Google Developer Groups Solution Challenge 2026.</p>
+            <a href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026"
+               class="inline-block text-sm text-crt-greenlt hover:text-crt-fg transition-colors duration-200 mb-4">&gt; git clone OpenSight [view source]</a>
             <ul class="flex flex-wrap gap-2 text-xs">
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">TypeScript</li>
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">Web Components</li>
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">CSS</li>
-            </ul>
-          </article>
-
-          <article class="border border-crt-border bg-crt-panel p-5 hover:border-crt-green transition-colors duration-200">
-            <p class="text-xs text-crt-muted uppercase tracking-widest mb-2">drwxr-xr-x &middot; 02</p>
-            <h3 class="font-display text-3xl text-crt-fg glow-soft mb-2">BOOTLDR</h3>
-            <p class="text-sm text-crt-muted leading-relaxed mb-4">A deploy dashboard that renders CI pipelines as an old-school POST sequence, red beeps included.</p>
-            <ul class="flex flex-wrap gap-2 text-xs">
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">Go</li>
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">React</li>
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">Docker</li>
-            </ul>
-          </article>
-
-          <article class="border border-crt-border bg-crt-panel p-5 hover:border-crt-green transition-colors duration-200">
-            <p class="text-xs text-crt-muted uppercase tracking-widest mb-2">drwxr-xr-x &middot; 03</p>
-            <h3 class="font-display text-3xl text-crt-fg glow-soft mb-2">SCANLINE.DB</h3>
-            <p class="text-sm text-crt-muted leading-relaxed mb-4">A keyboard-first terminal explorer for time-series data &mdash; query, graph, and export without a mouse.</p>
-            <ul class="flex flex-wrap gap-2 text-xs">
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">Rust</li>
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">SQL</li>
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">WebGL</li>
-            </ul>
-          </article>
-
-          <article class="border border-crt-border bg-crt-panel p-5 hover:border-crt-green transition-colors duration-200">
-            <p class="text-xs text-crt-muted uppercase tracking-widest mb-2">drwxr-xr-x &middot; 04</p>
-            <h3 class="font-display text-3xl text-crt-fg glow-soft mb-2">TELETYPE</h3>
-            <p class="text-sm text-crt-muted leading-relaxed mb-4">Real-time chat with a teletype soul &mdash; optional 300-baud mode for conversations worth savoring.</p>
-            <ul class="flex flex-wrap gap-2 text-xs">
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">Node.js</li>
+              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">FastAPI</li>
               <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">WebSockets</li>
+              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">Gemini on Vertex AI</li>
+              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">Deepgram</li>
             </ul>
           </article>
 
@@ -307,26 +277,26 @@
         <h2 id="contact-h" class="font-display text-4xl sm:text-5xl text-crt-greenlt glow-green mb-8">CONTACT.CFG</h2>
 
         <div class="border border-crt-border bg-crt-panel max-w-2xl">
-          <div class="border-b border-crt-border px-4 py-2 text-xs text-crt-muted uppercase tracking-widest">uplink &mdash; standing by</div>
+          <div class="border-b border-crt-border px-4 py-2 text-xs text-crt-muted uppercase tracking-widest">uplink &middot; standing by</div>
           <div class="p-5 grid gap-4 text-sm sm:text-base">
             <p class="text-crt-fg">Transmission channels open. Response time: one business boot cycle.</p>
 
-            <a href="mailto:hello@alexmorgan.dev"
+            <a href="mailto:somala.abhi@gmail.com"
                class="inline-flex items-center gap-3 text-crt-greenlt hover:text-crt-fg transition-colors duration-200 w-fit">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 shrink-0" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-              <span>hello@alexmorgan.dev</span>
+              <span>somala.abhi@gmail.com</span>
             </a>
 
-            <a href="#"
+            <a href="https://github.com/abhisomala"
                class="inline-flex items-center gap-3 text-crt-greenlt hover:text-crt-fg transition-colors duration-200 w-fit">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 shrink-0" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
-              <span>github.com/alexmorgan</span>
+              <span>github.com/abhisomala</span>
             </a>
 
-            <a href="#"
+            <a href="https://www.linkedin.com/in/abhijitsomala"
                class="inline-flex items-center gap-3 text-crt-greenlt hover:text-crt-fg transition-colors duration-200 w-fit">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 shrink-0" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
-              <span>linkedin.com/in/alexmorgan</span>
+              <span>linkedin.com/in/abhijitsomala</span>
             </a>
           </div>
         </div>
@@ -335,9 +305,9 @@
 
     <footer class="border-t border-crt-border">
       <div class="max-w-5xl mx-auto px-5 sm:px-8 py-6 flex flex-wrap gap-x-6 gap-y-1 text-xs text-crt-muted uppercase tracking-widest">
-        <span>ALEXOS v2.6.1</span>
+        <span>SOMALA-OS v2.6.1</span>
         <span aria-hidden="true">&middot;</span>
-        <span>&copy; 2026 Alex Morgan</span>
+        <span>&copy; 2026 Abhijit Somala</span>
         <span aria-hidden="true">&middot;</span>
         <span class="text-crt-green">All systems nominal</span>
       </div>
@@ -490,23 +460,23 @@
   }
 
   var steps = [
-    line('MORGAN SYSTEMS PHOSPHOR BIOS v2.6.1', 'bl-fg', 260),
-    line('(C) 1986-2026 ALEXOS PROJECT', 'bl-dim', 320),
+    line('SOMALA SYSTEMS PHOSPHOR BIOS v2.6.1', 'bl-fg', 260),
+    line('(C) 2026 SOMALA-OS PROJECT', 'bl-dim', 320),
     line(' ', '', 140),
-    line('CPU : ALEX MORGAN @ 4.0GHZ', '', 170),
-    line('CORES : ENGINEER x1 / DESIGNER x1', '', 170),
+    line('CPU : ABHIJIT SOMALA @ 4.0GHZ', '', 170),
+    line('CORES : ML x1 / ENGINEER x1', '', 170),
     memTest(),
     line('VIDEO : PHOSPHOR CRT / GREEN P1', '', 190),
     line(' ', '', 130),
-    line('DETECTING CURIOSITY ......... OK', '', 210),
-    line('DETECTING SHIPPED WORK ...... 4 FOUND', '', 210),
+    line('DETECTING CORNELL ORIE ...... OK', '', 210),
+    line('DETECTING SHIPPED WORK ...... 1 FOUND', '', 210),
     line('MOUNTING /DEV/PORTFOLIO ..... OK', '', 260),
     line(' ', '', 130),
     bar('KERNEL.SYS  '),
     bar('PROJECTS.DAT'),
     bar('CONTACT.CFG '),
     line(' ', '', 130),
-    line('BOOT OK - STARTING ALEXOS ...', 'bl-hi', 620)
+    line('BOOT OK - STARTING SOMALA-OS ...', 'bl-hi', 620)
   ];
 
   (function runSteps(i) {
