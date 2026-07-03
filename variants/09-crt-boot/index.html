@@ -3,487 +3,737 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Abhijit Somala - CRT boot sequence</title>
+<title>Abhijit Somala - CRT boot</title>
+<meta name="description" content="Abhijit Somala. ML engineer. Terminal portfolio.">
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          crt: {
-            bg: '#020617',
-            panel: '#0F172A',
-            panel2: '#1E293B',
-            border: '#334155',
-            green: '#22C55E',
-            greenlt: '#4ADE80',
-            fg: '#F8FAFC',
-            muted: '#94A3B8',
-            red: '#EF4444'
-          }
-        },
-        fontFamily: {
-          display: ['VT323', 'monospace'],
-          mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
-        }
-      }
-    }
-  };
-</script>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  html { background: #020617; }
-  body { background: #020617; color: #F8FAFC; }
-  body.booting { overflow: hidden; }
-  body.booting #main-content { visibility: hidden; }
-
-  ::selection { background: #22C55E; color: #020617; }
-
-  :focus-visible {
-    outline: 2px solid #4ADE80;
-    outline-offset: 2px;
-    border-radius: 2px;
+  :root {
+    --bg: #020905;
+    --g: #41ff7a;
+    --g-hi: #c9ffdb;
+    --g-dim: #2dbd60;
+    --g-mut: #1d8a46;
+    --border: #14532d;
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --fs: 15px;
   }
-  #main-content:focus { outline: none; }
+  @media (max-width: 430px) { :root { --fs: 13.5px; } }
 
-  /* ---- THE MECHANIC, part 2: persistent subtle scanline + flicker overlay ---- */
-  #crt-overlay {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--g);
+    font-family: var(--mono);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--g); color: #02140a; }
+  :focus-visible { outline: 2px solid var(--g); outline-offset: 2px; }
+
+  /* ---------- stage: the whole terminal ---------- */
+  #stage {
     position: fixed;
     inset: 0;
-    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+  }
+  #stage.poweron { animation: crtOn 0.5s cubic-bezier(0.23, 1, 0.32, 1) both; }
+  @keyframes crtOn {
+    0%   { transform: scale(1, 0.012); filter: brightness(4); opacity: 0.4; }
+    55%  { transform: scale(1, 1);     filter: brightness(1.6); opacity: 1; }
+    100% { transform: none;            filter: brightness(1); opacity: 1; }
+  }
+
+  #tbar {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px clamp(14px, 4vw, 24px);
+    padding-right: 158px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--g-dim);
+    white-space: nowrap;
+  }
+  @media (max-width: 560px) { #tbar-right { display: none; } }
+
+  #scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px clamp(14px, 4vw, 24px) 10px;
+    font-size: var(--fs);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  #scroll::-webkit-scrollbar { width: 10px; }
+  #scroll::-webkit-scrollbar-thumb { background: var(--border); }
+  #scroll::-webkit-scrollbar-track { background: transparent; }
+
+  .line {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.6;
+    min-height: 1.6em;
+    text-shadow: 0 0 6px rgba(65, 255, 122, 0.25);
+  }
+  .dim { color: var(--g-dim); }
+  .mut { color: var(--g-mut); text-shadow: none; }
+  .hi  { color: var(--g-hi); text-shadow: 0 0 8px rgba(130, 255, 175, 0.4); }
+  .head { color: var(--g-hi); letter-spacing: 0.1em; text-shadow: 0 0 8px rgba(130, 255, 175, 0.4); }
+  .banner {
+    font-family: 'VT323', var(--mono);
+    font-size: clamp(36px, 9vw, 60px);
+    line-height: 1.05;
+    color: var(--g-hi);
+    text-shadow: 0 0 16px rgba(95, 255, 155, 0.55), 0 0 3px rgba(201, 255, 219, 0.6);
+    padding: 10px 0 2px;
+  }
+
+  .cmd {
+    color: var(--g-hi);
+    background: rgba(65, 255, 122, 0.09);
+    border: 1px solid var(--border);
+    padding: 1px 7px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .cmd:hover, .cmd:focus-visible {
+    background: var(--g);
+    color: #02140a;
+    border-color: var(--g);
+    text-shadow: none;
+  }
+  #scroll a {
+    color: var(--g-hi);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  #scroll a:hover { background: var(--g); color: #02140a; text-shadow: none; }
+
+  /* ---------- prompt row ---------- */
+  #prow {
+    flex: 0 0 auto;
+    display: none;
+    position: relative;
+    align-items: baseline;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--border);
+    padding: 12px clamp(14px, 4vw, 24px);
+    font-size: var(--fs);
+    cursor: text;
+  }
+  body.ready #prow { display: flex; }
+  #ps1 { color: var(--g-dim); white-space: pre; }
+  #mirror { color: var(--g-hi); white-space: pre-wrap; overflow-wrap: anywhere; text-shadow: 0 0 8px rgba(130, 255, 175, 0.4); }
+  #caret {
+    width: 0.6em;
+    height: 1.15em;
+    margin-left: 1px;
+    background: var(--g);
+    box-shadow: 0 0 8px rgba(65, 255, 122, 0.8);
+    display: inline-block;
+    vertical-align: text-bottom;
+    animation: caretblink 1.12s steps(1, end) infinite;
+  }
+  body.typing #caret { animation: none; opacity: 1; }
+  @keyframes caretblink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0.15; } }
+  #cmd {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    border: none;
+    background: transparent;
+    color: transparent;
+    font: inherit;
+    font-size: 16px;
+    caret-color: transparent;
+    cursor: text;
+  }
+  #cmd:focus { outline: none; }
+
+  /* ---------- CRT overlay layers ---------- */
+  #scan {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
     pointer-events: none;
     background:
-      repeating-linear-gradient(to bottom,
-        rgba(0, 0, 0, 0) 0px,
-        rgba(0, 0, 0, 0) 2px,
-        rgba(0, 0, 0, 0.22) 2px,
-        rgba(0, 0, 0, 0.22) 3px),
-      radial-gradient(ellipse at center,
-        rgba(0, 0, 0, 0) 55%,
-        rgba(0, 0, 0, 0.32) 100%);
-    animation: crtFlicker 6s linear infinite;
+      repeating-linear-gradient(0deg,
+        rgba(0, 0, 0, 0.3) 0px, rgba(0, 0, 0, 0.3) 1px,
+        rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 3px),
+      radial-gradient(ellipse at 50% 45%,
+        rgba(0, 0, 0, 0) 55%, rgba(0, 8, 3, 0.55) 100%);
   }
-  @keyframes crtFlicker {
-    0%   { opacity: 1; }
-    6%   { opacity: 0.88; }
-    9%   { opacity: 1; }
-    32%  { opacity: 0.95; }
-    36%  { opacity: 1; }
-    58%  { opacity: 0.86; }
-    61%  { opacity: 1; }
-    83%  { opacity: 0.94; }
-    87%  { opacity: 1; }
-    100% { opacity: 1; }
-  }
-
-  /* ---- THE MECHANIC, part 1: one-time boot / POST sequence ---- */
-  #boot-screen {
+  #flick {
     position: fixed;
     inset: 0;
-    z-index: 50;
-    background: #020617;
-    transform-origin: 50% 50%;
+    z-index: 71;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 38%, rgba(120, 255, 170, 0.07), rgba(0, 0, 0, 0) 62%);
+    opacity: 0.5;
+    animation: flickA 6.4s steps(1, end) infinite;
   }
-  #boot-log {
-    font-family: 'VT323', monospace;
-    font-size: clamp(15px, 4vw, 22px);
-    line-height: 1.45;
-    color: #22C55E;
-    white-space: pre-wrap;
-    word-break: break-word;
-    text-shadow: 0 0 8px rgba(34, 197, 94, 0.45);
+  @keyframes flickA {
+    0%   { opacity: 0.45; }
+    9%   { opacity: 0.62; }
+    11%  { opacity: 0.42; }
+    23%  { opacity: 0.55; }
+    31%  { opacity: 0.4;  }
+    47%  { opacity: 0.6;  }
+    52%  { opacity: 0.44; }
+    68%  { opacity: 0.58; }
+    77%  { opacity: 0.42; }
+    88%  { opacity: 0.56; }
+    100% { opacity: 0.45; }
   }
-  #boot-log .bl-fg    { color: #F8FAFC; text-shadow: 0 0 8px rgba(248, 250, 252, 0.35); }
-  #boot-log .bl-dim   { color: #94A3B8; text-shadow: none; }
-  #boot-log .bl-hi    { color: #4ADE80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.6); }
-
-  .boot-off { animation: bootOff 0.38s ease-in forwards; }
-  @keyframes bootOff {
-    0%   { opacity: 1; transform: scaleY(1); filter: brightness(1); }
-    60%  { opacity: 1; transform: scaleY(0.006); filter: brightness(3.5); }
-    100% { opacity: 0; transform: scaleY(0.002); filter: brightness(0.2); }
-  }
-
-  .crt-on {
-    animation: crtOn 0.55s cubic-bezier(0.23, 1, 0.32, 1) both;
-    transform-origin: 50% 50%;
-  }
-  @keyframes crtOn {
-    0%   { transform: scale(1, 0.01); filter: brightness(4); opacity: 0.4; }
-    55%  { transform: scale(1, 1);    filter: brightness(1.7); opacity: 1; }
-    100% { transform: none;           filter: brightness(1); opacity: 1; }
+  /* activity-reactive: stronger flicker plus a tiny jitter while text is printing */
+  body.crt-hot #flick { animation: flickB 0.17s steps(2, end) infinite; }
+  @keyframes flickB { 0% { opacity: 0.8; } 50% { opacity: 0.35; } 100% { opacity: 0.75; } }
+  body.crt-hot #scroll { animation: jit 0.15s steps(2, end) infinite; }
+  @keyframes jit {
+    0%   { transform: translate(0, 0); }
+    25%  { transform: translate(0.5px, -0.5px); }
+    50%  { transform: translate(-0.5px, 0.4px); }
+    75%  { transform: translate(0.4px, 0.5px); }
+    100% { transform: translate(0, 0); }
   }
 
-  .glow-green { text-shadow: 0 0 10px rgba(34, 197, 94, 0.55), 0 0 2px rgba(34, 197, 94, 0.8); }
-  .glow-soft  { text-shadow: 0 0 12px rgba(248, 250, 252, 0.25); }
-
-  .cursor-block {
-    display: inline-block;
-    width: 0.55em;
-    height: 1em;
-    background: #22C55E;
-    vertical-align: text-bottom;
-    animation: blink 1.06s steps(1) infinite;
+  /* ---------- chrome ---------- */
+  #backlink {
+    position: fixed;
+    top: 8px;
+    right: 10px;
+    z-index: 60;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--g-dim);
+    border: 1px solid var(--border);
+    background: rgba(1, 10, 5, 0.9);
+    padding: 5px 9px;
   }
-  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  #backlink:hover { color: var(--g-hi); border-color: var(--g-dim); }
 
-  /* Reduced motion: kill boot animations, flicker, and cursor blink.
-     JS also auto-skips the boot sequence entirely. */
+  #skiphint {
+    position: fixed;
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    z-index: 60;
+    color: var(--g-mut);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    display: none;
+  }
+  body.booting #skiphint { display: block; }
+
+  noscript .line { padding: 16px clamp(14px, 4vw, 24px); display: block; }
+  noscript a { color: var(--g-hi); }
+
+  /* ---------- reduced motion: no flicker, no jitter, no blink, static scanlines stay ---------- */
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-    #crt-overlay { animation: none !important; }
-    .cursor-block { animation: none !important; }
+    #flick { display: none; }
+    #caret { animation: none; opacity: 1; }
+    #stage { animation: none !important; filter: none !important; }
+    body.crt-hot #scroll { animation: none; }
+    .cmd, #scroll a, #backlink { transition: none; }
   }
 </style>
-<noscript>
-  <style>
-    #boot-screen { display: none !important; }
-    body.booting { overflow: auto !important; }
-    body.booting #main-content { visibility: visible !important; }
-  </style>
-</noscript>
 </head>
-<body class="booting bg-crt-bg text-crt-fg font-mono antialiased min-h-screen">
+<body>
 
-  <!-- All variants link (above boot overlay so it's always reachable) -->
-  <a href="../index.html"
-     class="fixed top-3 left-3 z-[60] text-xs font-mono uppercase tracking-widest bg-crt-panel text-crt-greenlt border border-crt-border px-3 py-1.5 hover:border-crt-green hover:text-crt-fg transition-colors duration-200">
-    &larr; All variants
-  </a>
+  <a id="backlink" href="../index.html">&larr; All variants</a>
 
-  <!-- Persistent scanline / flicker overlay -->
-  <div id="crt-overlay" aria-hidden="true"></div>
-
-  <!-- ============ BOOT / POST SCREEN ============ -->
-  <div id="boot-screen" aria-label="Boot sequence">
-    <div class="h-full flex flex-col p-5 pt-14 sm:p-10 sm:pt-16 max-w-3xl mx-auto">
-      <div id="boot-log" aria-hidden="true"></div>
-      <div class="mt-auto pt-6 flex items-center justify-between gap-4">
-        <span class="hidden sm:inline text-crt-muted text-xs uppercase tracking-widest" aria-hidden="true">phosphor bios &middot; green p1</span>
-        <button id="boot-skip" type="button"
-                class="font-display text-lg sm:text-xl text-crt-bg bg-crt-green px-4 py-1.5 uppercase tracking-wider cursor-pointer hover:bg-crt-greenlt transition-colors duration-200">
-          Skip boot [ESC]
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ MAIN CONTENT ============ -->
-  <div id="main-content" tabindex="-1">
-
-    <!-- HERO -->
-    <header id="top" class="min-h-screen flex flex-col max-w-5xl mx-auto px-5 sm:px-8">
-      <!-- terminal menu bar -->
-      <nav aria-label="Sections" class="mt-16 sm:mt-8 border border-crt-border bg-crt-panel flex flex-wrap items-center gap-x-5 gap-y-1 px-4 py-2 text-sm">
-        <span class="font-display text-xl text-crt-greenlt glow-green select-none">SOMALA-OS v2.6</span>
-        <span class="text-crt-border select-none" aria-hidden="true">|</span>
-        <a href="#about"    class="text-crt-muted hover:text-crt-greenlt transition-colors duration-200">/about</a>
-        <a href="#projects" class="text-crt-muted hover:text-crt-greenlt transition-colors duration-200">/projects</a>
-        <a href="#contact"  class="text-crt-muted hover:text-crt-greenlt transition-colors duration-200">/contact</a>
-      </nav>
-
-      <div class="flex-1 flex flex-col justify-center py-14">
-        <p class="text-crt-green text-sm sm:text-base uppercase tracking-[0.3em] mb-3">Boot complete &middot; session 001</p>
-        <h1 class="font-display text-6xl sm:text-8xl leading-none text-crt-fg glow-soft">ABHIJIT SOMALA</h1>
-        <p class="font-display text-2xl sm:text-4xl text-crt-greenlt glow-green mt-2">ML ENGINEER. BUILDS THINGS THAT SHIP.</p>
-
-        <!-- terminal window -->
-        <div class="mt-10 border border-crt-border bg-crt-panel max-w-2xl">
-          <div class="flex items-center gap-2 border-b border-crt-border px-4 py-2">
-            <span class="w-2.5 h-2.5 bg-crt-red inline-block" aria-hidden="true"></span>
-            <span class="w-2.5 h-2.5 bg-crt-border inline-block" aria-hidden="true"></span>
-            <span class="w-2.5 h-2.5 bg-crt-green inline-block" aria-hidden="true"></span>
-            <span class="ml-2 text-xs text-crt-muted uppercase tracking-widest">tty1 &middot; abhi@crt</span>
-          </div>
-          <div class="px-4 py-4 text-sm sm:text-base leading-relaxed overflow-x-auto">
-            <p><span class="text-crt-green">abhi@crt:~$</span> whoami</p>
-            <p class="text-crt-fg mb-3">Abhi Somala. ML engineer at Cornell University (ORIE). I build multi-agent systems, NLP pipelines, and ML infra that ships to production.</p>
-            <p><span class="text-crt-green">abhi@crt:~$</span> ls /sections</p>
-            <p class="text-crt-muted mb-3">about/&nbsp;&nbsp;projects/&nbsp;&nbsp;contact/</p>
-            <p><span class="text-crt-green">abhi@crt:~$</span> <span class="cursor-block" aria-hidden="true"></span></p>
-          </div>
-        </div>
-
-        <div class="mt-8 flex flex-wrap gap-4">
-          <a href="#projects"
-             class="font-display text-xl sm:text-2xl uppercase tracking-wider bg-crt-green text-crt-bg px-6 py-2 hover:bg-crt-greenlt transition-colors duration-200">
-            Run /projects
-          </a>
-          <a href="#contact"
-             class="font-display text-xl sm:text-2xl uppercase tracking-wider border border-crt-green text-crt-greenlt px-6 py-2 hover:bg-crt-panel2 transition-colors duration-200">
-            Open /contact
-          </a>
-        </div>
-      </div>
+  <div id="stage">
+    <header id="tbar">
+      <span id="tbar-left">SOMALA-OS v2.6 &middot; tty1</span>
+      <span id="tbar-right"><span id="clock">--:--:--</span> &middot; green P1 phosphor</span>
     </header>
-
-    <main class="max-w-5xl mx-auto px-5 sm:px-8">
-
-      <!-- ABOUT -->
-      <section id="about" aria-labelledby="about-h" class="py-16 sm:py-24 border-t border-crt-border">
-        <p class="text-crt-muted text-xs uppercase tracking-[0.3em] mb-2">&gt; cat /sections/about.txt</p>
-        <h2 id="about-h" class="font-display text-4xl sm:text-5xl text-crt-greenlt glow-green mb-8">ABOUT.TXT</h2>
-        <div class="grid gap-6 max-w-3xl text-crt-fg leading-relaxed text-sm sm:text-base">
-          <p>
-            <span class="text-crt-greenlt">Focara</span> (stealth EdTech startup): built a Canvas webhook plus LLM
-            classifier that surfaces critical announcements before academic deadlines. Cut pipeline latency
-            from 900ms to 500ms.
-          </p>
-          <p>
-            <span class="text-crt-greenlt">Virginia Tech NLP Research Lab</span>: led a 10-person team rebuilding a
-            recommendation pipeline with no baseline to start from. Got a 40%+ MAP improvement and shipped
-            pipelines serving 45k users.
-          </p>
-          <p class="text-crt-muted">
-            Currently: ML engineer at Cornell University (ORIE).
-          </p>
-        </div>
-      </section>
-
-      <!-- PROJECTS -->
-      <section id="projects" aria-labelledby="projects-h" class="py-16 sm:py-24 border-t border-crt-border">
-        <p class="text-crt-muted text-xs uppercase tracking-[0.3em] mb-2">&gt; ls -la /sections/projects/</p>
-        <h2 id="projects-h" class="font-display text-4xl sm:text-5xl text-crt-greenlt glow-green mb-10">PROJECTS.DAT</h2>
-
-        <div class="grid gap-5 max-w-2xl">
-
-          <article class="border border-crt-border bg-crt-panel p-5 hover:border-crt-green transition-colors duration-200">
-            <p class="text-xs text-crt-muted uppercase tracking-widest mb-2">drwxr-xr-x &middot; 01</p>
-            <h3 class="font-display text-3xl text-crt-fg glow-soft mb-2">OPENSIGHT</h3>
-            <p class="text-sm text-crt-muted leading-relaxed mb-3">A real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. Cuts a multi-step web task down to under 60 seconds, against a screen reader baseline of 5 to 10 minutes. Top 10 finalist in North America out of 2,500+ teams in the Google Developer Groups Solution Challenge 2026.</p>
-            <a href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026"
-               class="inline-block text-sm text-crt-greenlt hover:text-crt-fg transition-colors duration-200 mb-4">&gt; git clone OpenSight [view source]</a>
-            <ul class="flex flex-wrap gap-2 text-xs">
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">FastAPI</li>
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">WebSockets</li>
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">Gemini on Vertex AI</li>
-              <li class="border border-crt-border text-crt-greenlt px-2 py-0.5">Deepgram</li>
-            </ul>
-          </article>
-
-        </div>
-      </section>
-
-      <!-- CONTACT -->
-      <section id="contact" aria-labelledby="contact-h" class="py-16 sm:py-24 border-t border-crt-border">
-        <p class="text-crt-muted text-xs uppercase tracking-[0.3em] mb-2">&gt; exec /sections/contact.cfg</p>
-        <h2 id="contact-h" class="font-display text-4xl sm:text-5xl text-crt-greenlt glow-green mb-8">CONTACT.CFG</h2>
-
-        <div class="border border-crt-border bg-crt-panel max-w-2xl">
-          <div class="border-b border-crt-border px-4 py-2 text-xs text-crt-muted uppercase tracking-widest">uplink &middot; standing by</div>
-          <div class="p-5 grid gap-4 text-sm sm:text-base">
-            <p class="text-crt-fg">Transmission channels open. Response time: one business boot cycle.</p>
-
-            <a href="mailto:somala.abhi@gmail.com"
-               class="inline-flex items-center gap-3 text-crt-greenlt hover:text-crt-fg transition-colors duration-200 w-fit">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 shrink-0" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-              <span>somala.abhi@gmail.com</span>
-            </a>
-
-            <a href="https://github.com/abhisomala"
-               class="inline-flex items-center gap-3 text-crt-greenlt hover:text-crt-fg transition-colors duration-200 w-fit">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 shrink-0" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
-              <span>github.com/abhisomala</span>
-            </a>
-
-            <a href="https://www.linkedin.com/in/abhijitsomala"
-               class="inline-flex items-center gap-3 text-crt-greenlt hover:text-crt-fg transition-colors duration-200 w-fit">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 shrink-0" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
-              <span>linkedin.com/in/abhijitsomala</span>
-            </a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="border-t border-crt-border">
-      <div class="max-w-5xl mx-auto px-5 sm:px-8 py-6 flex flex-wrap gap-x-6 gap-y-1 text-xs text-crt-muted uppercase tracking-widest">
-        <span>SOMALA-OS v2.6.1</span>
-        <span aria-hidden="true">&middot;</span>
-        <span>&copy; 2026 Abhijit Somala</span>
-        <span aria-hidden="true">&middot;</span>
-        <span class="text-crt-green">All systems nominal</span>
-      </div>
-    </footer>
+    <main id="scroll" aria-label="Terminal scrollback"></main>
+    <form id="prow" autocomplete="off">
+      <span id="ps1">abhi@somala-os:~$&nbsp;</span><span id="mirror"></span><span id="caret" aria-hidden="true"></span>
+      <input id="cmd" type="text" aria-label="Type a command. Try help." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
+    </form>
   </div>
+
+  <div id="scan" aria-hidden="true"></div>
+  <div id="flick" aria-hidden="true"></div>
+  <div id="skiphint" aria-hidden="true">press any key or tap to skip</div>
+
+  <noscript>
+    <div class="line">Abhijit Somala. ML engineer at Cornell University. This page is a JavaScript terminal. Without JS: email <a href="mailto:somala.abhi@gmail.com">somala.abhi@gmail.com</a>, GitHub <a href="https://github.com/abhisomala">github.com/abhisomala</a>, LinkedIn <a href="https://www.linkedin.com/in/abhijitsomala">linkedin.com/in/abhijitsomala</a>.</div>
+  </noscript>
 
 <script>
 (function () {
   'use strict';
 
-  var reduceMotion = false;
-  try {
-    reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  } catch (e) { reduceMotion = false; }
+  var RM = false;
+  try { RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 
-  var boot    = document.getElementById('boot-screen');
-  var log     = document.getElementById('boot-log');
-  var main    = document.getElementById('main-content');
-  var skipBtn = document.getElementById('boot-skip');
+  var stage    = document.getElementById('stage');
+  var scroller = document.getElementById('scroll');
+  var prow     = document.getElementById('prow');
+  var input    = document.getElementById('cmd');
+  var mirror   = document.getElementById('mirror');
+  var clockEl  = document.getElementById('clock');
 
-  var finished = false;
-  var skipped  = false;
+  var PS1 = 'abhi@somala-os:~$ ';
+  var KEY = 'crt09Booted';
+  var ready = false;
 
-  function finish(instant) {
-    if (finished) return;
-    finished = true;
-    skipped  = true;
-    document.body.classList.remove('booting');
-    document.removeEventListener('keydown', onKey);
+  /* ---------- content ---------- */
 
-    if (main && !instant && !reduceMotion) {
-      main.classList.add('crt-on');
-    }
-    if (boot) {
-      if (instant || reduceMotion) {
-        boot.style.display = 'none';
-      } else {
-        boot.classList.add('boot-off');
-        window.setTimeout(function () { boot.style.display = 'none'; }, 420);
-      }
-    }
-    if (main && typeof main.focus === 'function') {
-      try { main.focus({ preventScroll: true }); } catch (e) { main.focus(); }
-    }
-  }
+  function T(t, cls) { return { segs: [{ t: t, cls: cls }] }; }
+  var B = { segs: [{ t: '' }] };
 
-  function onKey(e) {
-    if (finished) return;
-    if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      finish(false);
-    }
-  }
-
-  // If the boot markup is missing for any reason, fail open: show the site.
-  if (!boot || !log || !main) {
-    if (boot) boot.style.display = 'none';
-    document.body.classList.remove('booting');
-    return;
-  }
-
-  if (skipBtn) {
-    skipBtn.addEventListener('click', function (ev) {
-      ev.stopPropagation();
-      finish(false);
-    });
-  }
-  boot.addEventListener('click', function () { finish(false); });
-  document.addEventListener('keydown', onKey);
-
-  // Reduced motion: auto-skip the entire boot sequence.
-  if (reduceMotion) {
-    finish(true);
-    return;
-  }
-
-  if (skipBtn) {
-    try { skipBtn.focus({ preventScroll: true }); } catch (e) { skipBtn.focus(); }
-  }
-
-  function addLine(text, cls) {
-    var el = document.createElement('div');
-    el.textContent = text;
-    if (cls) el.className = cls;
-    log.appendChild(el);
-    return el;
-  }
-
-  function wait(ms) {
-    return new Promise(function (resolve) { window.setTimeout(resolve, ms); });
-  }
-
-  function line(text, cls, delay) {
-    return function () {
-      if (skipped) return Promise.resolve();
-      addLine(text, cls);
-      return wait(delay || 130);
-    };
-  }
-
-  function memTest() {
-    return function () {
-      if (skipped) return Promise.resolve();
-      var el = addLine('MEMORY TEST : 0 KB', '');
-      return new Promise(function (resolve) {
-        var kb = 0;
-        var t = window.setInterval(function () {
-          if (skipped) { window.clearInterval(t); resolve(); return; }
-          kb += 8192;
-          if (kb >= 65536) {
-            el.textContent = 'MEMORY TEST : 65536 KB OK';
-            window.clearInterval(t);
-            window.setTimeout(resolve, 160);
-          } else {
-            el.textContent = 'MEMORY TEST : ' + kb + ' KB';
-          }
-        }, 55);
-      });
-    };
-  }
-
-  function bar(label) {
-    return function () {
-      if (skipped) return Promise.resolve();
-      var el = addLine('', 'bl-hi');
-      return new Promise(function (resolve) {
-        var seg = 0;
-        var total = 10;
-        function render() {
-          var fill = '';
-          for (var i = 0; i < total; i++) fill += (i < seg ? '#' : '-');
-          var pct = (seg * 10);
-          el.textContent = label + ' [' + fill + '] ' + (pct < 100 ? ' ' : '') + pct + '%';
-        }
-        render();
-        var t = window.setInterval(function () {
-          if (skipped) { window.clearInterval(t); resolve(); return; }
-          seg += 1 + Math.floor(Math.random() * 2);
-          if (seg >= total) {
-            seg = total;
-            render();
-            window.clearInterval(t);
-            window.setTimeout(resolve, 130);
-          } else {
-            render();
-          }
-        }, 85);
-      });
-    };
-  }
-
-  var steps = [
-    line('SOMALA SYSTEMS PHOSPHOR BIOS v2.6.1', 'bl-fg', 260),
-    line('(C) 2026 SOMALA-OS PROJECT', 'bl-dim', 320),
-    line(' ', '', 140),
-    line('CPU : ABHIJIT SOMALA @ 4.0GHZ', '', 170),
-    line('CORES : ML x1 / ENGINEER x1', '', 170),
-    memTest(),
-    line('VIDEO : PHOSPHOR CRT / GREEN P1', '', 190),
-    line(' ', '', 130),
-    line('DETECTING CORNELL ORIE ...... OK', '', 210),
-    line('DETECTING SHIPPED WORK ...... 1 FOUND', '', 210),
-    line('MOUNTING /DEV/PORTFOLIO ..... OK', '', 260),
-    line(' ', '', 130),
-    bar('KERNEL.SYS  '),
-    bar('PROJECTS.DAT'),
-    bar('CONTACT.CFG '),
-    line(' ', '', 130),
-    line('BOOT OK - STARTING SOMALA-OS ...', 'bl-hi', 620)
+  var WELCOME = [
+    B,
+    { cls: 'banner', segs: [{ t: 'ABHIJIT SOMALA' }] },
+    T('ML engineer. Builds things that ship.', 'hi'),
+    T('Cornell University. Ithaca, NY and Richmond, VA.', 'dim'),
+    B,
+    { segs: [
+      { t: 'commands: ', cls: 'dim' },
+      { t: 'about', cmd: 'about' }, { t: '  ' },
+      { t: 'experience', cmd: 'experience' }, { t: '  ' },
+      { t: 'projects', cmd: 'projects' }, { t: '  ' },
+      { t: 'contact', cmd: 'contact' }, { t: '  ' },
+      { t: 'help', cmd: 'help' }
+    ] },
+    B
   ];
 
-  (function runSteps(i) {
-    if (skipped || finished) return;
-    if (i >= steps.length) { finish(false); return; }
-    steps[i]().then(function () { runSteps(i + 1); });
-  })(0);
+  var COMMANDS = {
+    help: [
+      T('AVAILABLE COMMANDS', 'head'),
+      { segs: [{ t: '  ' }, { t: 'about', cmd: 'about' },           { t: '         who I am', cls: 'dim' }] },
+      { segs: [{ t: '  ' }, { t: 'experience', cmd: 'experience' }, { t: '    Focara, Virginia Tech NLP Lab, Nomic AI', cls: 'dim' }] },
+      { segs: [{ t: '  ' }, { t: 'projects', cmd: 'projects' },     { t: '      OpenSight plus the algae bloom model', cls: 'dim' }] },
+      { segs: [{ t: '  ' }, { t: 'contact', cmd: 'contact' },       { t: '       email, GitHub, LinkedIn', cls: 'dim' }] },
+      { segs: [{ t: '  ' }, { t: 'clear', cmd: 'clear' },           { t: '         wipe the scrollback', cls: 'dim' }] },
+      T('type a command and press enter, or click one.', 'mut'),
+      B
+    ],
+    about: [
+      T('ABOUT', 'head'),
+      B,
+      T('Abhijit Somala. Abhi. ML engineer at Cornell University, based between Ithaca, NY and Richmond, VA.'),
+      B,
+      T("I've worked across the ML stack, from unsupervised clustering on data with no labels to inference pipelines running in production for tens of thousands of users. Right now I'm building at Focara, an EdTech startup, and leading applied ML work at Virginia Tech's NLP Research Lab. Before that I built embedding visualization infrastructure at Nomic AI. My biggest project so far is OpenSight, a real-time multi-agent voice assistant for blind and low-vision users. It placed top 10 out of 2,500+ teams nationally."),
+      B
+    ],
+    experience: [
+      T('EXPERIENCE (3)', 'head'),
+      B,
+      T('[01] Focara :: ML Engineer :: stealth EdTech startup :: May 2026 to present', 'hi'),
+      T('     Built a Canvas webhook plus LLM classifier that surfaces critical announcements before academic deadlines.'),
+      T('     Cut pipeline latency from 900ms to 500ms. Architected the multi-tenant chat-to-migration system.'),
+      B,
+      T('[02] Virginia Tech NLP Research Lab :: Applied ML Engineering Lead :: Dec 2025 to present', 'hi'),
+      T('     Led a 10-person team rebuilding a recommendation pipeline with no baseline to start from. Got a 40%+ MAP improvement.'),
+      T('     Shipped clustering, sentiment, and LLM inference pipelines to production, serving 45k users.'),
+      B,
+      T('[03] Nomic AI :: AI Data Engineering Intern :: Summer 2024', 'hi'),
+      T('     Built embedding visualization and ETL infrastructure for 250k+ monthly users.'),
+      B
+    ],
+    projects: [
+      T('PROJECTS (2)', 'head'),
+      B,
+      T('[01] OPENSIGHT :: FLAGSHIP', 'hi'),
+      T("     A real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. I built it because screen readers describe a page, they don't act on it."),
+      { segs: [{ t: '     result   ', cls: 'dim' }, { t: 'top 10 finalist in North America out of 2,500+ teams, Google Developer Groups Solution Challenge 2026' }] },
+      { segs: [{ t: '     speed    ', cls: 'dim' }, { t: 'a multi-step web task runs in under 60 seconds. screen reader baseline is 5 to 10 minutes' }] },
+      { segs: [{ t: '     stack    ', cls: 'dim' }, { t: 'FastAPI, WebSockets, Gemini on Vertex AI, Deepgram STT, Google Cloud TTS' }] },
+      { segs: [{ t: '     tested   ', cls: 'dim' }, { t: 'validated with the Blind Institute of Technology and the Virginia Department for the Blind and Vision Impaired' }] },
+      { segs: [{ t: '     source   ', cls: 'dim' }, { t: 'github.com/abhisomala/OpenSight_GDGChallenge_2026', href: 'https://github.com/abhisomala/OpenSight_GDGChallenge_2026' }] },
+      B,
+      T('[02] ALGAE BLOOM PREDICTION MODEL', 'hi'),
+      T('     Autonomous detection across 50k+ satellite images. 92% detection accuracy. Deployed to AWS Lambda for real-time monitoring.'),
+      B
+    ],
+    contact: [
+      T('CONTACT', 'head'),
+      B,
+      { segs: [{ t: '  email     ', cls: 'dim' }, { t: 'somala.abhi@gmail.com', href: 'mailto:somala.abhi@gmail.com' }] },
+      { segs: [{ t: '  github    ', cls: 'dim' }, { t: 'github.com/abhisomala', href: 'https://github.com/abhisomala' }] },
+      { segs: [{ t: '  linkedin  ', cls: 'dim' }, { t: 'linkedin.com/in/abhijitsomala', href: 'https://www.linkedin.com/in/abhijitsomala' }] },
+      B
+    ],
+    whoami: [
+      T('ML engineer. Builds things that ship.', 'hi'),
+      B
+    ]
+  };
+
+  var CLEARED = [
+    { segs: [{ t: 'scrollback cleared. type ', cls: 'dim' }, { t: 'help', cmd: 'help' }, { t: ' for commands.', cls: 'dim' }] },
+    B
+  ];
+
+  var BOOT = [
+    { line: T('SOMALA SYSTEMS PHOSPHOR BIOS V2.6', 'hi'), d: 200 },
+    { line: T('(C) 2026 ABHIJIT SOMALA. GREEN P1 PHOSPHOR.', 'dim'), d: 170 },
+    { line: B, d: 110 },
+    { line: T('MEMORY TEST: 65536 KB OK'), d: 150 },
+    { line: T('CPU: ML ENGINEER @ CORNELL UNIVERSITY'), d: 150 },
+    { line: T('BASE: ITHACA, NY / RICHMOND, VA'), d: 150 },
+    { line: B, d: 110 },
+    { line: T('LOADING EXPERIENCE... [FOCARA, VT NLP LAB, NOMIC AI]'), d: 190 },
+    { bar: { label: 'MOUNTING PROJECT: OPENSIGHT' } },
+    { line: T('MOUNTING PROJECT: ALGAE-BLOOM-MODEL ... OK'), d: 160 },
+    { line: T('CONTACT MODULE READY [EMAIL, GITHUB, LINKEDIN]'), d: 180 },
+    { line: B, d: 110 },
+    { line: T('BOOT COMPLETE.', 'hi'), d: 240 },
+    { line: { cls: 'hi', segs: [{ t: "TYPE '" }, { t: 'help', cmd: 'help' }, { t: "' OR SELECT A COMMAND." }] }, d: 180 }
+  ];
+
+  /* ---------- printing engine ---------- */
+
+  function scrollBottom() { scroller.scrollTop = scroller.scrollHeight; }
+
+  var hotT = null;
+  function pulse() {
+    if (RM) return;
+    document.body.classList.add('crt-hot');
+    clearTimeout(hotT);
+    hotT = setTimeout(function () { document.body.classList.remove('crt-hot'); }, 240);
+  }
+
+  function norm(L) {
+    if (typeof L === 'string') return { cls: '', segs: [{ t: L }] };
+    return { cls: L.cls || '', segs: L.segs || [{ t: '' }] };
+  }
+
+  function buildSeg(sg) {
+    var n;
+    if (sg.cmd) {
+      n = document.createElement('span');
+      n.className = 'cmd';
+      n.dataset.cmd = sg.cmd;
+      n.setAttribute('role', 'button');
+      n.tabIndex = 0;
+    } else if (sg.href) {
+      n = document.createElement('a');
+      n.href = sg.href;
+      if (sg.href.slice(0, 7) !== 'mailto:') { n.target = '_blank'; n.rel = 'noopener'; }
+    } else {
+      n = document.createElement('span');
+      if (sg.cls) n.className = sg.cls;
+    }
+    return n;
+  }
+
+  function renderInstant(lines) {
+    var frag = document.createDocumentFragment();
+    lines.forEach(function (L) {
+      var ln = norm(L);
+      var d = document.createElement('div');
+      d.className = 'line' + (ln.cls ? ' ' + ln.cls : '');
+      ln.segs.forEach(function (sg) {
+        var n = buildSeg(sg);
+        n.textContent = sg.t || '';
+        d.appendChild(n);
+      });
+      frag.appendChild(d);
+    });
+    scroller.appendChild(frag);
+    scrollBottom();
+    window.__lastTypeMs = 0;
+  }
+
+  function typeLines(lines) {
+    if (RM) { renderInstant(lines); return Promise.resolve(); }
+    var t0 = performance.now();
+    var norms = lines.map(norm);
+    var total = 0;
+    norms.forEach(function (l) { l.segs.forEach(function (s) { total += (s.t || '').length; }); });
+    var cps = Math.max(480, Math.ceil(total / 1.1));
+    return new Promise(function (resolve) {
+      var li = 0, si = 0, ci = 0, lineEl = null, segEl = null, budget = 0, last = performance.now();
+      function ensure() {
+        while (li < norms.length) {
+          if (!lineEl) {
+            lineEl = document.createElement('div');
+            lineEl.className = 'line' + (norms[li].cls ? ' ' + norms[li].cls : '');
+            scroller.appendChild(lineEl);
+            si = 0; ci = 0; segEl = null;
+          }
+          var segs = norms[li].segs;
+          if (si >= segs.length) { li++; lineEl = null; continue; }
+          var sg = segs[si];
+          if (!segEl) { segEl = buildSeg(sg); segEl.textContent = ''; lineEl.appendChild(segEl); ci = 0; }
+          var txt = sg.t || '';
+          if (ci >= txt.length) { si++; segEl = null; continue; }
+          return txt;
+        }
+        return null;
+      }
+      function frame(now) {
+        budget += (now - last) / 1000 * cps;
+        last = now;
+        var n = Math.floor(budget);
+        budget -= n;
+        var printed = false;
+        while (n > 0) {
+          var txt = ensure();
+          if (txt === null) break;
+          ci++;
+          segEl.textContent = txt.slice(0, ci);
+          n--;
+          printed = true;
+        }
+        var done = ensure() === null;
+        if (printed) { pulse(); scrollBottom(); }
+        if (done) {
+          window.__lastTypeMs = performance.now() - t0;
+          scrollBottom();
+          resolve();
+        } else {
+          requestAnimationFrame(frame);
+        }
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  var chain = Promise.resolve();
+  function enqueue(fn) {
+    chain = chain.then(fn)['catch'](function (e) {
+      if (window.console && console.warn) console.warn('crt queue: ' + e);
+    });
+  }
+
+  /* ---------- commands ---------- */
+
+  function echo(cmdtext) {
+    renderInstant([{ segs: [{ t: PS1, cls: 'dim' }, { t: cmdtext, cls: 'hi' }] }]);
+  }
+
+  function runCommand(raw) {
+    if (!ready) return;
+    var t = String(raw || '').trim();
+    enqueue(function () { echo(t); });
+    if (!t) return;
+    var key = t.split(/\s+/)[0].toLowerCase();
+    if (key === 'clear') {
+      enqueue(function () {
+        scroller.textContent = '';
+        renderInstant(CLEARED);
+      });
+      return;
+    }
+    var def = COMMANDS[key];
+    if (def) {
+      enqueue(function () { return typeLines(def); });
+    } else {
+      var shown = key.slice(0, 40);
+      enqueue(function () {
+        return typeLines([
+          { segs: [{ t: 'sh: ' + shown + ': command not found. type ', cls: 'dim' }, { t: 'help', cmd: 'help' }, { t: '.', cls: 'dim' }] },
+          B
+        ]);
+      });
+    }
+  }
+
+  /* ---------- input wiring ---------- */
+
+  var typT = null;
+  function sync() {
+    mirror.textContent = input.value;
+    document.body.classList.add('typing');
+    clearTimeout(typT);
+    typT = setTimeout(function () { document.body.classList.remove('typing'); }, 420);
+  }
+  function focusInput() {
+    try { input.focus({ preventScroll: true }); } catch (e) { try { input.focus(); } catch (e2) {} }
+  }
+  function submitVal() {
+    var v = input.value;
+    input.value = '';
+    sync();
+    runCommand(v);
+  }
+
+  input.addEventListener('input', sync);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); submitVal(); }
+  });
+  prow.addEventListener('submit', function (e) { e.preventDefault(); submitVal(); });
+  prow.addEventListener('click', focusInput);
+
+  document.addEventListener('click', function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('.cmd') : null;
+    if (el && ready) runCommand(el.dataset.cmd);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (!ready) return;
+    var tEl = e.target;
+    if (tEl && tEl.classList && tEl.classList.contains('cmd') && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      runCommand(tEl.dataset.cmd);
+      return;
+    }
+    if (tEl === input) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submitVal();
+    } else if (e.key === 'Backspace') {
+      e.preventDefault();
+      input.value = input.value.slice(0, -1);
+      sync();
+      focusInput();
+    } else if (e.key.length === 1) {
+      e.preventDefault();
+      input.value += e.key;
+      sync();
+      focusInput();
+    }
+  });
+
+  /* ---------- clock ---------- */
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function tickClock() {
+    var d = new Date();
+    clockEl.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  }
+  tickClock();
+  setInterval(tickClock, 1000);
+
+  /* ---------- boot sequence, once per session ---------- */
+
+  var booting = false, bootSkipped = false, bootEnded = false;
+  var bootWaiters = [];
+
+  function bwait(ms) {
+    if (bootSkipped) return Promise.resolve();
+    return new Promise(function (r) {
+      var w = { r: r, t: 0 };
+      w.t = setTimeout(function () {
+        var i = bootWaiters.indexOf(w);
+        if (i >= 0) bootWaiters.splice(i, 1);
+        r();
+      }, ms);
+      bootWaiters.push(w);
+    });
+  }
+
+  function skipBoot() {
+    if (!booting || bootSkipped) return;
+    bootSkipped = true;
+    var ws = bootWaiters.slice();
+    bootWaiters = [];
+    ws.forEach(function (w) { clearTimeout(w.t); w.r(); });
+  }
+
+  function onSkipKey() { skipBoot(); }
+  function onSkipPtr() { skipBoot(); }
+
+  function bootBar(spec) {
+    var d = document.createElement('div');
+    d.className = 'line';
+    var sp = document.createElement('span');
+    d.appendChild(sp);
+    scroller.appendChild(d);
+    var segsN = 12;
+    function draw(n) {
+      var f = '';
+      for (var j = 0; j < segsN; j++) f += (j < n ? '#' : '.');
+      sp.textContent = spec.label + ' [' + f + '] ' + (n >= segsN ? 'OK' : Math.round(n / segsN * 100) + '%');
+    }
+    return new Promise(function (r) {
+      if (bootSkipped || RM) { draw(segsN); scrollBottom(); return r(); }
+      draw(0);
+      scrollBottom();
+      var i = 0;
+      var t = setInterval(function () {
+        if (bootSkipped) { clearInterval(t); draw(segsN); scrollBottom(); return r(); }
+        i++;
+        draw(i);
+        pulse();
+        scrollBottom();
+        if (i >= segsN) { clearInterval(t); r(); }
+      }, 38);
+    });
+  }
+
+  function stepAt(i) {
+    if (i >= BOOT.length) { endBoot(); return; }
+    var st = BOOT[i];
+    if (st.bar) {
+      bootBar(st.bar).then(function () { stepAt(i + 1); });
+      return;
+    }
+    renderInstant([st.line]);
+    pulse();
+    if (bootSkipped || RM) {
+      stepAt(i + 1);
+    } else {
+      bwait(st.d || 150).then(function () { stepAt(i + 1); });
+    }
+  }
+
+  function setReady() {
+    if (ready) return;
+    ready = true;
+    window.__bootDone = performance.now();
+    document.body.classList.add('ready');
+    scrollBottom();
+    focusInput();
+  }
+
+  function endBoot() {
+    if (bootEnded) return;
+    bootEnded = true;
+    booting = false;
+    document.removeEventListener('keydown', onSkipKey, true);
+    document.removeEventListener('pointerdown', onSkipPtr, true);
+    document.body.classList.remove('booting');
+    try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+    if (bootSkipped || RM) {
+      renderInstant(WELCOME);
+      setReady();
+    } else {
+      typeLines(WELCOME).then(setReady);
+    }
+  }
+
+  var seen = false;
+  try { seen = sessionStorage.getItem(KEY) === '1'; } catch (e) {}
+
+  if (seen) {
+    renderInstant([T('SOMALA-OS V2.6 · SESSION RESTORED. BOOT SKIPPED.', 'dim')].concat(WELCOME));
+    setReady();
+  } else {
+    window.__bootStart = performance.now();
+    booting = true;
+    document.body.classList.add('booting');
+    if (!RM) stage.classList.add('poweron');
+    document.addEventListener('keydown', onSkipKey, true);
+    document.addEventListener('pointerdown', onSkipPtr, true);
+    stepAt(0);
+  }
 })();
 </script>
 </body>

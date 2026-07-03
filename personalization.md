@@ -6,7 +6,7 @@ Written in first person, in my voice. No em dashes, no semicolons, no filler adj
 
 ## Identity
 - Name: Abhijit Somala (Abhi)
-- Currently: ML engineer, Cornell University (ORIE)
+- Currently: ML engineer, Cornell University
 - Based between Ithaca, NY and Richmond, VA
 
 ## Contact / links
