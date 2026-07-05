@@ -1,0 +1,2035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abhijit Somala</title>
+  <meta name="description" content="Abhijit Somala, ML engineer at Cornell University. I build ML systems, from research pipelines to production agents, including OpenSight, a real-time multi-agent voice assistant.">
+  <meta property="og:title" content="Abhijit Somala">
+  <meta property="og:description" content="Abhijit Somala, ML engineer at Cornell University. I build ML systems, from research pipelines to production agents, including OpenSight, a real-time multi-agent voice assistant.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%231E5FCC' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='16' cy='16' r='8'/%3E%3Cpath d='M16 1.5v6M16 24.5v6M1.5 16h6M24.5 16h6'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%231E5FCC'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #F3F7FA;
+      --ink: #1B2E38;
+      --graphite: #48606E;
+      --accent: #1E5FCC;
+      --accent-soft: rgba(30, 95, 204, 0.09);
+      --line-soft: rgba(27, 46, 56, 0.42);
+      --stamp-red: #C0392B;
+      --mono: 'IBM Plex Mono', ui-monospace, monospace;
+      --sans: 'Archivo', system-ui, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      position: relative;
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--ink);
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(rgba(30, 95, 204, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 95, 204, 0.15) 1px, transparent 1px),
+        linear-gradient(rgba(30, 95, 204, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 95, 204, 0.055) 1px, transparent 1px);
+      background-size: 40px 40px, 40px 40px, 8px 8px, 8px 8px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* ============ fixed chrome ============ */
+    .skiplink {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translate(-50%, -300%);
+      z-index: 100;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-decoration: none;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--ink);
+      padding: 6px 10px;
+    }
+    .skiplink:focus-visible { transform: translate(-50%, 0); }
+
+    /* ============ ambient pencil trail ============ */
+    .ambient {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .trail { position: absolute; opacity: 0.5; }
+    .trail-h {
+      top: 239px;
+      left: 0;
+      width: 190px;
+      height: 0;
+      border-top: 1.5px dashed rgba(30, 95, 204, 0.55);
+      animation: trail-x 26s linear infinite;
+    }
+    .trail-h::after {
+      content: "";
+      position: absolute;
+      right: -3px;
+      top: -4px;
+      width: 6px;
+      height: 6px;
+      background: rgba(30, 95, 204, 0.7);
+      transform: rotate(45deg);
+    }
+    .trail-v {
+      top: 0;
+      left: 479.5px;
+      width: 0;
+      height: 150px;
+      border-left: 1.5px dashed rgba(30, 95, 204, 0.45);
+      animation: trail-y 34s linear infinite;
+    }
+    @keyframes trail-x {
+      from { transform: translateX(-200px); }
+      to   { transform: translateX(100vw); }
+    }
+    @keyframes trail-y {
+      from { transform: translateY(-160px); }
+      to   { transform: translateY(1800px); }
+    }
+
+    /* ============ custom cursor ============ */
+    #cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 90;
+      pointer-events: none;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      will-change: transform;
+    }
+    body.cur-on #cursor { display: block; }
+    body.cur-on #frame, body.cur-on #frame * { cursor: none !important; }
+    #cursor svg { display: block; transition: transform 0.15s; }
+    #cursor.act svg { transform: scale(1.3); }
+
+    /* ============ drawing frame ============ */
+    #frame {
+      position: relative;
+      z-index: 1;
+      margin: 10px;
+      border: 2px solid var(--ink);
+      padding: 5px;
+      background: transparent;
+    }
+    .frame-inner { border: 1px solid var(--line-soft); }
+
+    .strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 24px;
+      justify-content: space-between;
+      padding: 8px 18px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--graphite);
+    }
+    .strip-top { border-bottom: 1px solid var(--line-soft); padding-left: 142px; }
+    .strip-bottom { border-top: 1px solid var(--line-soft); }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ============ cover sheet / hero ============ */
+    .hero {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 38px;
+      padding: 34px 0 30px;
+    }
+    .hero-ctor {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .hero-top {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px 56px;
+      align-items: flex-start;
+    }
+    .kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.24em;
+      color: var(--accent);
+      margin-bottom: 16px;
+      width: 100%;
+    }
+
+    .index {
+      border: 1.5px solid var(--ink);
+      background: #fff;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      min-width: 264px;
+      box-shadow: 6px 6px 0 rgba(27, 46, 56, 0.06);
+    }
+    .index p {
+      padding: 7px 12px;
+      background: var(--accent-soft);
+      border-bottom: 1px solid var(--line-soft);
+      color: var(--graphite);
+      font-size: 9.5px;
+      letter-spacing: 0.2em;
+    }
+    .index a {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 8px 12px;
+      text-decoration: none;
+      color: var(--ink);
+      border-bottom: 1px solid rgba(27, 46, 56, 0.18);
+      transition: background-color 0.15s;
+    }
+    .index a:last-child { border-bottom: 0; }
+    .index a:hover { background: var(--accent-soft); }
+    .index a .dwg { color: var(--accent); }
+
+    .gnotes {
+      max-width: 400px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--graphite);
+    }
+    .gnotes h2 {
+      font-size: 9.5px;
+      letter-spacing: 0.22em;
+      color: var(--graphite);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .gnotes p { margin-bottom: 8px; }
+    .gnotes .no { color: var(--accent); margin-right: 6px; }
+
+    /* title block, bottom right, with export stamp */
+    .tblock-wrap {
+      position: relative;
+      align-self: flex-end;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px 22px;
+      align-items: flex-end;
+      justify-content: flex-end;
+      width: 100%;
+      max-width: 700px;
+    }
+    .tblock {
+      position: relative;
+      flex: 1 1 420px;
+      min-width: 0;
+      border: 2px solid var(--ink);
+      background: #fff;
+      box-shadow: 8px 8px 0 rgba(27, 46, 56, 0.08);
+      font-family: var(--mono);
+    }
+    .tb-title {
+      padding: 18px 20px 16px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .tb-title .tlabel {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 0.24em;
+      color: var(--graphite);
+      margin-bottom: 6px;
+    }
+    .tb-title h1 {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: clamp(27px, 4.6vw, 42px);
+      letter-spacing: 0.01em;
+      line-height: 1.08;
+    }
+    .tb-title .tag {
+      margin-top: 10px;
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--graphite);
+    }
+    .tb-row { display: flex; border-bottom: 1px solid var(--line-soft); }
+    .tb-row:last-child { border-bottom: 0; }
+    .tb-cell {
+      flex: 1;
+      min-width: 0;
+      padding: 7px 12px 8px;
+      border-right: 1px solid var(--line-soft);
+    }
+    .tb-cell:last-child { border-right: 0; }
+    .tb-cell b {
+      display: block;
+      font-weight: 500;
+      font-size: 8.5px;
+      letter-spacing: 0.22em;
+      color: var(--graphite);
+      margin-bottom: 2px;
+    }
+    .tb-cell span { font-size: 11px; letter-spacing: 0.04em; }
+
+    /* ============ export stamp ============ */
+    .stamp-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding-bottom: 6px;
+    }
+    .stamp-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.26em;
+      color: var(--graphite);
+    }
+    .stamp {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 4px 6px 0;
+      font-family: var(--mono);
+    }
+    .stamp-knob {
+      width: 30px;
+      height: 16px;
+      border: 1.5px solid var(--ink);
+      border-radius: 10px 10px 3px 3px;
+      background: #fff;
+    }
+    .stamp-neck {
+      width: 10px;
+      height: 12px;
+      border: 1.5px solid var(--ink);
+      border-top: 0;
+      background: #fff;
+    }
+    .stamp-base {
+      border: 2px solid var(--ink);
+      background: #fff;
+      padding: 7px 13px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--ink);
+      box-shadow: 0 4px 0 rgba(27, 46, 56, 0.14);
+      transition: background-color 0.2s;
+    }
+    .stamp:hover .stamp-base { background: var(--accent-soft); }
+    .stamp:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .stamp.pressing { animation: stamp-press 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+    @keyframes stamp-press {
+      0%   { transform: none; }
+      40%  { transform: translateY(9px) scale(0.96); }
+      100% { transform: none; }
+    }
+    .stamp-hint {
+      font-family: var(--mono);
+      font-size: 8.5px;
+      letter-spacing: 0.14em;
+      color: var(--graphite);
+      max-width: 130px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .stamp-ink {
+      position: absolute;
+      top: -16px;
+      right: 16px;
+      z-index: 6;
+      transform: rotate(var(--ink-rot, -7deg));
+      border: 2.5px solid var(--stamp-red);
+      color: var(--stamp-red);
+      background: rgba(255, 255, 255, 0.4);
+      padding: 7px 14px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-align: center;
+      line-height: 1.7;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .stamp-ink span { display: block; }
+    .stamp-ink.inked { animation: ink-in 0.32s cubic-bezier(0.2, 1.4, 0.4, 1); }
+    @keyframes ink-in {
+      0%   { opacity: 0; transform: rotate(var(--ink-rot, -7deg)) scale(1.6); }
+      60%  { opacity: 1; }
+      100% { opacity: 0.9; transform: rotate(var(--ink-rot, -7deg)) scale(1); }
+    }
+
+    /* ============ canvas: rail + layer zones ============ */
+    .canvas { position: relative; padding: 10px 0 70px; }
+
+    .rail-label, .rail-note {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--graphite);
+    }
+    .rail-label { margin-bottom: 8px; }
+    .rail-note { margin-top: 10px; line-height: 1.7; }
+    .rail-note-short { display: none; }
+    .rail-tabs { display: grid; gap: 8px; }
+
+    .lsw {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      border: 1.5px solid var(--ink);
+      border-left: 4px solid var(--lc, var(--accent));
+      background: #fff;
+      padding: 8px 8px 8px 7px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 rgba(27, 46, 56, 0.1);
+      transition: transform 0.18s, box-shadow 0.18s, background-color 0.18s, border-color 0.18s;
+    }
+    .lsw-pin {
+      position: relative;
+      flex-shrink: 0;
+      width: 22px;
+      height: 10px;
+      border: 1.5px solid var(--ink);
+      border-radius: 6px;
+    }
+    .lsw-pin::after {
+      content: "";
+      position: absolute;
+      top: 1px;
+      left: 12px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--lc, var(--accent));
+      transition: left 0.18s, background-color 0.18s;
+    }
+    .lsw-txt { min-width: 0; }
+    .lsw-id { color: var(--lc, var(--accent)); font-weight: 600; margin-right: 4px; }
+    .lsw-state {
+      margin-left: auto;
+      font-size: 8.5px;
+      letter-spacing: 0.16em;
+      color: var(--graphite);
+    }
+    .lsw:hover { background: var(--accent-soft); }
+    .lsw:not(.on) {
+      background: rgba(255, 255, 255, 0.5);
+      border-style: dashed;
+      border-left-style: solid;
+      color: var(--graphite);
+      transform: translateX(-4px);
+      box-shadow: none;
+    }
+    .lsw:not(.on) .lsw-pin::after { left: 1px; background: var(--graphite); }
+    .lsw-ico {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      color: var(--lc, var(--accent));
+      transition: color 0.18s;
+    }
+    .lsw:not(.on) .lsw-ico { color: var(--graphite); }
+
+    .zones {
+      position: relative;
+      display: grid;
+      gap: 26px;
+      align-content: start;
+      min-height: 240px;
+      margin-top: 16px;
+    }
+
+    /* tracing-paper layer */
+    .layer {
+      position: relative;
+      min-width: 0;
+      border: 1.5px solid var(--ink);
+      border-top: 3px solid var(--lc, var(--accent));
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 6px 6px 0 rgba(27, 46, 56, 0.06);
+      padding: 16px 18px 22px;
+    }
+    .layer[hidden] { display: none !important; }
+    .layer::before, .layer::after {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: rgba(30, 95, 204, 0.6);
+      position: absolute;
+      pointer-events: none;
+      line-height: 1;
+    }
+    .layer::before { content: "+"; top: -10px; left: -13px; }
+    .layer::after { content: "+"; bottom: -8px; right: -13px; }
+    .tape {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      width: 72px;
+      height: 18px;
+      transform: translateX(-50%) rotate(-1.5deg);
+      background: rgba(160, 190, 210, 0.35);
+      border: 1px solid rgba(27, 46, 56, 0.15);
+      pointer-events: none;
+    }
+    .layer-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 14px;
+      align-items: baseline;
+      border-bottom: 1px solid var(--line-soft);
+      padding-bottom: 8px;
+    }
+    .layer-id {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.2em;
+      color: #fff;
+      background: var(--lc, var(--accent));
+      padding: 3px 7px;
+    }
+    .layer-title {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+    }
+    .layer-dwg {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.18em;
+      color: var(--graphite);
+    }
+    .layer-sub {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.06em;
+      color: var(--graphite);
+      margin: 8px 0 16px;
+    }
+
+    /* zone placement on the shared canvas, desktop */
+    /* Option G (pin-and-unroll): zones flow as one vertical column of rolled
+       sheets that push content below down as they unroll, so the desktop
+       12-column zone placement is intentionally not applied here. */
+    @media (min-width: 700px) {
+      .canvas {
+        display: grid;
+        grid-template-columns: 136px minmax(0, 1fr);
+        gap: 22px;
+        align-items: start;
+      }
+      .rail { position: sticky; top: 48px; }
+      .zones { margin-top: 0; }
+    }
+
+    /* ============ option G: pin-and-unroll mechanic ============ */
+    .layer-roll {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.4s ease;
+    }
+    .layer-roll-inner {
+      overflow: hidden;
+      min-height: 0;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
+    }
+    .layer.open .layer-roll { grid-template-rows: 1fr; }
+    .layer.open .layer-roll-inner { opacity: 1; transform: none; }
+    .layer-head { cursor: pointer; }
+    .layer-head:focus { outline: none; }
+    .layer-head:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .layer-arrow {
+      flex-shrink: 0;
+      align-self: center;
+      margin-left: 12px;
+      fill: var(--accent);
+      transition: transform 0.3s ease;
+    }
+    .layer.open .layer-arrow { transform: rotate(180deg); }
+    /* rolled sheet reads as a curled edge of paper */
+    .layer:not(.open) { padding-bottom: 10px; }
+    .layer:not(.open) .layer-head { border-bottom: none; padding-bottom: 2px; }
+    .layer:not(.open)::after { bottom: 2px; }
+    .layer:not(.open) {
+      border-bottom: 3px double rgba(27, 46, 56, 0.35);
+      box-shadow: 6px 6px 0 rgba(27, 46, 56, 0.06), 0 9px 10px -9px rgba(27, 46, 56, 0.35);
+    }
+    @media (max-width: 699px) {
+      .rail { margin-bottom: 4px; }
+      .rail-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+      .lsw { width: auto; padding: 6px 8px; font-size: 9px; }
+      .lsw-state { display: none; }
+      .lsw-pin { width: 18px; height: 9px; }
+      .lsw-pin::after { width: 4px; height: 4px; left: 9px; }
+      .lsw-ico { width: 13px; height: 13px; }
+      .lsw:not(.on) { transform: none; }
+      .rail-note { margin-top: 8px; }
+      .rail-note-full { display: none; }
+      .rail-note-short { display: inline; }
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 30px 54px;
+      align-items: start;
+    }
+    .col-label {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.22em;
+      color: var(--graphite);
+      margin-bottom: 12px;
+    }
+    .stack { display: grid; gap: 22px; }
+
+    figure.fig-wrap { margin: 0; }
+    figure.fig-wrap figcaption {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.18em;
+      color: var(--graphite);
+      margin-top: 10px;
+    }
+    .fig-hint {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-top: 4px;
+    }
+    svg.fig { width: 100%; height: auto; display: block; }
+
+    /* ============ drafting linework in SVG ============ */
+    .ink2  { stroke: var(--ink); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .fill2 { fill: var(--ink); }
+    .ctor  { stroke: #93AEC4; fill: none; stroke-width: 1; stroke-dasharray: 5 4; pointer-events: none; }
+    .cline { stroke-dasharray: 14 5 3 5; }
+    .snote { font-family: var(--mono); fill: #7B93A4; letter-spacing: 0.1em; }
+    .revtri { fill: #fff; stroke: var(--ink); stroke-width: 1.4; }
+    .revtxt { font-family: var(--mono); font-weight: 600; fill: var(--ink); letter-spacing: 0.05em; }
+
+    .part { cursor: pointer; }
+    .part .pshape {
+      fill: #fff;
+      stroke: var(--ink);
+      stroke-width: 1.6;
+      transition: fill 0.2s, stroke 0.2s;
+    }
+    .part .phit { fill: transparent; stroke: none; }
+    .part .pname { font-family: var(--mono); font-weight: 600; fill: var(--ink); letter-spacing: 0.08em; }
+    .part .psub  { font-family: var(--mono); fill: var(--graphite); letter-spacing: 0.14em; }
+    .part:hover .pshape, .part.hov .pshape { fill: var(--accent-soft); }
+    .part[aria-pressed="true"] .pshape { stroke: var(--accent); }
+    .part:focus { outline: none; }
+    .part:focus-visible .pshape { stroke: var(--accent); stroke-width: 2.6; }
+
+    /* dimension sets: faint stubs by default, drawn out on hover/tap/focus */
+    .dimset { opacity: 0.42; transition: opacity 0.2s; }
+    .dimset .lead {
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.3;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0.88;
+      transition: stroke-dashoffset 0.42s cubic-bezier(0.25, 0.7, 0.3, 1);
+    }
+    .dimset .dline {
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.3;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      transition: stroke-dashoffset 0.3s ease-out 0.28s;
+    }
+    .dimset .darrow { fill: var(--accent); }
+    .dimset .dtick  { stroke: var(--accent); stroke-width: 1.1; }
+    .dimset .darrow, .dimset .dtick {
+      opacity: 0;
+      transition: opacity 0.2s ease-out 0.34s;
+    }
+    .dimset .dlabel {
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 0.26s ease-out 0.38s, transform 0.26s ease-out 0.38s;
+    }
+    .dimset .dval { font-family: var(--mono); font-weight: 600; fill: var(--accent); letter-spacing: 0.05em; }
+    .dimset .dcap { font-family: var(--mono); fill: var(--graphite); letter-spacing: 0.14em; }
+    .dimset.on { opacity: 1; }
+    .dimset.on .lead  { stroke-dashoffset: 0; }
+    .dimset.on .dline { stroke-dashoffset: 0; }
+    .dimset.on .darrow, .dimset.on .dtick { opacity: 1; }
+    .dimset.on .dlabel { opacity: 1; transform: none; }
+
+    /* ============ HTML dimension styling for inline numbers ============ */
+    .dim {
+      font-family: var(--mono);
+      font-size: 0.92em;
+      font-weight: 600;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .dim::before, .dim::after {
+      content: "";
+      display: inline-block;
+      width: 0;
+      height: 0;
+      border-top: 3.5px solid transparent;
+      border-bottom: 3.5px solid transparent;
+      vertical-align: middle;
+      position: relative;
+      top: -1px;
+    }
+    .dim::before { border-right: 5px solid currentColor; margin-right: 4px; }
+    .dim::after  { border-left: 5px solid currentColor; margin-left: 4px; }
+
+    /* ============ about layer: notes + callouts ============ */
+    .bio p { margin-bottom: 14px; max-width: 58ch; }
+    .co-phrase {
+      border-bottom: 1px dashed rgba(30, 95, 204, 0.55);
+      transition: background-color 0.2s;
+    }
+    .co-phrase.lit { background: var(--accent-soft); border-bottom-style: solid; }
+    .co {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      margin-left: 3px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      background: #fff;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      line-height: 1;
+      cursor: pointer;
+      vertical-align: 4px;
+      padding: 0;
+      transition: background-color 0.18s, color 0.18s;
+    }
+    .co:hover, .co.on { background: var(--accent); color: #fff; }
+
+    .notes { display: grid; gap: 10px; }
+    .note {
+      position: relative;
+      border: 1px solid rgba(27, 46, 56, 0.35);
+      background: #fff;
+      padding: 10px 12px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--graphite);
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .note .no { color: var(--accent); font-weight: 600; margin-right: 6px; }
+    .note::before {
+      content: "";
+      position: absolute;
+      left: -40px;
+      top: 17px;
+      width: 32px;
+      height: 0;
+      border-top: 1.5px solid var(--accent);
+      opacity: 0.35;
+      transform: scaleX(0.2);
+      transform-origin: left center;
+      transition: transform 0.4s cubic-bezier(0.25, 0.7, 0.3, 1), opacity 0.3s;
+    }
+    .note::after {
+      content: "";
+      position: absolute;
+      left: -12px;
+      top: 13.5px;
+      width: 0;
+      height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid var(--accent);
+      opacity: 0;
+      transition: opacity 0.2s ease-out 0.3s;
+    }
+    .note.lit { border-color: var(--accent); box-shadow: 4px 4px 0 var(--accent-soft); color: var(--ink); }
+    .note.lit::before { transform: scaleX(1); opacity: 1; }
+    .note.lit::after { opacity: 1; }
+    .note-margin { border-style: dashed; }
+
+    /* ============ experience notes ============ */
+    .rolenotes { display: grid; gap: 14px; }
+    .rolenote { border: 1px solid rgba(27, 46, 56, 0.35); background: #fff; padding: 12px 14px; }
+    .rolenote h3 {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+    }
+    .rolenote h3 .pno { color: var(--accent); margin-right: 8px; }
+    .rolenote .meta {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--graphite);
+      margin: 3px 0 8px;
+    }
+    .rolenote p { font-size: 13.5px; color: var(--graphite); }
+
+    /* ============ opensight layer + revision ruler ============ */
+    .os-text p { margin-bottom: 13px; max-width: 56ch; color: var(--ink); }
+    .os-text p.sub { color: var(--graphite); }
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; list-style: none; margin: 14px 0 0; }
+    .chips li {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      border: 1px solid var(--line-soft);
+      background: var(--accent-soft);
+      padding: 4px 9px;
+    }
+    .os-link {
+      display: inline-block;
+      margin-top: 18px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .os-link:hover { background: var(--accent-soft); }
+
+    .rev-ctl { margin: 0 0 22px; }
+    .rev-kicker {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.22em;
+      color: var(--graphite);
+      margin-bottom: 4px;
+    }
+    .rev-caption {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.1em;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .rev-caption #rev-name { color: var(--accent); font-weight: 600; }
+    .rev-ruler {
+      position: relative;
+      height: 86px;
+      max-width: 430px;
+      border: 1.5px solid var(--ink);
+      background: #fff;
+      box-shadow: 4px 4px 0 rgba(27, 46, 56, 0.06);
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .rev-ruler:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .rev-track {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: 6px;
+      height: 14px;
+      border-bottom: 1.5px solid var(--ink);
+      background: repeating-linear-gradient(90deg, rgba(27, 46, 56, 0.9) 0 1.5px, transparent 1.5px 32px);
+    }
+    .rev-track::after {
+      content: "";
+      position: absolute;
+      inset: 0 0 6px 0;
+      background: repeating-linear-gradient(90deg, rgba(27, 46, 56, 0.45) 0 1px, transparent 1px 6.4px);
+    }
+    .rev-marker {
+      position: absolute;
+      top: 23px;
+      left: var(--pos, 75%);
+      transform: translateX(-50%);
+      transition: left 0.35s cubic-bezier(0.3, 1.4, 0.5, 1);
+      pointer-events: none;
+    }
+    .rev-marker::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -6px;
+      width: 1.5px;
+      height: 6px;
+      background: var(--accent);
+    }
+    .rev-marker b {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 26px;
+      padding-top: 7px;
+      clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .rev-stop {
+      position: absolute;
+      bottom: 5px;
+      width: 50%;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.16em;
+      color: var(--graphite);
+      line-height: 1.5;
+    }
+    .rev-stop small { display: block; font-size: 8px; letter-spacing: 0.12em; }
+    .rev-stop.cur { color: var(--accent); font-weight: 600; }
+    .rev-stop-a { left: 0; }
+    .rev-stop-b { right: 0; }
+    .rev-hint {
+      font-family: var(--mono);
+      font-size: 8.5px;
+      letter-spacing: 0.16em;
+      color: var(--graphite);
+      margin-top: 6px;
+    }
+    .rev-view[hidden] { display: none !important; }
+
+    /* ============ contact BOM ============ */
+    .bom { border-collapse: collapse; width: 100%; max-width: 760px; font-family: var(--mono); }
+    .bom caption {
+      text-align: left;
+      font-size: 9.5px;
+      letter-spacing: 0.22em;
+      color: var(--graphite);
+      padding-bottom: 10px;
+    }
+    .bom th, .bom td {
+      border: 1px solid var(--line-soft);
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+    }
+    .bom th {
+      background: var(--accent-soft);
+      font-size: 9.5px;
+      letter-spacing: 0.2em;
+      color: var(--graphite);
+      font-weight: 500;
+    }
+    .bom td.c { text-align: center; }
+    .bom a { text-decoration: underline; text-underline-offset: 3px; }
+    .bom a:hover { background: var(--accent-soft); }
+    .bom-note {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--graphite);
+      margin-top: 14px;
+    }
+
+    /* ============ responsive ============ */
+    @media (max-width: 900px) {
+      .two-col { grid-template-columns: 1fr; }
+      .two-col > * { max-width: 560px; }
+      .note::before, .note::after { display: none; }
+      .hero { gap: 34px; }
+    }
+    @media (max-width: 480px) {
+      body { font-size: 14px; }
+      #frame { margin: 6px; }
+      .wrap { padding: 0 12px; }
+      .strip { padding: 8px 12px; }
+      .strip-top { padding-left: 134px; }
+      .bom th, .bom td { padding: 7px 7px; font-size: 11px; word-break: break-word; }
+      .index { min-width: 0; width: 100%; }
+      .tblock-wrap { max-width: none; }
+      .tblock { flex-basis: 100%; }
+      .hero { padding-top: 44px; }
+      .stamp-ink { right: 8px; padding: 6px 10px; font-size: 9.5px; }
+      .layer { padding: 14px 12px 18px; }
+    }
+
+    /* ============ reduced motion ============ */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .trail { animation: none; display: none; }
+      .dimset, .dimset .lead, .dimset .dline, .dimset .darrow, .dimset .dtick, .dimset .dlabel { transition: none; }
+      .note, .note::before, .note::after { transition: none; }
+      .co, .co-phrase, .part .pshape { transition: none; }
+      #cursor, #cursor svg { transition: none; }
+      .lsw { transition: none; }
+      .lsw-pin::after { transition: none; }
+      .rev-marker { transition: none; }
+      .stamp.pressing { animation: none; }
+      .stamp-ink.inked { animation: none; }
+      .layer-roll { transition: none; }
+      .layer-roll-inner { transition: none; }
+      .layer-arrow { transition: none; }
+    }
+
+    /* ============ print ============ */
+    @media print {
+      @page { margin: 15mm; }
+      html, body {
+        background: #fff;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      /* no transitions on paper: force final drawn state, never a mid-tween snapshot */
+      .layer-roll, .layer-roll-inner,
+      .dimset, .dimset .lead, .dimset .dline, .dimset .darrow, .dimset .dtick, .dimset .dlabel {
+        transition: none !important;
+      }
+      /* screen-only chrome with no meaning on paper */
+      .skiplink, #cursor, .ambient, .fig-hint, .lsw-state, .layer-arrow, .stamp-zone { display: none !important; }
+      /* every layer prints unrolled regardless of open/closed state */
+      .layer-roll { grid-template-rows: 1fr !important; }
+      .layer-roll-inner {
+        opacity: 1 !important;
+        transform: none !important;
+        overflow: visible !important;
+      }
+      /* both OpenSight revisions print, not just the active one */
+      #rev-view-a, #rev-view-b, .rev-view[hidden] { display: block !important; }
+      /* dimension callouts print fully drawn instead of at their faint hover default */
+      .dimset { opacity: 1 !important; }
+      .dimset .darrow, .dimset .dtick, .dimset .dlabel { opacity: 1 !important; }
+      .dimset .dlabel { transform: none !important; }
+      .dimset .lead, .dimset .dline { stroke-dashoffset: 0 !important; }
+      /* ink stamp drops its absolute/rotated overlay so it can't cross the title */
+      .stamp-ink {
+        position: static !important;
+        transform: none !important;
+        opacity: 1 !important;
+        margin: 12px 0 0;
+        box-shadow: none;
+      }
+      /* keep figures and note blocks from splitting across pages */
+      figure.fig-wrap, .rolenote, .note, .rev-view { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skiplink" href="#canvas">SKIP TO CANVAS</a>
+
+  <div class="ambient" aria-hidden="true">
+    <span class="trail trail-h"></span>
+    <span class="trail trail-v"></span>
+  </div>
+
+  <div id="frame">
+    <div class="frame-inner">
+
+      <header class="strip strip-top">
+        <span>AS-2026 &middot; PORTFOLIO DRAWING SET &middot; ABHIJIT SOMALA</span>
+        <span>ISSUED FOR REVIEW &middot; 2026-07-03</span>
+      </header>
+
+      <main id="main" class="wrap">
+
+        <!-- ======== cover sheet / hero ======== -->
+        <section class="hero" aria-label="Cover sheet">
+          <svg class="hero-ctor" aria-hidden="true" viewBox="0 0 1080 620" preserveAspectRatio="xMidYMid slice">
+            <path class="ctor cline" d="M540 20 V600 M60 310 H1020"/>
+            <circle class="ctor" cx="540" cy="310" r="190"/>
+            <circle class="ctor" cx="540" cy="310" r="12"/>
+            <path class="ctor" d="M528 310 h24 M540 298 v24"/>
+            <path class="ctor" d="M420 430 L540 120 L660 430 M460 330 H620"/>
+            <circle class="ctor" cx="540" cy="120" r="26"/>
+          </svg>
+
+          <div class="hero-top">
+            <p class="kicker">DWG NO. AS-100 &middot; COVER SHEET</p>
+
+            <nav class="index" aria-label="Index of overlays">
+              <p>INDEX OF OVERLAYS</p>
+              <a href="#layer-about" data-open="layer-about"><span>L1 &middot; ABOUT</span><span class="dwg">AS-101</span></a>
+              <a href="#layer-experience" data-open="layer-experience"><span>L2 &middot; EXPERIENCE</span><span class="dwg">AS-102</span></a>
+              <a href="#layer-opensight" data-open="layer-opensight"><span>L3 &middot; OPENSIGHT</span><span class="dwg">AS-103</span></a>
+              <a href="#layer-wildfire" data-open="layer-wildfire"><span>L4 &middot; WILDFIRE</span><span class="dwg">AS-104</span></a>
+              <a href="#layer-contact" data-open="layer-contact"><span>L5 &middot; CONTACT</span><span class="dwg">AS-105</span></a>
+            </nav>
+
+            <div class="gnotes">
+              <h2>GENERAL NOTES</h2>
+              <p><span class="no">G1</span>ML engineer at a stealth EdTech startup and applied ML lead at Virginia Tech's NLP Research Lab, currently at Cornell.</p>
+              <p><span class="no">G2</span>I build multi-agent systems, NLP pipelines, and ML infra that ships to production.</p>
+              <p><span class="no">G3</span>Overlays L1 to L5 are tracing sheets on one base grid. Toggle them at the canvas edge and stack any combination.</p>
+            </div>
+          </div>
+
+          <div class="tblock-wrap">
+            <div class="stamp-zone">
+              <span class="stamp-label" id="stamp-label">EXPORT</span>
+              <button class="stamp" id="stamp" type="button" aria-pressed="false" aria-label="Export. Stamp the drawing set as issued and print it." aria-describedby="stamp-hint">
+                <span class="stamp-knob" aria-hidden="true"></span>
+                <span class="stamp-neck" aria-hidden="true"></span>
+                <span class="stamp-base">PRINT SET</span>
+              </button>
+              <span class="stamp-hint" id="stamp-hint">PRESS TO ISSUE THE SET</span>
+            </div>
+            <div class="tblock" role="group" aria-label="Title block">
+              <div class="tb-title">
+                <span class="tlabel">TITLE</span>
+                <h1>ABHIJIT SOMALA</h1>
+                <p class="tag">I build ML systems, from research pipelines to production agents.</p>
+              </div>
+              <div class="tb-row">
+                <div class="tb-cell"><b>ROLE</b><span>ML ENGINEER &middot; CORNELL UNIVERSITY</span></div>
+                <div class="tb-cell"><b>BASED</b><span>ITHACA NY AND RICHMOND VA</span></div>
+              </div>
+              <div class="tb-row">
+                <div class="tb-cell"><b>DWG NO.</b><span>AS-100</span></div>
+                <div class="tb-cell"><b>REV</b><span>05</span></div>
+                <div class="tb-cell"><b>DATE</b><span>2026-07-03</span></div>
+              </div>
+              <div class="tb-row">
+                <div class="tb-cell"><b>SCALE</b><span>NOT TO SCALE</span></div>
+                <div class="tb-cell"><b>DRAWN BY</b><span>A. SOMALA</span></div>
+                <div class="tb-cell"><b>SHEETS</b><span>COVER + 05</span></div>
+              </div>
+              <p class="stamp-ink" id="stamp-ink" role="status" hidden>
+                <span>ISSUED &middot; PRINT SET</span>
+                <span>2026-07-03 &middot; SET AS-2026</span>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======== shared canvas: rail + layer zones ======== -->
+        <div class="canvas" id="canvas">
+
+          <div class="rail">
+            <p class="rail-label">OVERLAYS</p>
+            <div class="rail-tabs" role="group" aria-label="Layer switches">
+              <button class="lsw on" type="button" style="--lc:#1E5FCC" data-layer="layer-about" aria-pressed="true" aria-controls="layer-about">
+                <span class="lsw-pin" aria-hidden="true"></span>
+                <svg class="lsw-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="2.6"/><path d="M2.8 13.8a5.2 5.2 0 0 1 10.4 0"/></svg>
+                <span class="lsw-txt"><span class="lsw-id">L1</span>ABOUT</span>
+                <span class="lsw-state" aria-hidden="true">ON</span>
+              </button>
+              <button class="lsw on" type="button" style="--lc:#0E7B6C" data-layer="layer-experience" aria-pressed="true" aria-controls="layer-experience">
+                <span class="lsw-pin" aria-hidden="true"></span>
+                <svg class="lsw-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="10.2" width="11" height="3.3"/><rect x="3.6" y="6.4" width="8.8" height="2.9"/><rect x="4.7" y="2.6" width="6.6" height="2.9"/></svg>
+                <span class="lsw-txt"><span class="lsw-id">L2</span>EXPERIENCE</span>
+                <span class="lsw-state" aria-hidden="true">ON</span>
+              </button>
+              <button class="lsw on" type="button" style="--lc:#7A3EB8" data-layer="layer-opensight" aria-pressed="true" aria-controls="layer-opensight">
+                <span class="lsw-pin" aria-hidden="true"></span>
+                <svg class="lsw-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1.8 8C4.2 4.7 11.8 4.7 14.2 8C11.8 11.3 4.2 11.3 1.8 8Z"/><circle cx="8" cy="8" r="1.9"/></svg>
+                <span class="lsw-txt"><span class="lsw-id">L3</span>OPENSIGHT</span>
+                <span class="lsw-state" aria-hidden="true">ON</span>
+              </button>
+              <button class="lsw on" type="button" style="--lc:#B4552D" data-layer="layer-wildfire" aria-pressed="true" aria-controls="layer-wildfire">
+                <span class="lsw-pin" aria-hidden="true"></span>
+                <svg class="lsw-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.6C8.4 4.2 11.9 5.6 11.9 9.3A3.9 3.9 0 0 1 4.1 9.3C4.1 7.4 5.5 6.2 6.1 4.5C6.7 5.7 7.6 6 8 1.6Z"/></svg>
+                <span class="lsw-txt"><span class="lsw-id">L4</span>WILDFIRE</span>
+                <span class="lsw-state" aria-hidden="true">ON</span>
+              </button>
+              <button class="lsw on" type="button" style="--lc:#48606E" data-layer="layer-contact" aria-pressed="true" aria-controls="layer-contact">
+                <span class="lsw-pin" aria-hidden="true"></span>
+                <svg class="lsw-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="3.6" width="12.4" height="8.8"/><path d="M2.2 4.2L8 9L13.8 4.2"/></svg>
+                <span class="lsw-txt"><span class="lsw-id">L5</span>CONTACT</span>
+                <span class="lsw-state" aria-hidden="true">ON</span>
+              </button>
+            </div>
+            <p class="rail-note"><span class="rail-note-full">TRACING OVERLAYS ON BASE GRID AS-100. ANY STACK READS.</span><span class="rail-note-short">OVERLAYS ON ONE BASE GRID. ANY STACK READS.</span></p>
+          </div>
+
+          <div class="zones">
+
+            <!-- LAYER 01 / ABOUT -->
+            <section class="layer" id="layer-about" style="--lc:#1E5FCC" aria-labelledby="lt-about">
+              <span class="tape" aria-hidden="true"></span>
+              <header class="layer-head">
+                <span class="layer-id">LAYER 01</span>
+                <h2 class="layer-title" id="lt-about">ABOUT &middot; SPECIFICATION NOTES</h2>
+                <span class="layer-dwg">DWG AS-101</span>
+                <svg class="layer-arrow" aria-hidden="true" width="12" height="8" viewBox="0 0 12 8"><path d="M6 7.5 L1 0.5 H11 Z"/></svg>
+              </header>
+              <div class="layer-roll"><div class="layer-roll-inner">
+              <p class="layer-sub">ML engineer, Cornell University. Based between Ithaca NY and Richmond VA.</p>
+              <div class="two-col">
+                <div class="bio">
+                  <p class="col-label">SPEC &middot; READ WITH MARGIN NOTES N1 TO N6</p>
+                  <p>I've worked across the ML stack, from <span class="co-phrase" id="p1">unsupervised clustering on data with no labels</span><button class="co" data-note="note-1" data-phrase="p1" aria-pressed="false" aria-label="Highlight margin note 1, clustering toolkit">1</button> to inference pipelines running in production for tens of thousands of users.</p>
+                  <p>Right now I'm building at <span class="co-phrase" id="p2">Focara</span><button class="co" data-note="note-2" data-phrase="p2" aria-pressed="false" aria-label="Highlight margin note 2, Focara">2</button>, an EdTech startup, and leading applied ML work at <span class="co-phrase" id="p3">Virginia Tech's NLP Research Lab</span><button class="co" data-note="note-3" data-phrase="p3" aria-pressed="false" aria-label="Highlight margin note 3, Virginia Tech NLP Research Lab">3</button>. Before that I built embedding visualization infrastructure at <span class="co-phrase" id="p4">Nomic AI</span><button class="co" data-note="note-4" data-phrase="p4" aria-pressed="false" aria-label="Highlight margin note 4, Nomic AI">4</button>.</p>
+                  <p>My biggest project so far is <span class="co-phrase" id="p5">OpenSight</span><button class="co" data-note="note-5" data-phrase="p5" aria-pressed="false" aria-label="Highlight margin note 5, OpenSight">5</button>, a real-time multi-agent voice assistant for blind and low-vision users. It placed <span class="dim">top 10 out of 2,500+</span> teams nationally.</p>
+                </div>
+                <div>
+                  <p class="col-label">MARGIN NOTES</p>
+                  <div class="notes">
+                    <p class="note" id="note-1"><span class="no">N1</span>Label-free toolkit: UMAP and HDBSCAN clustering, with PyTorch, TensorFlow, and scikit-learn.</p>
+                    <p class="note" id="note-2"><span class="no">N2</span>Focara, stealth EdTech startup. ML engineer, May 2026 to present. Component detail on layer 02.</p>
+                    <p class="note" id="note-3"><span class="no">N3</span>Virginia Tech NLP Research Lab. Applied ML engineering lead, Dec 2025 to present, leading a <span class="dim">10</span>-person team.</p>
+                    <p class="note" id="note-4"><span class="no">N4</span>Nomic AI. AI data engineering intern, summer 2024. Embedding visualization and ETL infrastructure.</p>
+                    <p class="note" id="note-5"><span class="no">N5</span>OpenSight is the primary drawing of this set. Full breakdown on layer 03, with revision history.</p>
+                    <p class="note note-margin" id="note-6"><span class="no">N6</span>Margin note. At <span class="dim">17</span> I wrote a state bill in Virginia. It became permanent legislation and put <span class="dim">$1.7M</span> of STEM funding in front of almost <span class="dim">38,000</span> students.</p>
+                  </div>
+                </div>
+              </div>
+              </div></div>
+            </section>
+
+            <!-- LAYER 02 / EXPERIENCE -->
+            <section class="layer" id="layer-experience" style="--lc:#0E7B6C" aria-labelledby="lt-experience">
+              <span class="tape" aria-hidden="true"></span>
+              <header class="layer-head">
+                <span class="layer-id">LAYER 02</span>
+                <h2 class="layer-title" id="lt-experience">EXPERIENCE &middot; ASSEMBLY</h2>
+                <span class="layer-dwg">DWG AS-102</span>
+                <svg class="layer-arrow" aria-hidden="true" width="12" height="8" viewBox="0 0 12 8"><path d="M6 7.5 L1 0.5 H11 Z"/></svg>
+              </header>
+              <div class="layer-roll"><div class="layer-roll-inner">
+              <p class="layer-sub">Three components: Focara, Virginia Tech NLP Research Lab, Nomic AI.</p>
+              <div class="stack">
+                <figure class="fig-wrap">
+                  <svg class="fig" viewBox="0 0 460 400" role="group" aria-label="Assembly drawing of three experience components with dimension lines">
+                    <path class="ctor cline" d="M155 18 V382"/>
+                    <text class="snote" font-size="8.5" x="60" y="392">EXPLODED VIEW &middot; STACK ORDER MOST RECENT FIRST</text>
+
+                    <g class="part" id="part-focara" data-dim="d-focara" tabindex="0" role="button" aria-pressed="false" aria-label="Focara, ML engineer. Dimension: pipeline latency cut from 900 milliseconds to 500 milliseconds.">
+                      <rect class="pshape" x="60" y="36" width="190" height="76"/>
+                      <text class="psub" font-size="9" x="74" y="58">PART 01</text>
+                      <text class="pname" font-size="14" x="74" y="80">FOCARA</text>
+                      <text class="psub" font-size="8" x="74" y="98">ML ENGINEER</text>
+                    </g>
+                    <g class="dimset" id="d-focara" aria-hidden="true">
+                      <path class="lead" pathLength="1" d="M250 74 L272 60 L300 60"/>
+                      <line class="dline" pathLength="1" x1="300" y1="60" x2="448" y2="60"/>
+                      <path class="darrow" d="M300 60 L308 57 L308 63 Z"/>
+                      <path class="darrow" d="M448 60 L440 57 L440 63 Z"/>
+                      <line class="dtick" x1="300" y1="53" x2="300" y2="67"/>
+                      <line class="dtick" x1="448" y1="53" x2="448" y2="67"/>
+                      <g class="dlabel">
+                        <text class="dval" font-size="13" x="374" y="52" text-anchor="middle">900 MS TO 500 MS</text>
+                        <text class="dcap" font-size="9.5" x="374" y="76" text-anchor="middle">PIPELINE LATENCY</text>
+                        <text class="dcap" font-size="9.5" x="374" y="88" text-anchor="middle">CANVAS ALERT CLASSIFIER</text>
+                      </g>
+                    </g>
+
+                    <g class="part" id="part-vt" data-dim="d-vt" tabindex="0" role="button" aria-pressed="false" aria-label="Virginia Tech NLP Research Lab, applied ML engineering lead. Dimension: 40 percent plus MAP improvement, serving 45,000 users.">
+                      <rect class="pshape" x="60" y="156" width="190" height="76"/>
+                      <text class="psub" font-size="9" x="74" y="178">PART 02</text>
+                      <text class="pname" font-size="13" x="74" y="200">VT NLP RESEARCH LAB</text>
+                      <text class="psub" font-size="8" x="74" y="218">APPLIED ML ENGINEERING LEAD</text>
+                    </g>
+                    <g class="dimset" id="d-vt" aria-hidden="true">
+                      <path class="lead" pathLength="1" d="M250 194 L272 180 L300 180"/>
+                      <line class="dline" pathLength="1" x1="300" y1="180" x2="448" y2="180"/>
+                      <path class="darrow" d="M300 180 L308 177 L308 183 Z"/>
+                      <path class="darrow" d="M448 180 L440 177 L440 183 Z"/>
+                      <line class="dtick" x1="300" y1="173" x2="300" y2="187"/>
+                      <line class="dtick" x1="448" y1="173" x2="448" y2="187"/>
+                      <g class="dlabel">
+                        <text class="dval" font-size="13" x="374" y="172" text-anchor="middle">40%+ MAP</text>
+                        <text class="dcap" font-size="9.5" x="374" y="196" text-anchor="middle">RECOMMENDATION PIPELINE</text>
+                        <text class="dcap" font-size="9.5" x="374" y="208" text-anchor="middle">SERVING 45K USERS</text>
+                      </g>
+                    </g>
+
+                    <g class="part" id="part-nomic" data-dim="d-nomic" tabindex="0" role="button" aria-pressed="false" aria-label="Nomic AI, AI data engineering intern. Dimension: 250,000 plus monthly active users.">
+                      <rect class="pshape" x="60" y="276" width="190" height="76"/>
+                      <text class="psub" font-size="9" x="74" y="298">PART 03</text>
+                      <text class="pname" font-size="14" x="74" y="320">NOMIC AI</text>
+                      <text class="psub" font-size="8" x="74" y="338">AI DATA ENGINEERING INTERN</text>
+                    </g>
+                    <g class="dimset" id="d-nomic" aria-hidden="true">
+                      <path class="lead" pathLength="1" d="M250 314 L272 300 L300 300"/>
+                      <line class="dline" pathLength="1" x1="300" y1="300" x2="448" y2="300"/>
+                      <path class="darrow" d="M300 300 L308 297 L308 303 Z"/>
+                      <path class="darrow" d="M448 300 L440 297 L440 303 Z"/>
+                      <line class="dtick" x1="300" y1="293" x2="300" y2="307"/>
+                      <line class="dtick" x1="448" y1="293" x2="448" y2="307"/>
+                      <g class="dlabel">
+                        <text class="dval" font-size="13" x="374" y="292" text-anchor="middle">250K+ MAU</text>
+                        <text class="dcap" font-size="9.5" x="374" y="316" text-anchor="middle">EMBEDDING VIZ AND ETL INFRA</text>
+                      </g>
+                    </g>
+                  </svg>
+                  <figcaption>FIG 02-1 &middot; EXPERIENCE ASSEMBLY</figcaption>
+                  <p class="fig-hint">HOVER OR TAP A PART TO PULL ITS DIMENSION</p>
+                </figure>
+
+                <div>
+                  <p class="col-label">COMPONENT NOTES</p>
+                  <div class="rolenotes">
+                    <article class="rolenote">
+                      <h3><span class="pno">PART 01</span>FOCARA</h3>
+                      <p class="meta">ML ENGINEER &middot; STEALTH EDTECH STARTUP &middot; MAY 2026 TO PRESENT</p>
+                      <p>Built a Canvas webhook plus LLM classifier that surfaces critical announcements before academic deadlines. Cut pipeline latency from <span class="dim">900MS to 500MS</span>. Architected the multi-tenant chat-to-migration system.</p>
+                    </article>
+                    <article class="rolenote">
+                      <h3><span class="pno">PART 02</span>VIRGINIA TECH NLP RESEARCH LAB</h3>
+                      <p class="meta">APPLIED ML ENGINEERING LEAD &middot; DEC 2025 TO PRESENT</p>
+                      <p>Led a <span class="dim">10</span>-person team rebuilding a recommendation pipeline with no baseline to start from. Got a <span class="dim">40%+ MAP</span> improvement. Shipped clustering, sentiment, and LLM inference pipelines to production, serving <span class="dim">45K</span> users.</p>
+                    </article>
+                    <article class="rolenote">
+                      <h3><span class="pno">PART 03</span>NOMIC AI</h3>
+                      <p class="meta">AI DATA ENGINEERING INTERN &middot; SUMMER 2024</p>
+                      <p>Built embedding visualization and ETL infrastructure for <span class="dim">250K+</span> monthly users.</p>
+                    </article>
+                  </div>
+                </div>
+              </div>
+              </div></div>
+            </section>
+
+            <!-- LAYER 03 / OPENSIGHT with revision history -->
+            <section class="layer" id="layer-opensight" style="--lc:#7A3EB8" aria-labelledby="lt-opensight">
+              <span class="tape" aria-hidden="true"></span>
+              <header class="layer-head">
+                <span class="layer-id">LAYER 03</span>
+                <h2 class="layer-title" id="lt-opensight">OPENSIGHT &middot; PRIMARY DRAWING</h2>
+                <span class="layer-dwg">DWG AS-103</span>
+                <svg class="layer-arrow" aria-hidden="true" width="12" height="8" viewBox="0 0 12 8"><path d="M6 7.5 L1 0.5 H11 Z"/></svg>
+              </header>
+              <div class="layer-roll"><div class="layer-roll-inner">
+              <p class="layer-sub">Real-time multi-agent voice assistant. Top 10 of 2,500+ teams. One drawing, two revisions.</p>
+
+              <div class="rev-ctl">
+                <p class="rev-kicker">REVISION HISTORY &middot; SAME TASK, TWO ISSUES OF THE DRAWING</p>
+                <p class="rev-caption" aria-live="polite">SHOWING <span id="rev-name">REV B &middot; OPENSIGHT RESULT &middot; CURRENT ISSUE</span></p>
+                <div class="rev-ruler" id="rev-ruler" role="slider" tabindex="0" aria-orientation="horizontal"
+                     aria-label="Drawing revision, Rev A screen reader baseline to Rev B OpenSight result"
+                     aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-valuetext="Rev B, OpenSight result, current issue">
+                  <span class="rev-track" aria-hidden="true"></span>
+                  <span class="rev-marker" aria-hidden="true"><b id="rev-flag">B</b></span>
+                  <span class="rev-stop rev-stop-a" data-rev="0">REV A<small>SCREEN READER BASELINE</small></span>
+                  <span class="rev-stop rev-stop-b cur" data-rev="1">REV B<small>OPENSIGHT &middot; CURRENT</small></span>
+                </div>
+                <p class="rev-hint">SLIDE OR CLICK A STOP &middot; ARROW KEYS WHEN FOCUSED</p>
+              </div>
+
+              <!-- REV A: screen reader baseline -->
+              <div class="rev-view" id="rev-view-a" hidden>
+                <div class="stack">
+                  <figure class="fig-wrap">
+                    <svg class="fig" viewBox="0 0 430 360" role="group" aria-label="Rev A. Section of the screen reader baseline with dimension lines">
+                      <path class="revtri" d="M46 24 L58 46 L34 46 Z"/>
+                      <text class="revtxt" font-size="10" x="46" y="43" text-anchor="middle">A</text>
+                      <rect class="ctor" x="94" y="52" width="202" height="250"/>
+
+                      <rect class="ink2" x="110" y="60" width="170" height="48" fill="#fff"/>
+                      <text class="psub" font-size="8.5" x="195" y="78" text-anchor="middle" style="font-family:var(--mono);fill:var(--graphite);letter-spacing:0.14em">SOURCE</text>
+                      <text class="pname" font-size="11.5" x="195" y="96" text-anchor="middle" style="font-family:var(--mono);font-weight:600;fill:var(--ink);letter-spacing:0.08em">WEB PAGE</text>
+                      <line class="ink2" x1="195" y1="108" x2="195" y2="132"/>
+                      <path class="fill2" d="M195 138 L191 130 L199 130 Z"/>
+
+                      <g class="part" id="part-sr" data-dim="d-base-time" tabindex="0" role="button" aria-pressed="false" aria-label="Part 1, screen reader. Dimension: a multi-step web task takes 5 to 10 minutes at this baseline.">
+                        <rect class="pshape" x="110" y="138" width="170" height="54"/>
+                        <text class="psub" font-size="8.5" x="195" y="156" text-anchor="middle">PART 01</text>
+                        <text class="pname" font-size="11.5" x="195" y="176" text-anchor="middle">SCREEN READER</text>
+                      </g>
+                      <g class="dimset" id="d-base-time" aria-hidden="true">
+                        <path class="lead" pathLength="1" d="M110 165 L80 165 L56 165"/>
+                        <path class="dline" pathLength="1" d="M56 60 V276"/>
+                        <path class="darrow" d="M56 60 L52 69 L60 69 Z"/>
+                        <path class="darrow" d="M56 276 L52 267 L60 267 Z"/>
+                        <line class="dtick" x1="48" y1="60" x2="110" y2="60"/>
+                        <line class="dtick" x1="48" y1="276" x2="110" y2="276"/>
+                        <g class="dlabel">
+                          <text class="dval" font-size="12.5" x="24" y="168" text-anchor="middle" transform="rotate(-90 24 168)">5 TO 10 MIN</text>
+                          <text class="dcap" font-size="9" x="40" y="168" text-anchor="middle" transform="rotate(-90 40 168)">MULTI-STEP WEB TASK</text>
+                        </g>
+                      </g>
+
+                      <line class="ink2" x1="195" y1="192" x2="195" y2="216"/>
+                      <path class="fill2" d="M195 222 L191 214 L199 214 Z"/>
+
+                      <g class="part" id="part-desc" data-dim="d-desc" tabindex="0" role="button" aria-pressed="false" aria-label="Output, linear description. Dimension: describes only, does not act on the page.">
+                        <rect class="pshape" x="110" y="222" width="170" height="54"/>
+                        <text class="psub" font-size="8.5" x="195" y="240" text-anchor="middle">OUTPUT</text>
+                        <text class="pname" font-size="10.5" x="195" y="260" text-anchor="middle">LINEAR DESCRIPTION</text>
+                      </g>
+                      <g class="dimset" id="d-desc" aria-hidden="true">
+                        <path class="lead" pathLength="1" d="M280 249 L290 249 L300 249"/>
+                        <line class="dline" pathLength="1" x1="300" y1="249" x2="424" y2="249"/>
+                        <path class="darrow" d="M300 249 L308 246 L308 252 Z"/>
+                        <path class="darrow" d="M424 249 L416 246 L416 252 Z"/>
+                        <line class="dtick" x1="300" y1="242" x2="300" y2="256"/>
+                        <line class="dtick" x1="424" y1="242" x2="424" y2="256"/>
+                        <g class="dlabel">
+                          <text class="dval" font-size="10.5" x="362" y="241" text-anchor="middle">DESCRIBES ONLY</text>
+                          <text class="dcap" font-size="9" x="362" y="263" text-anchor="middle">DOES NOT ACT ON THE PAGE</text>
+                        </g>
+                      </g>
+
+                      <line class="ink2" x1="195" y1="276" x2="195" y2="300"/>
+                      <path class="fill2" d="M195 306 L191 298 L199 298 Z"/>
+                      <text class="snote" font-size="9" x="195" y="326" text-anchor="middle">USER LISTENS, THEN COMPLETES EVERY STEP ALONE</text>
+                      <text class="snote" font-size="8.5" x="195" y="348" text-anchor="middle">REV A &middot; SUPERSEDED BY REV B</text>
+                    </svg>
+                    <figcaption>FIG 03-1 &middot; REV A &middot; SCREEN READER BASELINE</figcaption>
+                    <p class="fig-hint">HOVER OR TAP A PART TO PULL ITS DIMENSION</p>
+                  </figure>
+
+                  <div class="os-text">
+                    <p class="col-label">REV A NOTES &middot; BASELINE CONDITION</p>
+                    <p>A screen reader describes the page. It does not act on it. The user listens, then completes every step alone.</p>
+                    <p>A multi-step web task takes <span class="dim">5 to 10 minutes</span> at this baseline. That number is why OpenSight exists.</p>
+                    <p class="sub">Slide to Rev B for the revised drawing.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- REV B: the OpenSight result -->
+              <div class="rev-view" id="rev-view-b">
+                <div class="stack">
+                  <figure class="fig-wrap">
+                    <svg class="fig" viewBox="0 0 430 640" role="group" aria-label="Rev B. System section of the OpenSight voice pipeline with dimension lines">
+                      <path class="revtri" d="M46 24 L58 46 L34 46 Z"/>
+                      <text class="revtxt" font-size="10" x="46" y="43" text-anchor="middle">B</text>
+                      <!-- static linework -->
+                      <rect class="ctor" x="94" y="82" width="202" height="416"/>
+                      <circle class="ink2" cx="195" cy="38" r="13"/>
+                      <rect class="ink2" x="191" y="30" width="8" height="12" rx="4"/>
+                      <path class="ink2" d="M187 38 a8 8 0 0 0 16 0"/>
+                      <text class="snote" font-size="9" x="216" y="42">VOICE IN</text>
+                      <line class="ink2" x1="195" y1="57" x2="195" y2="82"/>
+                      <path class="fill2" d="M195 88 L191 80 L199 80 Z"/>
+                      <line class="ink2" x1="195" y1="142" x2="195" y2="170"/>
+                      <path class="fill2" d="M195 176 L191 168 L199 168 Z"/>
+                      <line class="ink2" x1="195" y1="316" x2="195" y2="344"/>
+                      <path class="fill2" d="M195 350 L191 342 L199 342 Z"/>
+                      <line class="ink2" x1="195" y1="404" x2="195" y2="432"/>
+                      <path class="fill2" d="M195 438 L191 430 L199 430 Z"/>
+                      <line class="ink2" x1="195" y1="492" x2="195" y2="514"/>
+                      <path class="fill2" d="M195 520 L191 512 L199 512 Z"/>
+
+                      <!-- parts -->
+                      <g class="part" id="part-badge" data-dim="d-top10" tabindex="0" role="button" aria-pressed="false" aria-label="Revision marker. Dimension: top 10 of 2,500 plus teams, Google Developer Groups Solution Challenge 2026, North America.">
+                        <rect class="phit" x="272" y="56" width="44" height="40"/>
+                        <path class="pshape" d="M296 64 L306 82 L286 82 Z"/>
+                      </g>
+                      <g class="dimset" id="d-top10" aria-hidden="true">
+                        <path class="lead" pathLength="1" d="M300 72 L306 70 L310 70"/>
+                        <line class="dline" pathLength="1" x1="310" y1="70" x2="424" y2="70"/>
+                        <path class="darrow" d="M310 70 L318 67 L318 73 Z"/>
+                        <path class="darrow" d="M424 70 L416 67 L416 73 Z"/>
+                        <line class="dtick" x1="310" y1="63" x2="310" y2="77"/>
+                        <line class="dtick" x1="424" y1="63" x2="424" y2="77"/>
+                        <g class="dlabel">
+                          <text class="dval" font-size="11.5" x="367" y="61" text-anchor="middle">TOP 10 OF 2,500+</text>
+                          <text class="dcap" font-size="9" x="367" y="86" text-anchor="middle">GDG SOLUTION CHALLENGE</text>
+                          <text class="dcap" font-size="9" x="367" y="98" text-anchor="middle">2026 &middot; NORTH AMERICA</text>
+                        </g>
+                      </g>
+
+                      <g class="part" id="part-stt" data-dim="d-stt" tabindex="0" role="button" aria-pressed="false" aria-label="Part 1, speech to text. Dimension: Deepgram.">
+                        <rect class="pshape" x="110" y="88" width="170" height="54"/>
+                        <text class="psub" font-size="8.5" x="195" y="106" text-anchor="middle">PART 01</text>
+                        <text class="pname" font-size="11.5" x="195" y="126" text-anchor="middle">SPEECH TO TEXT</text>
+                      </g>
+                      <g class="dimset" id="d-stt" aria-hidden="true">
+                        <path class="lead" pathLength="1" d="M280 118 L290 124 L300 124"/>
+                        <line class="dline" pathLength="1" x1="300" y1="124" x2="424" y2="124"/>
+                        <path class="darrow" d="M300 124 L308 121 L308 127 Z"/>
+                        <path class="darrow" d="M424 124 L416 121 L416 127 Z"/>
+                        <line class="dtick" x1="300" y1="117" x2="300" y2="131"/>
+                        <line class="dtick" x1="424" y1="117" x2="424" y2="131"/>
+                        <g class="dlabel">
+                          <text class="dval" font-size="12.5" x="362" y="116" text-anchor="middle">DEEPGRAM</text>
+                          <text class="dcap" font-size="9" x="362" y="138" text-anchor="middle">SPEECH TO TEXT</text>
+                        </g>
+                      </g>
+
+                      <g class="part" id="part-orch" data-dim="d-orch" tabindex="0" role="button" aria-pressed="false" aria-label="Part 2, agent orchestrator. Dimension: FastAPI plus WebSockets.">
+                        <rect class="pshape" x="100" y="176" width="190" height="140"/>
+                        <text class="psub" font-size="8.5" x="195" y="194" text-anchor="middle">PART 02</text>
+                        <text class="pname" font-size="11.5" x="195" y="212" text-anchor="middle">AGENT ORCHESTRATOR</text>
+                        <rect class="ctor" x="116" y="224" width="158" height="18"/>
+                        <rect class="ctor" x="116" y="246" width="158" height="18"/>
+                        <g class="part" id="part-llm" data-dim="d-llm" tabindex="0" role="button" aria-pressed="false" aria-label="Part 3, LLM. Dimension: Gemini on Vertex AI.">
+                          <rect class="pshape" x="116" y="272" width="158" height="30"/>
+                          <text class="pname" font-size="10" x="195" y="291" text-anchor="middle">PART 03 &middot; LLM</text>
+                        </g>
+                      </g>
+                      <g class="dimset" id="d-orch" aria-hidden="true">
+                        <path class="lead" pathLength="1" d="M290 200 L295 196 L300 196"/>
+                        <line class="dline" pathLength="1" x1="300" y1="196" x2="424" y2="196"/>
+                        <path class="darrow" d="M300 196 L308 193 L308 199 Z"/>
+                        <path class="darrow" d="M424 196 L416 193 L416 199 Z"/>
+                        <line class="dtick" x1="300" y1="189" x2="300" y2="203"/>
+                        <line class="dtick" x1="424" y1="189" x2="424" y2="203"/>
+                        <g class="dlabel">
+                          <text class="dval" font-size="10" x="362" y="188" text-anchor="middle">FASTAPI + WEBSOCKETS</text>
+                          <text class="dcap" font-size="9" x="362" y="210" text-anchor="middle">ORCHESTRATION LAYER</text>
+                        </g>
+                      </g>
+                      <g class="dimset" id="d-llm" aria-hidden="true">
+                        <path class="lead" pathLength="1" d="M274 287 L300 287"/>
+                        <line class="dline" pathLength="1" x1="300" y1="287" x2="424" y2="287"/>
+                        <path class="darrow" d="M300 287 L308 284 L308 290 Z"/>
+                        <path class="darrow" d="M424 287 L416 284 L416 290 Z"/>
+                        <line class="dtick" x1="300" y1="280" x2="300" y2="294"/>
+                        <line class="dtick" x1="424" y1="280" x2="424" y2="294"/>
+                        <g class="dlabel">
+                          <text class="dval" font-size="10.5" x="362" y="279" text-anchor="middle">GEMINI ON VERTEX AI</text>
+                          <text class="dcap" font-size="9" x="362" y="301" text-anchor="middle">REASONING</text>
+                        </g>
+                      </g>
+
+                      <g class="part" id="part-action" data-dim="d-time" tabindex="0" role="button" aria-pressed="false" aria-label="Part 4, browser action. Dimension: multi-step web task under 60 seconds, against the Rev A baseline of 5 to 10 minutes.">
+                        <rect class="pshape" x="110" y="350" width="170" height="54"/>
+                        <text class="psub" font-size="8.5" x="195" y="368" text-anchor="middle">PART 04</text>
+                        <text class="pname" font-size="11.5" x="195" y="388" text-anchor="middle">BROWSER ACTION</text>
+                      </g>
+                      <g class="dimset" id="d-time" aria-hidden="true">
+                        <path class="lead" pathLength="1" d="M110 377 L80 377 L56 377"/>
+                        <path class="dline" pathLength="1" d="M56 88 V404"/>
+                        <path class="darrow" d="M56 88 L52 97 L60 97 Z"/>
+                        <path class="darrow" d="M56 404 L52 395 L60 395 Z"/>
+                        <line class="dtick" x1="48" y1="88" x2="110" y2="88"/>
+                        <line class="dtick" x1="48" y1="404" x2="110" y2="404"/>
+                        <g class="dlabel">
+                          <text class="dval" font-size="12.5" x="24" y="246" text-anchor="middle" transform="rotate(-90 24 246)">UNDER 60 S</text>
+                          <text class="dcap" font-size="9" x="40" y="246" text-anchor="middle" transform="rotate(-90 40 246)">MULTI-STEP WEB TASK</text>
+                        </g>
+                      </g>
+
+                      <g class="part" id="part-tts" data-dim="d-tts" tabindex="0" role="button" aria-pressed="false" aria-label="Part 5, text to speech. Dimension: Google Cloud TTS.">
+                        <rect class="pshape" x="110" y="438" width="170" height="54"/>
+                        <text class="psub" font-size="8.5" x="195" y="456" text-anchor="middle">PART 05</text>
+                        <text class="pname" font-size="11.5" x="195" y="476" text-anchor="middle">TEXT TO SPEECH</text>
+                      </g>
+                      <g class="dimset" id="d-tts" aria-hidden="true">
+                        <path class="lead" pathLength="1" d="M280 465 L300 465"/>
+                        <line class="dline" pathLength="1" x1="300" y1="465" x2="424" y2="465"/>
+                        <path class="darrow" d="M300 465 L308 462 L308 468 Z"/>
+                        <path class="darrow" d="M424 465 L416 462 L416 468 Z"/>
+                        <line class="dtick" x1="300" y1="458" x2="300" y2="472"/>
+                        <line class="dtick" x1="424" y1="458" x2="424" y2="472"/>
+                        <g class="dlabel">
+                          <text class="dval" font-size="12" x="362" y="457" text-anchor="middle">GOOGLE CLOUD TTS</text>
+                          <text class="dcap" font-size="9" x="362" y="479" text-anchor="middle">SPEECH SYNTHESIS</text>
+                        </g>
+                      </g>
+
+                      <g class="part" id="part-user" data-dim="d-valid" tabindex="0" role="button" aria-pressed="false" aria-label="Part 6, audio out to the user. Dimension: validated with the Blind Institute of Technology and the Virginia Department for the Blind and Vision Impaired.">
+                        <rect class="phit" x="150" y="518" width="100" height="62"/>
+                        <path class="ink2" d="M176 538 h12 l14 -12 v32 l-14 -12 h-12 z"/>
+                        <path class="ink2" d="M208 538 a12 12 0 0 1 0 16"/>
+                        <path class="ink2" d="M214 532 a20 20 0 0 1 0 28"/>
+                        <text class="psub" font-size="8.5" x="240" y="544">PART 06</text>
+                        <text class="psub" font-size="8.5" x="240" y="556">AUDIO OUT</text>
+                      </g>
+                      <g class="dimset" id="d-valid" aria-hidden="true">
+                        <path class="lead" pathLength="1" d="M186 558 L140 590 L106 590"/>
+                        <g class="dlabel">
+                          <text class="dcap" font-size="9.5" x="110" y="598">VALIDATED WITH THE</text>
+                          <text class="dval" font-size="9.5" x="110" y="611">BLIND INSTITUTE OF TECHNOLOGY AND THE</text>
+                          <text class="dval" font-size="9.5" x="110" y="624">VIRGINIA DEPARTMENT FOR THE BLIND AND VISION IMPAIRED</text>
+                        </g>
+                      </g>
+                    </svg>
+                    <figcaption>FIG 03-1 &middot; REV B &middot; OPENSIGHT SYSTEM SECTION A-A</figcaption>
+                    <p class="fig-hint">HOVER OR TAP A PART TO PULL ITS DIMENSION</p>
+                  </figure>
+
+                  <div class="os-text">
+                    <p class="col-label">REV B NOTES &middot; CURRENT ISSUE</p>
+                    <p>A real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. I built it because screen readers describe a page, they don't act on it.</p>
+                    <p>OpenSight cuts the same multi-step web task down to <span class="dim">under 60 seconds</span>. Slide back to Rev A for the baseline this revises.</p>
+                    <p class="sub"><span class="dim">Top 10</span> finalist in North America out of <span class="dim">2,500+</span> teams, Google Developer Groups Solution Challenge 2026.</p>
+                    <p class="sub">Validated directly with the Blind Institute of Technology and the Virginia Department for the Blind and Vision Impaired.</p>
+                    <ul class="chips" aria-label="OpenSight stack">
+                      <li>FASTAPI</li>
+                      <li>WEBSOCKETS</li>
+                      <li>GEMINI ON VERTEX AI</li>
+                      <li>DEEPGRAM</li>
+                      <li>GOOGLE CLOUD TTS</li>
+                    </ul>
+                    <a class="os-link" href="https://github.com/abhisomala/OpenSight_GDGChallenge_2026">SOURCE &middot; GITHUB.COM/ABHISOMALA/OPENSIGHT</a>
+                  </div>
+                </div>
+              </div>
+              </div></div>
+            </section>
+
+            <!-- LAYER 04 / WILDFIRE -->
+            <section class="layer" id="layer-wildfire" style="--lc:#B4552D" aria-labelledby="lt-wildfire">
+              <span class="tape" aria-hidden="true"></span>
+              <header class="layer-head">
+                <span class="layer-id">LAYER 04</span>
+                <h2 class="layer-title" id="lt-wildfire">WILDFIRE &middot; SPREAD PREDICTION</h2>
+                <span class="layer-dwg">DWG AS-104</span>
+                <svg class="layer-arrow" aria-hidden="true" width="12" height="8" viewBox="0 0 12 8"><path d="M6 7.5 L1 0.5 H11 Z"/></svg>
+              </header>
+              <div class="layer-roll"><div class="layer-roll-inner">
+              <p class="layer-sub">Deep learning pipeline on NASA environmental data.</p>
+              <div class="stack">
+                <figure class="fig-wrap">
+                  <svg class="fig" viewBox="0 0 460 360" role="group" aria-label="Elevation drawing of the wildfire spread prediction pipeline with dimension lines">
+                    <path class="ctor cline" d="M155 18 V330"/>
+                    <path class="ctor" d="M24 344 C 60 330, 96 348, 132 336 S 204 330, 240 342"/>
+                    <path class="ctor" d="M40 356 C 76 344, 112 358, 148 348 S 216 344, 252 354"/>
+                    <text class="snote" font-size="8.5" x="270" y="350">ELEVATION &middot; DATA TO DEPLOYMENT</text>
+
+                    <g class="part" id="part-wf-data" data-dim="d-wf-data" tabindex="0" role="button" aria-pressed="false" aria-label="Stage 1, NASA satellite data, VIIRS and MODIS. Dimension: 100,000 plus environmental datapoints.">
+                      <rect class="pshape" x="60" y="36" width="190" height="70"/>
+                      <text class="psub" font-size="9" x="74" y="56">STAGE 01</text>
+                      <text class="pname" font-size="12.5" x="74" y="76">NASA SATELLITE DATA</text>
+                      <text class="psub" font-size="8" x="74" y="94">VIIRS + MODIS</text>
+                    </g>
+                    <g class="dimset" id="d-wf-data" aria-hidden="true">
+                      <path class="lead" pathLength="1" d="M250 71 L272 58 L300 58"/>
+                      <line class="dline" pathLength="1" x1="300" y1="58" x2="448" y2="58"/>
+                      <path class="darrow" d="M300 58 L308 55 L308 61 Z"/>
+                      <path class="darrow" d="M448 58 L440 55 L440 61 Z"/>
+                      <line class="dtick" x1="300" y1="51" x2="300" y2="65"/>
+                      <line class="dtick" x1="448" y1="51" x2="448" y2="65"/>
+                      <g class="dlabel">
+                        <text class="dval" font-size="13" x="374" y="50" text-anchor="middle">100K+</text>
+                        <text class="dcap" font-size="9.5" x="374" y="74" text-anchor="middle">NASA ENVIRONMENTAL</text>
+                        <text class="dcap" font-size="9.5" x="374" y="86" text-anchor="middle">DATAPOINTS</text>
+                      </g>
+                    </g>
+
+                    <line class="ink2" x1="155" y1="106" x2="155" y2="132"/>
+                    <path class="fill2" d="M155 138 L151 130 L159 130 Z"/>
+
+                    <g class="part" id="part-wf-model" data-dim="d-wf-model" tabindex="0" role="button" aria-pressed="false" aria-label="Stage 2, deep learning pipeline. Dimension: wildfire spread prediction model.">
+                      <rect class="pshape" x="60" y="140" width="190" height="70"/>
+                      <text class="psub" font-size="9" x="74" y="160">STAGE 02</text>
+                      <text class="pname" font-size="12" x="74" y="180">DEEP LEARNING PIPELINE</text>
+                      <text class="psub" font-size="8" x="74" y="198">TRAINED ON STAGE 01</text>
+                    </g>
+                    <g class="dimset" id="d-wf-model" aria-hidden="true">
+                      <path class="lead" pathLength="1" d="M250 175 L272 162 L300 162"/>
+                      <line class="dline" pathLength="1" x1="300" y1="162" x2="448" y2="162"/>
+                      <path class="darrow" d="M300 162 L308 159 L308 165 Z"/>
+                      <path class="darrow" d="M448 162 L440 159 L440 165 Z"/>
+                      <line class="dtick" x1="300" y1="155" x2="300" y2="169"/>
+                      <line class="dtick" x1="448" y1="155" x2="448" y2="169"/>
+                      <g class="dlabel">
+                        <text class="dval" font-size="11.5" x="374" y="154" text-anchor="middle">WILDFIRE SPREAD</text>
+                        <text class="dcap" font-size="9.5" x="374" y="178" text-anchor="middle">PREDICTION MODEL</text>
+                      </g>
+                    </g>
+
+                    <line class="ink2" x1="155" y1="210" x2="155" y2="236"/>
+                    <path class="fill2" d="M155 242 L151 234 L159 234 Z"/>
+
+                    <g class="part" id="part-wf-deploy" data-dim="d-wf-deploy" tabindex="0" role="button" aria-pressed="false" aria-label="Stage 3, deployment. Dimension: containerized with Kubernetes and Helm.">
+                      <rect class="pshape" x="60" y="244" width="190" height="70"/>
+                      <text class="psub" font-size="9" x="74" y="264">STAGE 03</text>
+                      <text class="pname" font-size="12.5" x="74" y="284">DEPLOYMENT</text>
+                      <text class="psub" font-size="8" x="74" y="302">CONTAINERIZED</text>
+                    </g>
+                    <g class="dimset" id="d-wf-deploy" aria-hidden="true">
+                      <path class="lead" pathLength="1" d="M250 279 L272 266 L300 266"/>
+                      <line class="dline" pathLength="1" x1="300" y1="266" x2="448" y2="266"/>
+                      <path class="darrow" d="M300 266 L308 263 L308 269 Z"/>
+                      <path class="darrow" d="M448 266 L440 263 L440 269 Z"/>
+                      <line class="dtick" x1="300" y1="259" x2="300" y2="273"/>
+                      <line class="dtick" x1="448" y1="259" x2="448" y2="273"/>
+                      <g class="dlabel">
+                        <text class="dval" font-size="11" x="374" y="258" text-anchor="middle">KUBERNETES + HELM</text>
+                        <text class="dcap" font-size="9.5" x="374" y="282" text-anchor="middle">CONTAINERIZED</text>
+                      </g>
+                    </g>
+                  </svg>
+                  <figcaption>FIG 04-1 &middot; WILDFIRE SPREAD PIPELINE</figcaption>
+                  <p class="fig-hint">HOVER OR TAP A STAGE TO PULL ITS DIMENSION</p>
+                </figure>
+                <div class="os-text">
+                  <p class="col-label">SECONDARY PROJECT NOTES</p>
+                  <p>Wildfire spread prediction. A deep learning pipeline trained on <span class="dim">100K+</span> NASA environmental datapoints from VIIRS and MODIS.</p>
+                  <p class="sub">Containerized with Kubernetes and Helm.</p>
+                </div>
+              </div>
+              </div></div>
+            </section>
+
+            <!-- LAYER 05 / CONTACT -->
+            <section class="layer" id="layer-contact" style="--lc:#48606E" aria-labelledby="lt-contact">
+              <span class="tape" aria-hidden="true"></span>
+              <header class="layer-head">
+                <span class="layer-id">LAYER 05</span>
+                <h2 class="layer-title" id="lt-contact">CONTACT &middot; PARTS LIST</h2>
+                <span class="layer-dwg">DWG AS-105</span>
+                <svg class="layer-arrow" aria-hidden="true" width="12" height="8" viewBox="0 0 12 8"><path d="M6 7.5 L1 0.5 H11 Z"/></svg>
+              </header>
+              <div class="layer-roll"><div class="layer-roll-inner">
+              <p class="layer-sub">Email, GitHub, LinkedIn.</p>
+              <table class="bom">
+                <caption>BILL OF MATERIALS &middot; AS-105</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">ITEM</th>
+                    <th scope="col">PART</th>
+                    <th scope="col">SPECIFICATION</th>
+                    <th scope="col">QTY</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="c">1</td>
+                    <td>EMAIL</td>
+                    <td><a href="mailto:somala.abhi@gmail.com">somala.abhi@gmail.com</a></td>
+                    <td class="c"><span class="dim">1</span></td>
+                  </tr>
+                  <tr>
+                    <td class="c">2</td>
+                    <td>GITHUB</td>
+                    <td><a href="https://github.com/abhisomala">github.com/abhisomala</a></td>
+                    <td class="c"><span class="dim">1</span></td>
+                  </tr>
+                  <tr>
+                    <td class="c">3</td>
+                    <td>LINKEDIN</td>
+                    <td><a href="https://www.linkedin.com/in/abhijitsomala">linkedin.com/in/abhijitsomala</a></td>
+                    <td class="c"><span class="dim">1</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="bom-note">ISSUED FOR REVIEW &middot; RESPONSES ACCEPTED AT ANY PART ABOVE</p>
+              </div></div>
+            </section>
+
+          </div>
+        </div>
+      </main>
+
+      <footer class="strip strip-bottom">
+        <span>DO NOT SCALE DRAWING</span>
+        <span>&copy; 2026 ABHIJIT SOMALA &middot; SHEET SET AS-2026</span>
+      </footer>
+
+    </div>
+  </div>
+
+  <div id="cursor" aria-hidden="true">
+    <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+      <g stroke="#1E5FCC" stroke-width="1.4">
+        <circle cx="17" cy="17" r="5.5"/>
+        <path d="M17 1v9M17 24v9M1 17h9M24 17h9"/>
+      </g>
+      <g stroke="#1E5FCC" stroke-width="1">
+        <path d="M26.5 14.5v5M29.5 15.5v3"/>
+        <path d="M14.5 7.5h5M15.5 4.5h3"/>
+      </g>
+      <circle cx="17" cy="17" r="1.4" fill="#1E5FCC"/>
+    </svg>
+  </div>
+
+  <noscript>
+    <style>
+      .rev-view[hidden] { display: block !important; }
+      .rev-ctl, .rail { display: none; }
+      /* rail is hidden, so drop the two-column canvas grid and let the
+         layers span full width instead of the empty 136px rail track */
+      .canvas { display: block; }
+      /* no JS means no open/close mechanic, so unroll every layer by default */
+      .layer-roll { grid-template-rows: 1fr !important; }
+      .layer-roll-inner { opacity: 1 !important; transform: none !important; }
+      .layer-arrow { display: none; }
+    </style>
+  </noscript>
+
+  <script>
+    (function () {
+      'use strict';
+      var RM = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var FINE = window.matchMedia('(pointer: fine)');
+      var COARSE = window.matchMedia('(pointer: coarse)');
+      var NOHOVER = window.matchMedia('(hover: none)');
+
+      function onMQ(mq, fn) {
+        if (mq.addEventListener) mq.addEventListener('change', fn);
+        else if (mq.addListener) mq.addListener(fn);
+      }
+
+      /* ---------- option G: pin-and-unroll layer switches ----------
+         Layers start rolled (header strip only). Clicking a header or its
+         rail switch unrolls/rolls that one layer; any number can be open. */
+      function setLayer(id, on) {
+        var layer = document.getElementById(id);
+        if (!layer) return;
+        layer.classList.toggle('open', on);
+        var head = layer.querySelector('.layer-head');
+        if (head) head.setAttribute('aria-expanded', on ? 'true' : 'false');
+        var sw = document.querySelector('.lsw[data-layer="' + id + '"]');
+        if (sw) {
+          sw.classList.toggle('on', on);
+          sw.setAttribute('aria-pressed', on ? 'true' : 'false');
+          var st = sw.querySelector('.lsw-state');
+          if (st) st.textContent = on ? 'ON' : 'OFF';
+        }
+      }
+
+      function toggleLayer(id) {
+        var layer = document.getElementById(id);
+        if (!layer) return;
+        setLayer(id, !layer.classList.contains('open'));
+      }
+
+      Array.prototype.forEach.call(document.querySelectorAll('.lsw'), function (sw) {
+        sw.addEventListener('click', function () {
+          toggleLayer(sw.getAttribute('data-layer'));
+        });
+      });
+
+      /* the whole header strip is the roll/unroll control, keyboard included */
+      Array.prototype.forEach.call(document.querySelectorAll('.layer'), function (layer) {
+        var head = layer.querySelector('.layer-head');
+        if (!head) return;
+        head.setAttribute('role', 'button');
+        head.setAttribute('tabindex', '0');
+        head.setAttribute('aria-controls', layer.id);
+        head.addEventListener('click', function () { toggleLayer(layer.id); });
+        head.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            toggleLayer(layer.id);
+          }
+        });
+        setLayer(layer.id, false); /* everything starts rolled */
+      });
+
+      /* index-of-overlays links unroll the layer and scroll to it */
+      Array.prototype.forEach.call(document.querySelectorAll('[data-open]'), function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('data-open');
+          var layer = document.getElementById(id);
+          if (!layer) return;
+          e.preventDefault();
+          setLayer(id, true);
+          layer.scrollIntoView({ behavior: RM.matches ? 'auto' : 'smooth', block: 'start' });
+        });
+      });
+
+      /* ---------- revision ruler on the OpenSight layer ---------- */
+      var ruler = document.getElementById('rev-ruler');
+      if (ruler) {
+        var revViews = [document.getElementById('rev-view-a'), document.getElementById('rev-view-b')];
+        var stops = Array.prototype.slice.call(ruler.querySelectorAll('.rev-stop'));
+        var flag = document.getElementById('rev-flag');
+        var revName = document.getElementById('rev-name');
+        var names = [
+          'REV A · SCREEN READER BASELINE · SUPERSEDED',
+          'REV B · OPENSIGHT RESULT · CURRENT ISSUE'
+        ];
+        var vtexts = [
+          'Rev A, screen reader baseline, superseded',
+          'Rev B, OpenSight result, current issue'
+        ];
+        var setRev = function (n) {
+          n = n === 0 ? 0 : 1;
+          ruler.setAttribute('aria-valuenow', String(n));
+          ruler.setAttribute('aria-valuetext', vtexts[n]);
+          ruler.style.setProperty('--pos', n === 0 ? '25%' : '75%');
+          if (flag) flag.textContent = n === 0 ? 'A' : 'B';
+          if (revName) revName.textContent = names[n];
+          if (revViews[0]) revViews[0].hidden = n !== 0;
+          if (revViews[1]) revViews[1].hidden = n !== 1;
+          stops.forEach(function (s) {
+            s.classList.toggle('cur', +s.getAttribute('data-rev') === n);
+          });
+        };
+        ruler.addEventListener('click', function (e) {
+          var s = e.target && e.target.closest ? e.target.closest('.rev-stop') : null;
+          if (s) { setRev(+s.getAttribute('data-rev')); return; }
+          var r = ruler.getBoundingClientRect();
+          setRev(e.clientX - r.left > r.width / 2 ? 1 : 0);
+        });
+        ruler.addEventListener('keydown', function (e) {
+          var k = e.key;
+          if (k === 'ArrowLeft' || k === 'ArrowDown' || k === 'Home') { e.preventDefault(); setRev(0); }
+          else if (k === 'ArrowRight' || k === 'ArrowUp' || k === 'End') { e.preventDefault(); setRev(1); }
+        });
+        setRev(1);
+      }
+
+      /* ---------- export stamp ---------- */
+      var stampBtn = document.getElementById('stamp');
+      var inkMark = document.getElementById('stamp-ink');
+      if (stampBtn && inkMark) {
+        var showInk = function () {
+          inkMark.hidden = false;
+          if (!RM.matches) {
+            inkMark.classList.remove('inked');
+            void inkMark.offsetWidth;
+            inkMark.classList.add('inked');
+          }
+        };
+        var printTimer = 0;
+        var queuePrint = function (delay) {
+          window.clearTimeout(printTimer);
+          printTimer = window.setTimeout(function () { window.print(); }, delay);
+        };
+        stampBtn.addEventListener('click', function () {
+          stampBtn.setAttribute('aria-pressed', 'true');
+          var rot = (-9 + Math.random() * 5).toFixed(1);
+          inkMark.style.setProperty('--ink-rot', rot + 'deg');
+          if (RM.matches) { showInk(); queuePrint(60); return; }
+          stampBtn.classList.remove('pressing');
+          void stampBtn.offsetWidth;
+          stampBtn.classList.add('pressing');
+          window.setTimeout(showInk, 230);
+          queuePrint(620); /* press 230ms + ink-in 320ms, then issue */
+        });
+        stampBtn.addEventListener('animationend', function () {
+          stampBtn.classList.remove('pressing');
+        });
+      }
+
+      /* ---------- labeled parts pull their dimension lines ---------- */
+      Array.prototype.forEach.call(document.querySelectorAll('.part'), function (part) {
+        var dim = document.getElementById(part.getAttribute('data-dim'));
+        if (!dim) return;
+        var hov = false, pin = false;
+        function sync() {
+          var on = hov || pin;
+          dim.classList.toggle('on', on);
+          part.classList.toggle('hov', on);
+          part.setAttribute('aria-pressed', pin ? 'true' : 'false');
+        }
+        part.addEventListener('pointerenter', function () { hov = true; sync(); });
+        part.addEventListener('pointerleave', function () { hov = false; sync(); });
+        part.addEventListener('focus', function () { hov = true; sync(); });
+        part.addEventListener('blur', function () { hov = false; sync(); });
+        part.addEventListener('click', function (e) { e.stopPropagation(); pin = !pin; sync(); });
+        part.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            e.stopPropagation();
+            pin = !pin;
+            sync();
+          }
+        });
+      });
+
+      /* ---------- about-layer numbered callouts ---------- */
+      Array.prototype.forEach.call(document.querySelectorAll('.co'), function (co) {
+        var note = document.getElementById(co.getAttribute('data-note'));
+        var phrase = document.getElementById(co.getAttribute('data-phrase'));
+        if (!note) return;
+        var hov = false, pin = false;
+        function sync() {
+          var on = hov || pin;
+          note.classList.toggle('lit', on);
+          if (phrase) phrase.classList.toggle('lit', on);
+          co.classList.toggle('on', on);
+          co.setAttribute('aria-pressed', pin ? 'true' : 'false');
+        }
+        co.addEventListener('pointerenter', function () { hov = true; sync(); });
+        co.addEventListener('pointerleave', function () { hov = false; sync(); });
+        co.addEventListener('focus', function () { hov = true; sync(); });
+        co.addEventListener('blur', function () { hov = false; sync(); });
+        co.addEventListener('click', function () { pin = !pin; sync(); });
+      });
+
+      /* ---------- custom drafting cursor (fine pointers only) ---------- */
+      var cursorEl = document.getElementById('cursor');
+      if (cursorEl && FINE.matches && !COARSE.matches) {
+        document.body.classList.add('cur-on');
+        var px = -100, py = -100, rot = 0, targetRot = 0, shown = false;
+
+        function apply() {
+          cursorEl.style.transform =
+            'translate(' + (px - 17) + 'px,' + (py - 17) + 'px) rotate(' + rot.toFixed(2) + 'deg)';
+        }
+        function frame() {
+          rot += (targetRot - rot) * 0.16;
+          if (Math.abs(targetRot - rot) < 0.03) rot = targetRot;
+          apply();
+          window.requestAnimationFrame(frame);
+        }
+
+        window.addEventListener('pointermove', function (e) {
+          px = e.clientX;
+          py = e.clientY;
+          var t = e.target;
+          var inFrame = !!(t && t.closest && t.closest('#frame'));
+          if (inFrame !== shown) {
+            shown = inFrame;
+            cursorEl.style.opacity = inFrame ? '1' : '0';
+          }
+          var nearDim = !!(t && t.closest && t.closest('svg.fig, .dim, .co, .note, .dimset'));
+          if (nearDim && !RM.matches) {
+            var off = ((px % 40) + 40) % 40;
+            var d = off < 20 ? -off : 40 - off;
+            targetRot = Math.max(-10, Math.min(10, d * 0.9));
+          } else {
+            targetRot = 0;
+          }
+          var act = !!(t && t.closest && t.closest('a, button, .part, [role="button"], .rev-ruler, .lsw'));
+          cursorEl.classList.toggle('act', act);
+          if (RM.matches) { rot = 0; apply(); }
+        }, { passive: true });
+
+        document.documentElement.addEventListener('pointerleave', function () {
+          shown = false;
+          cursorEl.style.opacity = '0';
+        });
+
+        if (RM.matches) apply();
+        else window.requestAnimationFrame(frame);
+      }
+    })();
+  </script>
+</body>
+</html>
