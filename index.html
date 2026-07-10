@@ -258,6 +258,77 @@
     .gnotes p { margin-bottom: 8px; }
     .gnotes .no { color: var(--accent); margin-right: 6px; }
 
+    /* ============ key-plan locator ============ */
+    .keyplan {
+      flex: 0 1 216px;
+      align-self: flex-start;
+      border: 1.5px solid var(--ink);
+      background: #fff;
+      font-family: var(--mono);
+      box-shadow: 6px 6px 0 rgba(27, 46, 56, 0.06);
+    }
+    .kp-head {
+      padding: 7px 10px;
+      background: var(--accent-soft);
+      border-bottom: 1px solid var(--line-soft);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: var(--graphite);
+    }
+    .kp-canvas {
+      position: relative;
+      margin: 10px;
+      height: 116px;
+      border: 1px dashed rgba(30, 95, 204, 0.28);
+      background-image:
+        linear-gradient(rgba(30, 95, 204, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 95, 204, 0.08) 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    /* each mini sheet mirrors the real sheet's position + rotation in the canvas below */
+    .kp-sheet {
+      position: absolute;
+      width: 23%;
+      height: 21%;
+      padding: 0;
+      cursor: pointer;
+      border: 1px solid var(--ic, var(--accent));
+      background: rgba(255, 255, 255, 0.9); /* fallback */
+      background: color-mix(in srgb, var(--ic, var(--accent)) 14%, #fff);
+      transform: rotate(var(--rot, 0deg));
+      transform-origin: center center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 7px;
+      line-height: 1;
+      color: var(--graphite);
+      transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    .kp-sheet span { pointer-events: none; }
+    .kp-sheet:hover { background: color-mix(in srgb, var(--ic, var(--accent)) 24%, #fff); }
+    /* flagged sheet: accent border + accent-soft fill + subtle glow (mirrors the mock) */
+    .kp-sheet.on {
+      border: 1.5px solid var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 2px rgba(30, 95, 204, 0.16), 0 2px 8px -2px rgba(30, 95, 204, 0.5);
+      color: var(--accent);
+      z-index: 2;
+    }
+    .kp-sheet:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; z-index: 3; }
+    .kp-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 10px;
+      border-top: 1px solid var(--line-soft);
+      font-size: 8.5px;
+      letter-spacing: 0.1em;
+      color: var(--graphite);
+    }
+    .kp-foot b { color: var(--accent); font-weight: 600; }
+
     /* title block, bottom right */
     .tblock-wrap {
       position: relative;
@@ -700,6 +771,11 @@
       .tblock-wrap { max-width: none; }
       .hero { padding-top: 44px; }
     }
+    /* narrow: the compass canvas becomes a static stack and the index nav already covers
+       navigation, so the miniature key plan steps aside rather than shrinking illegibly */
+    @media (max-width: 560px) {
+      .keyplan { display: none; }
+    }
 
     /* ============ reduced motion ============ */
     @media (prefers-reduced-motion: reduce) {
@@ -712,14 +788,17 @@
       .note, .note::before, .note::after { transition: none; }
       .co, .co-phrase, .part .pshape { transition: none; }
       #cursor, #cursor svg { transition: none; }
+      .kp-sheet { transition: none; }
     }
 
 /* ===== bottom scaffold ===== */
 .drawing-layers{position:relative;max-width:1260px;margin:0 auto;padding:0 clamp(10px,3vw,26px) 40px;}
-.dl-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;border:1px solid var(--ink);border-bottom:0;background:#fff;padding:9px 13px;font-family:var(--mono);}
-.dl-no{font-size:10px;letter-spacing:.14em;color:var(--accent);font-weight:600;}
-.dl-title{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--ink);}
-.dl-hint{margin-left:auto;font-size:10px;letter-spacing:.06em;color:var(--graphite);}
+/* title-band header: accent spine + boxed sheet-set tag + bold title, matching the weight of the canvas below */
+.dl-head{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:7px 14px;border:1px solid var(--ink);border-bottom:0;background:linear-gradient(180deg,#fff,#eaf0f5);padding:12px 14px 12px 22px;font-family:var(--mono);box-shadow:inset 0 -2px 0 rgba(30,95,204,.14);}
+.dl-head::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--accent);}
+.dl-no{font-size:10px;letter-spacing:.14em;color:var(--ink);font-weight:600;background:#fff;border:1px solid var(--ink);padding:4px 10px;}
+.dl-title{font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--ink);}
+.dl-hint{margin-left:auto;font-size:9.5px;letter-spacing:.1em;color:var(--graphite);font-weight:600;border:1px solid var(--line-soft);background:#fff;padding:4px 9px;}
 .dl-canvas{position:relative;border:1px solid var(--ink);background:
   linear-gradient(rgba(30,95,204,0.10) 1px,transparent 1px),
   linear-gradient(90deg,rgba(30,95,204,0.10) 1px,transparent 1px),
@@ -736,14 +815,21 @@
 .rev-panel[hidden]{display:none;}
 .rev-panel table{width:100%;border-collapse:collapse;font-size:10px;}
 .rev-panel th,.rev-panel td{border:1px solid var(--line-soft);padding:3px 6px;text-align:left;}
-.stamp{position:absolute;z-index:45;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-13deg) scale(.6);border:3px double #B23A2E;color:#B23A2E;font-family:var(--mono);font-weight:600;letter-spacing:.15em;padding:10px 18px;font-size:20px;opacity:0;pointer-events:none;border-radius:4px;text-transform:uppercase;transition:opacity .35s ease,transform .35s ease;}
+/* stamp sits BELOW the sheets (z-index:1 < zones' 2+) so a promoted card always covers it —
+   it reads as an ink impression on the paper, never on top of an open sheet's text.
+   feDisplacementMap gives the double border a slightly worn, uneven edge. */
+.stamp{position:absolute;z-index:1;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-13deg) scale(.6);border:3px double #B23A2E;color:#B23A2E;font-family:var(--mono);font-weight:600;letter-spacing:.15em;padding:10px 18px;font-size:20px;opacity:0;pointer-events:none;border-radius:4px;text-transform:uppercase;filter:url(#stampWorn);transition:opacity .35s ease,transform .35s ease;}
 .stamp.inked{opacity:.85;transform:translate(-50%,-50%) rotate(-13deg) scale(1);}
 .dim{font-family:var(--mono);font-weight:600;color:var(--accent);white-space:nowrap;}
 /* ===== instrument-drag mechanism: nine sheets scattered as a drawing pile ===== */
 .zone{position:absolute;width:clamp(132px,17vw,216px);min-height:clamp(120px,11.5vw,150px);padding:11px 13px 22px;
-  border:1px solid var(--line-soft);background:rgba(255,255,255,.9);
+  border:1px solid var(--line-soft);
+  background:rgba(255,255,255,.9); /* fallback */
+  background:color-mix(in srgb,var(--ic,var(--accent)) 7%,rgba(255,255,255,.92)); /* faint accent-tinted file tab, idle only */
   transform:rotate(var(--rot,0deg));transform-origin:center center;
-  box-shadow:2px 3px 11px -6px rgba(27,46,56,.4);
+  /* z-order depth (light from top-left, so every shadow falls down-right): back-of-pile sheets
+     (low --lift) are nearly flat; front sheets (high --lift) lift clearly off the surface */
+  box-shadow:calc(var(--lift,3)*0.7px) calc(var(--lift,3)*1.05px + 1px) calc(4px + var(--lift,3)*3.2px) calc(-7px + var(--lift,3)*0.18px) rgba(27,46,56,.42);
   transition:transform .28s ease,width .28s ease,box-shadow .25s ease,border-color .25s ease,background .25s ease;}
 .zone .z-head{display:flex;align-items:center;gap:6px;}
 .zone .z-ico{width:14px;height:14px;flex:none;display:block;color:var(--ic,var(--accent));}
@@ -752,8 +838,8 @@
 .zone .z-sub{font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--graphite);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .zone .z-dwg{position:absolute;right:10px;bottom:7px;font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--graphite);opacity:.55;}
 .zone .z-body{max-height:0;overflow:hidden;opacity:0;transition:max-height .35s ease,opacity .25s ease,margin .35s ease;font-size:12.5px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere;}
-.zone.revealed{border-color:var(--accent);background:#fff;box-shadow:0 14px 34px -12px rgba(30,95,204,.55);z-index:40 !important;transform:rotate(0deg) scale(1.03);width:clamp(210px,30vw,300px) !important;}
-.zone.revealed .z-body{max-height:430px;opacity:1;margin-top:9px;overflow:auto;}
+.zone.revealed{border-color:var(--accent);background:#fff;box-shadow:11px 22px 46px -16px rgba(27,46,56,.52),0 0 0 1px rgba(30,95,204,.22);z-index:40 !important;transform:rotate(0deg) scale(1.03);width:clamp(210px,30vw,300px) !important;}
+.zone.revealed .z-body{max-height:clamp(200px,44vh,430px);opacity:1;margin-top:9px;overflow:auto;}
 .zone.revealed .z-dwg{opacity:.75;}
 .zone.near:not(.revealed){border-color:var(--accent);}
 .zone.primary{width:clamp(150px,19vw,240px);}
@@ -762,9 +848,19 @@
 .zone .sk{margin:0 0 6px;} .zone .sk b{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--graphite);display:block;margin-bottom:1px;}
 .instrument{position:absolute;width:118px;height:118px;margin:-59px 0 0 -59px;z-index:20;cursor:grab;touch-action:none;}
 .instrument:active{cursor:grabbing;}
-.instrument .reach{position:absolute;inset:0;border:1px dashed rgba(30,95,204,.5);border-radius:50%;}
+/* dashed reach ring — sits behind/around the divider body, clearly SECONDARY */
+.instrument .reach{position:absolute;inset:0;border:1px dashed rgba(30,95,204,.3);border-radius:50%;}
 .instrument .comp{position:absolute;inset:0;}
-.inst-handle{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:rgba(255,255,255,.62);border:1.5px solid var(--accent);cursor:grab;}
+/* the compass casts one consistent down-right shadow, so it floats above the surface */
+.instrument .comp{filter:drop-shadow(3px 5px 3px rgba(27,46,56,.32));}
+/* divider body (Option C): ink line-stroke legs (heaviest), accent hinge + tips, muted dashed arc (lightest) */
+.c-leg{stroke:var(--ink);stroke-width:4.5;stroke-linecap:round;fill:none;}
+.c-tip{fill:var(--accent);}
+.c-arc{stroke:var(--graphite);stroke-width:1.2;stroke-dasharray:3 3;fill:none;opacity:.75;}
+.c-hinge-o{fill:none;stroke:var(--accent);stroke-width:1.6;}
+.c-hinge-i{fill:var(--accent);}
+/* transparent central grab target — same drag hook (#instHandle), no visual of its own */
+.inst-handle{position:absolute;left:50%;top:50%;width:38px;height:44px;margin:-22px 0 0 -19px;background:transparent;border:0;cursor:grab;}
 /* while the compass sits over an open sheet, fade its linework so the text below stays readable */
 .instrument .comp,.instrument .reach{transition:opacity .22s ease;}
 .instrument.reading .comp,.instrument.reading .reach{opacity:.13;}
@@ -775,6 +871,36 @@
 /* flip readout above the compass when it sits low so it never clips the canvas edge */
 .instrument.ro-up .inst-readout{top:auto;bottom:calc(100% + 4px);}
 @media (prefers-reduced-motion: reduce){.zone,.zone .z-body,.stamp{transition:none;}.instrument .reach{animation:none;}.instrument.parked,.instrument .comp,.instrument .reach{transition:none;}}
+/* ---- background watermark: abstracted OpenSight multi-agent pipeline, far behind everything ---- */
+.dl-watermark{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;}
+.dl-watermark svg{width:100%;height:100%;display:block;}
+.wm-node{fill:none;stroke:#9DB4C6;stroke-width:1.4;}
+.wm-link{fill:none;stroke:#9DB4C6;stroke-width:1;stroke-dasharray:6 5;}
+.wm-lab{font-family:var(--mono);letter-spacing:.14em;fill:#8CA6BC;}
+/* ---- soft cast shadow pooling under the whole scattered pile (grounds it on the surface) ---- */
+.dl-pile-shadow{position:absolute;left:5%;top:9%;width:82%;height:72%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 54% 58% at 47% 50%,rgba(27,46,56,.2),rgba(27,46,56,.08) 46%,transparent 72%);
+  filter:blur(22px);}
+/* ---- decorative drafting fill: non-interactive, behind the sheets (z-index:0 < zones' 2+) ---- */
+.dl-deco{position:absolute;inset:0;z-index:0;pointer-events:none;}
+.dl-deco .deco{position:absolute;}
+.dl-deco svg{display:block;overflow:visible;}
+/* compass rose: a fixed N/S/E/W reference anchored in the bottom-right corner */
+.dl-north{right:4%;bottom:5%;top:auto;width:92px;}
+.dl-north .cr-lab{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;fill:#5F7385;}
+.dl-scalebar{left:57%;top:90%;width:150px;}
+.dl-scalebar .sb-lab{font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:#7B93A4;margin-bottom:2px;}
+.dl-scalebar .sb-ticks{height:9px;border:1px solid #93AEC4;border-top:0;display:flex;}
+.dl-scalebar .sb-ticks i{flex:1;border-left:1px solid #93AEC4;}
+.dl-scalebar .sb-ticks i:first-child{border-left:0;}
+.dl-scalebar .sb-cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:#7B93A4;margin-top:2px;}
+/* ---- top scale-ruler strip: tick language + mono label, behind the sheets ---- */
+.dl-ruler{position:absolute;left:0;right:0;top:0;height:16px;z-index:0;pointer-events:none;opacity:.7;
+  background-image:repeating-linear-gradient(90deg,#93AEC4 0,#93AEC4 1px,transparent 1px,transparent 40px),
+                   repeating-linear-gradient(90deg,rgba(147,174,196,.55) 0,rgba(147,174,196,.55) 1px,transparent 1px,transparent 8px);
+  background-position:0 bottom,0 bottom;background-size:auto 9px,auto 4px;background-repeat:repeat-x;
+  border-bottom:1px solid rgba(147,174,196,.5);}
+.dl-ruler .r-lab{position:absolute;left:8px;top:2px;font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;color:#7B93A4;background:var(--paper);padding:0 4px;}
 /* ---- narrow viewports: the instrument-drag canvas can't hold five positioned sheets + a compass,
        so present the same sheets as a clean vertical stack (compass hidden), like the print layout ---- */
 @media (max-width:560px){
@@ -786,6 +912,7 @@
   .zone .z-body p{max-width:none;}
   .instrument,.inst-readout{display:none !important;}
   .dl-hint,.dl-title{display:none;} /* no compass in stacked mode — drop the "drag the compass" copy */
+  .dl-deco,.dl-ruler,.dl-watermark,.dl-pile-shadow{display:none !important;} /* absolute decorations don't belong in the static stack */
   .stamp{top:auto;bottom:12px;}
 }
 @media (max-width:480px){.zone{width:150px;padding:8px 9px;}.zone.primary{width:170px;}.instrument{width:150px;height:150px;margin:-75px 0 0 -75px;}.inst-handle{width:58px;height:58px;margin:-29px 0 0 -29px;}
@@ -846,6 +973,22 @@
               <p><span class="no">G1</span>ML engineer at a stealth EdTech startup and applied ML lead at Virginia Tech's NLP Research Lab, currently at Cornell.</p>
               <p><span class="no">G2</span>I build multi-agent systems, NLP pipelines, and ML infra that ships to production.</p>
             </div>
+
+            <div class="keyplan" role="group" aria-label="Key plan sheet-layout locator: an alternative way to jump to a sheet by its position in the drawing below">
+              <p class="kp-head">KEY PLAN &middot; SHEET LAYOUT AS-2026</p>
+              <div class="kp-canvas">
+                <button type="button" class="kp-sheet" data-open="sheet-about"      data-zone="about"      style="left:3%;top:6%;--rot:-4deg;--ic:#1E5FCC" aria-label="Sheet 01, About"><span>01</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-education"  data-zone="education"  style="left:15%;top:15%;--rot:4deg;--ic:#3E7CB1" aria-label="Sheet 02, Education"><span>02</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-experience" data-zone="experience" style="left:31%;top:4%;--rot:-2deg;--ic:#0E7B6C" aria-label="Sheet 03, Experience"><span>03</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-skills"     data-zone="skills"     style="left:45%;top:12%;--rot:3deg;--ic:#B0417B" aria-label="Sheet 04, Skills"><span>04</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-opensight"  data-zone="opensight"  style="left:8%;top:44%;--rot:-2deg;--ic:#7A3EB8" aria-label="Sheet 05, OpenSight"><span>05</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-wildfire"   data-zone="wildfire"   style="left:21%;top:53%;--rot:3deg;--ic:#B4552D" aria-label="Sheet 06, Wildfire"><span>06</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-algae"      data-zone="algae"      style="left:40%;top:45%;--rot:-3deg;--ic:#3F8F5C" aria-label="Sheet 07, Algae Bloom"><span>07</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-awards"     data-zone="awards"     style="left:64%;top:28%;--rot:2deg;--ic:#C9A227" aria-label="Sheet 08, Awards"><span>08</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-contact"    data-zone="contact"    style="left:52%;top:62%;--rot:-2deg;--ic:#48606E" aria-label="Sheet 09, Contact"><span>09</span></button>
+              </div>
+              <p class="kp-foot"><span>9 SHEETS TOTAL</span><span>FLAGGED &middot; <b id="kpActive">05 OPENSIGHT</b></span></p>
+            </div>
           </div>
 
           <div class="tblock-wrap">
@@ -882,64 +1025,124 @@
     <span class="dl-hint" id="dlHint">DRAG THE COMPASS — NEAREST SHEET OPENS</span>
   </div>
   <div class="dl-canvas" id="dlCanvas">
-    
-    <div class="zone" data-zone="about" id="zone-about" style="left:3%;top:6%;--rot:-4deg;z-index:2;--ic:#1E5FCC">
+
+    <!-- background watermark: abstracted OpenSight multi-agent pipeline (behind everything, non-interactive) -->
+    <div class="dl-watermark" aria-hidden="true">
+      <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <path class="wm-link" d="M150 350 H300"/>
+        <path class="wm-link" d="M470 350 C560 350 560 160 645 160"/>
+        <path class="wm-link" d="M470 350 C560 350 560 290 645 290"/>
+        <path class="wm-link" d="M470 350 C560 350 560 415 645 415"/>
+        <path class="wm-link" d="M470 350 C560 350 560 545 645 545"/>
+        <path class="wm-link" d="M855 160 C935 160 935 350 965 350"/>
+        <path class="wm-link" d="M855 290 C935 290 935 350 965 350"/>
+        <path class="wm-link" d="M855 415 C935 415 935 350 965 350"/>
+        <path class="wm-link" d="M855 545 C935 545 935 350 965 350"/>
+        <circle class="wm-node" cx="112" cy="350" r="42"/>
+        <text class="wm-lab" x="112" y="355" text-anchor="middle" style="font-size:14px">VOICE</text>
+        <rect class="wm-node" x="300" y="312" width="170" height="76" rx="7"/>
+        <text class="wm-lab" x="385" y="356" text-anchor="middle" style="font-size:14px">ORCH</text>
+        <rect class="wm-node" x="645" y="134" width="210" height="52" rx="7"/>
+        <text class="wm-lab" x="750" y="165" text-anchor="middle" style="font-size:12px">PERCEIVE</text>
+        <rect class="wm-node" x="645" y="264" width="210" height="52" rx="7"/>
+        <text class="wm-lab" x="750" y="295" text-anchor="middle" style="font-size:12px">PLAN</text>
+        <rect class="wm-node" x="645" y="389" width="210" height="52" rx="7"/>
+        <text class="wm-lab" x="750" y="420" text-anchor="middle" style="font-size:12px">ACT</text>
+        <rect class="wm-node" x="645" y="519" width="210" height="52" rx="7"/>
+        <text class="wm-lab" x="750" y="550" text-anchor="middle" style="font-size:12px">SPEAK</text>
+        <circle class="wm-node" cx="1005" cy="350" r="42"/>
+        <text class="wm-lab" x="1005" y="355" text-anchor="middle" style="font-size:14px">DOM</text>
+        <text class="wm-lab" x="40" y="640" style="font-size:12px;letter-spacing:.22em">OPENSIGHT · MULTI-AGENT PIPELINE · SCHEMATIC</text>
+      </svg>
+    </div>
+
+    <!-- soft cast shadow pooling under the scattered pile -->
+    <div class="dl-pile-shadow" aria-hidden="true"></div>
+
+    <!-- scale-ruler strip along the top edge (behind the sheets, non-interactive) -->
+    <div class="dl-ruler" aria-hidden="true"><span class="r-lab">SCALE 1:1 · CM</span></div>
+
+    <!-- decorative drafting elements filling the empty canvas gaps (behind the sheets, non-interactive) -->
+    <div class="dl-deco" aria-hidden="true">
+      <div class="deco dl-north"><svg viewBox="-8 -8 116 116" fill="none">
+        <circle class="ctor" cx="50" cy="50" r="35"/>
+        <circle class="ctor" cx="50" cy="50" r="3"/>
+        <!-- diagonal short rays -->
+        <path d="M50 50 L69 31 M50 50 L31 31 M50 50 L69 69 M50 50 L31 69" stroke="#B7C6D4" stroke-width="1"/>
+        <!-- horizontal star point (E–W) -->
+        <path d="M14 50 L50 45 L86 50 L50 55 Z" fill="#D3DEE7" stroke="#8CA6BC" stroke-width="1"/>
+        <!-- vertical star point (N–S), N half accented -->
+        <path d="M50 14 L55 50 L50 86 L45 50 Z" fill="#B7C6D4" stroke="#8CA6BC" stroke-width="1"/>
+        <path d="M50 14 L55 50 L45 50 Z" fill="#8CA6BC"/>
+        <text class="cr-lab" x="50" y="-1" text-anchor="middle">N</text>
+        <text class="cr-lab" x="50" y="106" text-anchor="middle">S</text>
+        <text class="cr-lab" x="99" y="54" text-anchor="middle">E</text>
+        <text class="cr-lab" x="1" y="54" text-anchor="middle">W</text>
+      </svg></div>
+      <div class="deco dl-scalebar">
+        <div class="sb-lab">SCALE BAR</div>
+        <div class="sb-ticks"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="sb-cap"><span>0</span><span>25</span><span>50 M</span></div>
+      </div>
+    </div>
+
+    <div class="zone" data-zone="about" id="zone-about" style="left:3%;top:6%;--rot:-4deg;z-index:2;--lift:2;--ic:#1E5FCC">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="2.6"/><path d="M2.8 13.8a5.2 5.2 0 0 1 10.4 0"/></svg><span class="z-no">SHEET 01</span></div>
       <div class="z-label">ABOUT</div>
       <div class="z-sub">FULL ML STACK</div>
       <div class="z-body"><p>I've worked across the ML stack, from unsupervised clustering on data with no labels to inference pipelines running in production for tens of thousands of users. Right now I'm building at Focara, an EdTech startup, and leading applied ML work at Virginia Tech's NLP Research Lab. Before that I built embedding visualization infrastructure at Nomic AI.</p></div>
       <span class="z-dwg">AS-101</span>
     </div>
-    <div class="zone" data-zone="education" id="zone-education" style="left:15%;top:15%;--rot:4deg;z-index:3;--ic:#3E7CB1">
+    <div class="zone" data-zone="education" id="zone-education" style="left:15%;top:15%;--rot:4deg;z-index:3;--lift:3;--ic:#3E7CB1">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.2 L14.4 5.9 L8 8.6 L1.6 5.9 Z"/><path d="M4.6 7.2 V10 C4.6 11.3 11.4 11.3 11.4 10 V7.2"/><path d="M14.4 5.9 V10.4"/></svg><span class="z-no">SHEET 02</span></div>
       <div class="z-label">EDUCATION</div>
       <div class="z-sub">CORNELL · NY</div>
       <div class="z-body"><p>Cornell University &middot; Ithaca, NY.</p><p style='color:var(--graphite)'>Currently at Cornell. Transferred in from Virginia Tech.</p></div>
       <span class="z-dwg">AS-102</span>
     </div>
-    <div class="zone" data-zone="experience" id="zone-experience" style="left:31%;top:4%;--rot:-2deg;z-index:4;--ic:#0E7B6C">
+    <div class="zone" data-zone="experience" id="zone-experience" style="left:31%;top:4%;--rot:-2deg;z-index:4;--lift:4;--ic:#0E7B6C">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="10.2" width="11" height="3.3"/><rect x="3.6" y="6.4" width="8.8" height="2.9"/><rect x="4.7" y="2.6" width="6.6" height="2.9"/></svg><span class="z-no">SHEET 03</span></div>
       <div class="z-label">EXPERIENCE</div>
       <div class="z-sub">FOCARA · VT NLP</div>
       <div class="z-body"><div class='exp'><b>ML Engineer, Focara</b> (May 2026–present). Canvas webhook + LLM classifier surfacing critical announcements before deadlines. Latency <span class='dim'>900ms to 500ms</span>.</div><div class='exp'><b>Applied ML Lead, Virginia Tech NLP Lab</b> (Dec 2025–present). Led a 10-person team, no baseline. <span class='dim'>40%+ MAP</span> gain, serving <span class='dim'>45k users</span>.</div><div class='exp'><b>AI Data Engineering Intern, Nomic AI</b> (Summer 2024). Embedding visualization + ETL for <span class='dim'>250k+</span> monthly users.</div></div>
       <span class="z-dwg">AS-103</span>
     </div>
-    <div class="zone" data-zone="skills" id="zone-skills" style="left:45%;top:12%;--rot:3deg;z-index:6;--ic:#B0417B">
+    <div class="zone" data-zone="skills" id="zone-skills" style="left:45%;top:12%;--rot:3deg;z-index:6;--lift:6;--ic:#B0417B">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2"/><circle cx="8" cy="8" r="4.7"/><path d="M8 1.4V3.2 M8 12.8V14.6 M1.4 8H3.2 M12.8 8H14.6 M3.6 3.6l1.3 1.3 M11.1 11.1l1.3 1.3 M12.4 3.6l-1.3 1.3 M4.9 11.1l-1.3 1.3"/></svg><span class="z-no">SHEET 04</span></div>
       <div class="z-label">SKILLS</div>
       <div class="z-sub">ML · AGENTS · INFRA</div>
       <div class="z-body"><div class='sk'><b>ML / DATA</b>PyTorch, TensorFlow, scikit-learn, UMAP, HDBSCAN</div><div class='sk'><b>LLM / AGENTS</b>Gemini on Vertex AI, Deepgram, Google Cloud TTS, multi-agent systems</div><div class='sk'><b>BACKEND / INFRA</b>FastAPI, WebSockets, Kubernetes, Helm</div></div>
       <span class="z-dwg">AS-104</span>
     </div>
-    <div class="zone primary" data-zone="opensight" id="zone-opensight" style="left:8%;top:44%;--rot:-2deg;z-index:5;--ic:#7A3EB8">
+    <div class="zone primary" data-zone="opensight" id="zone-opensight" style="left:8%;top:44%;--rot:-2deg;z-index:5;--lift:5;--ic:#7A3EB8">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1.8 8C4.2 4.7 11.8 4.7 14.2 8C11.8 11.3 4.2 11.3 1.8 8Z"/><circle cx="8" cy="8" r="1.9"/></svg><span class="z-no">SHEET 05</span></div>
       <div class="z-label">OPENSIGHT</div>
       <div class="z-sub">TOP 10 · 2,500+</div>
       <div class="z-body"><p>A real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. I built it because screen readers describe a page, they don't act on it.</p><p><span class='dim'>Top 10 of 2,500+ teams</span>, Google Developer Groups Solution Challenge 2026, North America. Multi-step web task in <span class='dim'>under 60s</span>.</p><p>Stack: FastAPI, WebSockets, Gemini on Vertex AI, Deepgram, Google Cloud TTS. Validated with the Blind Institute of Technology and the Virginia Department for the Blind and Vision Impaired.</p><p><a href='https://github.com/abhisomala/OpenSight_GDGChallenge_2026'>github.com/abhisomala/OpenSight_GDGChallenge_2026</a></p></div>
       <span class="z-dwg">AS-105</span>
     </div>
-    <div class="zone" data-zone="wildfire" id="zone-wildfire" style="left:21%;top:53%;--rot:3deg;z-index:7;--ic:#B4552D">
+    <div class="zone" data-zone="wildfire" id="zone-wildfire" style="left:21%;top:53%;--rot:3deg;z-index:7;--lift:7;--ic:#B4552D">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.6C8.4 4.2 11.9 5.6 11.9 9.3A3.9 3.9 0 0 1 4.1 9.3C4.1 7.4 5.5 6.2 6.1 4.5C6.7 5.7 7.6 6 8 1.6Z"/></svg><span class="z-no">SHEET 06</span></div>
       <div class="z-label">WILDFIRE</div>
       <div class="z-sub">100K+ NASA POINTS</div>
       <div class="z-body"><p>Wildfire spread prediction. A deep learning pipeline trained on <span class='dim'>100K+</span> NASA environmental datapoints from VIIRS and MODIS.</p><p style='color:var(--graphite)'>Containerized with Kubernetes and Helm.</p></div>
       <span class="z-dwg">AS-106</span>
     </div>
-    <div class="zone" data-zone="algae" id="zone-algae" style="left:40%;top:45%;--rot:-3deg;z-index:8;--ic:#3F8F5C">
+    <div class="zone" data-zone="algae" id="zone-algae" style="left:40%;top:45%;--rot:-3deg;z-index:8;--lift:8;--ic:#3F8F5C">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5.5 q1.75 -2 3.5 0 t3.5 0 t3.5 0"/><path d="M2 8.5 q1.75 -2 3.5 0 t3.5 0 t3.5 0"/><path d="M2 11.5 q1.75 -2 3.5 0 t3.5 0 t3.5 0"/></svg><span class="z-no">SHEET 07</span></div>
       <div class="z-label">ALGAE BLOOM</div>
       <div class="z-sub">ROC-AUC 0.58–0.69</div>
       <div class="z-body"><p>Harmful algal bloom detection. Ground truth comes from EPA measured microcystin concentrations, not a heuristic proxy.</p><p>Leak-free cross-validation splits, so reported performance isn't inflated by data leakage. Cross-validated <span class='dim'>ROC-AUC 0.58–0.69</span> and still improving. Active work in progress.</p><p><a href='https://github.com/abhisomala/Capstone'>github.com/abhisomala/Capstone</a></p></div>
       <span class="z-dwg">AS-107</span>
     </div>
-    <div class="zone" data-zone="awards" id="zone-awards" style="left:64%;top:28%;--rot:2deg;z-index:9;--ic:#C9A227">
+    <div class="zone" data-zone="awards" id="zone-awards" style="left:64%;top:28%;--rot:2deg;z-index:9;--lift:9;--ic:#C9A227">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5.4" r="3.6"/><path d="M6.1 8.5 L4.7 14 L8 12 L11.3 14 L9.9 8.5"/></svg><span class="z-no">SHEET 08</span></div>
       <div class="z-label">AWARDS</div>
       <div class="z-sub">$1.7M · EAGLE SCOUT</div>
       <div class="z-body"><div class='exp'><b>STEM+C Competition Grant</b> (Virginia). Won a STEM+C competition grant, putting <span class='dim'>$1.7M</span> of STEM funding in front of almost <span class='dim'>38,000</span> students.</div><div class='exp'><b>Eagle Scout</b>. Attained the highest rank in scouting.</div><div class='exp'><b>GDG Solution Challenge 2026</b> (North America). <span class='dim'>Top 10 of 2,500+</span> teams for OpenSight.</div></div>
       <span class="z-dwg">AS-108</span>
     </div>
-    <div class="zone" data-zone="contact" id="zone-contact" style="left:52%;top:62%;--rot:-2deg;z-index:10;--ic:#48606E">
+    <div class="zone" data-zone="contact" id="zone-contact" style="left:52%;top:62%;--rot:-2deg;z-index:10;--lift:10;--ic:#48606E">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="3.6" width="12.4" height="8.8"/><path d="M2.2 4.2L8 9L13.8 4.2"/></svg><span class="z-no">SHEET 09</span></div>
       <div class="z-label">CONTACT</div>
       <div class="z-sub">EMAIL · GITHUB · LI</div>
@@ -949,12 +1152,17 @@
     <div class="instrument" id="instrument" role="slider" tabindex="0" aria-label="Drafting compass. Drag near a sheet to open it." aria-valuetext="idle">
       <div class="reach"></div>
       <svg class="comp" viewBox="0 0 118 118" aria-hidden="true">
-        <circle cx="59" cy="59" r="34" fill="none" stroke="#48606E" stroke-width="1" stroke-dasharray="4 4"/>
-        <g stroke="#1E5FCC" stroke-width="2" fill="none" stroke-linecap="round">
-          <circle cx="59" cy="59" r="10"/>
-          <path d="M59 33 V49 M59 69 V85 M33 59 H49 M69 59 H85"/>
-        </g>
-        <circle cx="59" cy="59" r="2.4" fill="#1E5FCC"/>
+        <!-- faint dashed measuring arc between the legs (muted graphite, thin) -->
+        <path class="c-arc" d="M49.6 63 Q59 71 68.4 63"/>
+        <!-- two symmetric ink legs, rounded caps, mirror images about x=59 -->
+        <path class="c-leg" d="M59 34 L40.2 92"/>
+        <path class="c-leg" d="M59 34 L77.8 92"/>
+        <!-- matching accent triangular points at both tips -->
+        <polygon class="c-tip" points="37.73,99.61 43.53,93.08 36.87,90.92"/>
+        <polygon class="c-tip" points="80.27,99.61 74.47,93.08 81.13,90.92"/>
+        <!-- hinge: filled accent circle inset in a stroked accent ring -->
+        <circle class="c-hinge-o" cx="59" cy="34" r="6"/>
+        <circle class="c-hinge-i" cx="59" cy="34" r="3"/>
       </svg>
       <div class="inst-handle" id="instHandle"></div>
       <div class="inst-readout" id="instReadout">X — Y —</div>
@@ -969,6 +1177,7 @@
       </div>
     </div>
   </div>
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute"><filter id="stampWorn" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.8" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
   <div class="stamp" id="stamp" aria-hidden="true">Issued for review</div>
 </section>
       </main>
@@ -1166,9 +1375,39 @@
   var canvas=document.getElementById('dlCanvas'),instrument=document.getElementById('instrument'),handle=document.getElementById('instHandle'),readout=document.getElementById('instReadout');
   var zones=Array.prototype.slice.call(canvas.querySelectorAll('.zone'));
   var inst={x:0,y:0}, active=null, firstRun=true, dragging=false, parked=false, kbTimer=0;
+  // key-plan locator (hero): mirror of which sheet is currently flagged in the canvas below
+  var kpSheets=Array.prototype.slice.call(document.querySelectorAll('.kp-sheet'));
+  var kpActiveEl=document.getElementById('kpActive');
+  var KPLABEL={about:'01 ABOUT',education:'02 EDUCATION',experience:'03 EXPERIENCE',skills:'04 SKILLS',opensight:'05 OPENSIGHT',wildfire:'06 WILDFIRE',algae:'07 ALGAE BLOOM',awards:'08 AWARDS',contact:'09 CONTACT'};
+  function flag(id){
+    var f=id||'opensight'; // OpenSight (05) is the flagship default before the user promotes anything
+    kpSheets.forEach(function(b){b.classList.toggle('on',b.getAttribute('data-zone')===f);b.setAttribute('aria-current',b.getAttribute('data-zone')===f?'true':'false');});
+    if(kpActiveEl)kpActiveEl.textContent=KPLABEL[f]||'—';
+  }
+  var centers=[]; // resting sheet centers, recomputed only on layout change (see measure)
   var STACK=window.matchMedia('(max-width:560px)'); // narrow: sheets render as a static stack, compass hidden
   function radius(){return Math.max(150, Math.min(canvas.clientWidth,canvas.clientHeight)*0.24);}
   function zoneCenter(z){var cb=canvas.getBoundingClientRect(),zb=z.getBoundingClientRect();return {x:zb.left-cb.left+zb.width/2,y:zb.top-cb.top+zb.height/2};}
+  // Cache each sheet's RESTING center from its layout box (offsetLeft/Top ignore the reveal
+  // transform+width growth). Reading the live getBoundingClientRect every move made a promoted
+  // sheet's own growth shift its center, which fed back into proximity and caused flicker.
+  function measure(){
+    centers=zones.map(function(z){
+      var was=z.classList.contains('revealed');
+      if(was)z.classList.remove('revealed');
+      var w=z.offsetWidth,h=z.offsetHeight,x=z.offsetLeft,y=z.offsetTop;
+      if(was)z.classList.add('revealed');
+      return {x:x+w/2,y:y+h/2};
+    });
+  }
+  // Cap a promoted sheet's body to the room left below it inside the canvas, so the card can
+  // never grow past the canvas edge and get clipped by overflow:hidden. The body scrolls
+  // (overflow:auto) if its content is taller than that room — contained, never cut off.
+  function fitBody(z){
+    var body=z.querySelector('.z-body'); if(!body)return;
+    var avail=canvas.clientHeight - z.offsetTop - 114; // 114 leaves room for chrome + the reveal scale(1.03) growth
+    body.style.maxHeight=Math.max(150,Math.min(430,avail))+'px';
+  }
   function render(){instrument.classList.toggle('reading', !!active && !parked);}
   function roFlip(){instrument.classList.toggle('ro-up', inst.y > canvas.clientHeight-84);}
   function place(x,y){
@@ -1187,12 +1426,25 @@
     roFlip();
   }
   function proximity(){
-    var R=radius(),best=null,bestD=Infinity;
-    zones.forEach(function(z){var c=zoneCenter(z);var d=Math.hypot(c.x-inst.x,c.y-inst.y);z.classList.toggle('near',d<R*1.25);if(d<R&&d<bestD){bestD=d;best=z;}});
+    if(!centers.length)measure();
+    var R=radius(),best=null,bestD=Infinity,curD=Infinity,curZone=null;
+    zones.forEach(function(z,i){
+      var c=centers[i]||zoneCenter(z);
+      var d=Math.hypot(c.x-inst.x,c.y-inst.y);
+      z.classList.toggle('near',d<R*1.25);
+      if(z.getAttribute('data-zone')===active){curD=d;curZone=z;}
+      if(d<R&&d<bestD){bestD=d;best=z;}
+    });
+    // hysteresis: keep the currently-open sheet unless a different one is clearly closer,
+    // so the reveal doesn't flip-flop when the compass hovers near a boundary between two sheets
+    if(curZone&&best&&best!==curZone&&curD<R&&bestD>curD-R*0.16){best=curZone;bestD=curD;}
     var id=best?best.getAttribute('data-zone'):null;
     if(id!==active){
-      zones.forEach(function(z){z.classList.toggle('revealed',z===best);});
-      active=id;instrument.setAttribute('aria-valuetext',id||'idle');
+      zones.forEach(function(z){
+        var on=z===best; z.classList.toggle('revealed',on);
+        if(on)fitBody(z); else z.querySelector('.z-body').style.maxHeight='';
+      });
+      active=id;instrument.setAttribute('aria-valuetext',id||'idle');flag(id);
       if(id&&!firstRun)addRevision('MEASURED '+id.toUpperCase());
     }
     firstRun=false;
@@ -1225,10 +1477,11 @@
   Array.prototype.forEach.call(document.querySelectorAll('[data-open]'),function(a){a.addEventListener('click',function(e){var zid=MAP[a.getAttribute('data-open')];var z=zid&&document.getElementById('zone-'+zid);if(!z)return;e.preventDefault();unpark();var c=zoneCenter(z);canvas.scrollIntoView({behavior:RM.matches?'auto':'smooth',block:'center'});place(c.x,c.y);park();});});
   // init: seat instrument in the clear top-right corner, no reveal on load (skipped in narrow static-stack mode)
   function init(){
+    flag(active); // default the key-plan flag to OpenSight on load
     if(STACK.matches){zones.forEach(function(z){z.classList.remove('revealed','near');});return;}
-    parked=false;instrument.classList.remove('parked');place(canvas.clientWidth-66, 66);
+    parked=false;instrument.classList.remove('parked');measure();place(canvas.clientWidth-66, 66);
   }
-  window.addEventListener('resize',function(){if(STACK.matches){zones.forEach(function(z){z.classList.remove('revealed','near');});return;}if(parked)park();else place(inst.x,inst.y);});
+  window.addEventListener('resize',function(){if(STACK.matches){zones.forEach(function(z){z.classList.remove('revealed','near');});return;}measure();var rz=canvas.querySelector('.zone.revealed');if(rz)fitBody(rz);if(parked)park();else place(inst.x,inst.y);});
   if(STACK.addEventListener)STACK.addEventListener('change',init);
   // test hooks
   window.__inst=function(){return {x:inst.x,y:inst.y};};
