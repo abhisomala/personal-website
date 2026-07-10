@@ -258,6 +258,77 @@
     .gnotes p { margin-bottom: 8px; }
     .gnotes .no { color: var(--accent); margin-right: 6px; }
 
+    /* ============ key-plan locator ============ */
+    .keyplan {
+      flex: 0 1 216px;
+      align-self: flex-start;
+      border: 1.5px solid var(--ink);
+      background: #fff;
+      font-family: var(--mono);
+      box-shadow: 6px 6px 0 rgba(27, 46, 56, 0.06);
+    }
+    .kp-head {
+      padding: 7px 10px;
+      background: var(--accent-soft);
+      border-bottom: 1px solid var(--line-soft);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: var(--graphite);
+    }
+    .kp-canvas {
+      position: relative;
+      margin: 10px;
+      height: 116px;
+      border: 1px dashed rgba(30, 95, 204, 0.28);
+      background-image:
+        linear-gradient(rgba(30, 95, 204, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 95, 204, 0.08) 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    /* each mini sheet mirrors the real sheet's position + rotation in the canvas below */
+    .kp-sheet {
+      position: absolute;
+      width: 23%;
+      height: 21%;
+      padding: 0;
+      cursor: pointer;
+      border: 1px solid var(--ic, var(--accent));
+      background: rgba(255, 255, 255, 0.9); /* fallback */
+      background: color-mix(in srgb, var(--ic, var(--accent)) 14%, #fff);
+      transform: rotate(var(--rot, 0deg));
+      transform-origin: center center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 7px;
+      line-height: 1;
+      color: var(--graphite);
+      transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    .kp-sheet span { pointer-events: none; }
+    .kp-sheet:hover { background: color-mix(in srgb, var(--ic, var(--accent)) 24%, #fff); }
+    /* flagged sheet: accent border + accent-soft fill + subtle glow (mirrors the mock) */
+    .kp-sheet.on {
+      border: 1.5px solid var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 2px rgba(30, 95, 204, 0.16), 0 2px 8px -2px rgba(30, 95, 204, 0.5);
+      color: var(--accent);
+      z-index: 2;
+    }
+    .kp-sheet:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; z-index: 3; }
+    .kp-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 10px;
+      border-top: 1px solid var(--line-soft);
+      font-size: 8.5px;
+      letter-spacing: 0.1em;
+      color: var(--graphite);
+    }
+    .kp-foot b { color: var(--accent); font-weight: 600; }
+
     /* title block, bottom right */
     .tblock-wrap {
       position: relative;
@@ -700,6 +771,11 @@
       .tblock-wrap { max-width: none; }
       .hero { padding-top: 44px; }
     }
+    /* narrow: the compass canvas becomes a static stack and the index nav already covers
+       navigation, so the miniature key plan steps aside rather than shrinking illegibly */
+    @media (max-width: 560px) {
+      .keyplan { display: none; }
+    }
 
     /* ============ reduced motion ============ */
     @media (prefers-reduced-motion: reduce) {
@@ -712,6 +788,7 @@
       .note, .note::before, .note::after { transition: none; }
       .co, .co-phrase, .part .pshape { transition: none; }
       #cursor, #cursor svg { transition: none; }
+      .kp-sheet { transition: none; }
     }
 
 /* ===== bottom scaffold ===== */
@@ -872,6 +949,22 @@
               <h2>GENERAL NOTES</h2>
               <p><span class="no">G1</span>ML engineer at a stealth EdTech startup and applied ML lead at Virginia Tech's NLP Research Lab, currently at Cornell.</p>
               <p><span class="no">G2</span>I build multi-agent systems, NLP pipelines, and ML infra that ships to production.</p>
+            </div>
+
+            <div class="keyplan" role="group" aria-label="Key plan sheet-layout locator: an alternative way to jump to a sheet by its position in the drawing below">
+              <p class="kp-head">KEY PLAN &middot; SHEET LAYOUT AS-2026</p>
+              <div class="kp-canvas">
+                <button type="button" class="kp-sheet" data-open="sheet-about"      data-zone="about"      style="left:3%;top:6%;--rot:-4deg;--ic:#1E5FCC" aria-label="Sheet 01, About"><span>01</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-education"  data-zone="education"  style="left:15%;top:15%;--rot:4deg;--ic:#3E7CB1" aria-label="Sheet 02, Education"><span>02</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-experience" data-zone="experience" style="left:31%;top:4%;--rot:-2deg;--ic:#0E7B6C" aria-label="Sheet 03, Experience"><span>03</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-skills"     data-zone="skills"     style="left:45%;top:12%;--rot:3deg;--ic:#B0417B" aria-label="Sheet 04, Skills"><span>04</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-opensight"  data-zone="opensight"  style="left:8%;top:44%;--rot:-2deg;--ic:#7A3EB8" aria-label="Sheet 05, OpenSight"><span>05</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-wildfire"   data-zone="wildfire"   style="left:21%;top:53%;--rot:3deg;--ic:#B4552D" aria-label="Sheet 06, Wildfire"><span>06</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-algae"      data-zone="algae"      style="left:40%;top:45%;--rot:-3deg;--ic:#3F8F5C" aria-label="Sheet 07, Algae Bloom"><span>07</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-awards"     data-zone="awards"     style="left:64%;top:28%;--rot:2deg;--ic:#C9A227" aria-label="Sheet 08, Awards"><span>08</span></button>
+                <button type="button" class="kp-sheet" data-open="sheet-contact"    data-zone="contact"    style="left:52%;top:62%;--rot:-2deg;--ic:#48606E" aria-label="Sheet 09, Contact"><span>09</span></button>
+              </div>
+              <p class="kp-foot"><span>9 SHEETS TOTAL</span><span>FLAGGED &middot; <b id="kpActive">05 OPENSIGHT</b></span></p>
             </div>
           </div>
 
@@ -1208,6 +1301,15 @@
   var canvas=document.getElementById('dlCanvas'),instrument=document.getElementById('instrument'),handle=document.getElementById('instHandle'),readout=document.getElementById('instReadout');
   var zones=Array.prototype.slice.call(canvas.querySelectorAll('.zone'));
   var inst={x:0,y:0}, active=null, firstRun=true, dragging=false, parked=false, kbTimer=0;
+  // key-plan locator (hero): mirror of which sheet is currently flagged in the canvas below
+  var kpSheets=Array.prototype.slice.call(document.querySelectorAll('.kp-sheet'));
+  var kpActiveEl=document.getElementById('kpActive');
+  var KPLABEL={about:'01 ABOUT',education:'02 EDUCATION',experience:'03 EXPERIENCE',skills:'04 SKILLS',opensight:'05 OPENSIGHT',wildfire:'06 WILDFIRE',algae:'07 ALGAE BLOOM',awards:'08 AWARDS',contact:'09 CONTACT'};
+  function flag(id){
+    var f=id||'opensight'; // OpenSight (05) is the flagship default before the user promotes anything
+    kpSheets.forEach(function(b){b.classList.toggle('on',b.getAttribute('data-zone')===f);b.setAttribute('aria-current',b.getAttribute('data-zone')===f?'true':'false');});
+    if(kpActiveEl)kpActiveEl.textContent=KPLABEL[f]||'—';
+  }
   var centers=[]; // resting sheet centers, recomputed only on layout change (see measure)
   var STACK=window.matchMedia('(max-width:560px)'); // narrow: sheets render as a static stack, compass hidden
   function radius(){return Math.max(150, Math.min(canvas.clientWidth,canvas.clientHeight)*0.24);}
@@ -1268,7 +1370,7 @@
         var on=z===best; z.classList.toggle('revealed',on);
         if(on)fitBody(z); else z.querySelector('.z-body').style.maxHeight='';
       });
-      active=id;instrument.setAttribute('aria-valuetext',id||'idle');
+      active=id;instrument.setAttribute('aria-valuetext',id||'idle');flag(id);
       if(id&&!firstRun)addRevision('MEASURED '+id.toUpperCase());
     }
     firstRun=false;
@@ -1301,6 +1403,7 @@
   Array.prototype.forEach.call(document.querySelectorAll('[data-open]'),function(a){a.addEventListener('click',function(e){var zid=MAP[a.getAttribute('data-open')];var z=zid&&document.getElementById('zone-'+zid);if(!z)return;e.preventDefault();unpark();var c=zoneCenter(z);canvas.scrollIntoView({behavior:RM.matches?'auto':'smooth',block:'center'});place(c.x,c.y);park();});});
   // init: seat instrument in the clear top-right corner, no reveal on load (skipped in narrow static-stack mode)
   function init(){
+    flag(active); // default the key-plan flag to OpenSight on load
     if(STACK.matches){zones.forEach(function(z){z.classList.remove('revealed','near');});return;}
     parked=false;instrument.classList.remove('parked');measure();place(canvas.clientWidth-66, 66);
   }
