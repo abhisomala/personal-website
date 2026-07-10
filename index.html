@@ -736,14 +736,21 @@
 .rev-panel[hidden]{display:none;}
 .rev-panel table{width:100%;border-collapse:collapse;font-size:10px;}
 .rev-panel th,.rev-panel td{border:1px solid var(--line-soft);padding:3px 6px;text-align:left;}
-.stamp{position:absolute;z-index:45;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-13deg) scale(.6);border:3px double #B23A2E;color:#B23A2E;font-family:var(--mono);font-weight:600;letter-spacing:.15em;padding:10px 18px;font-size:20px;opacity:0;pointer-events:none;border-radius:4px;text-transform:uppercase;transition:opacity .35s ease,transform .35s ease;}
+/* stamp sits BELOW the sheets (z-index:1 < zones' 2+) so a promoted card always covers it —
+   it reads as an ink impression on the paper, never on top of an open sheet's text.
+   feDisplacementMap gives the double border a slightly worn, uneven edge. */
+.stamp{position:absolute;z-index:1;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-13deg) scale(.6);border:3px double #B23A2E;color:#B23A2E;font-family:var(--mono);font-weight:600;letter-spacing:.15em;padding:10px 18px;font-size:20px;opacity:0;pointer-events:none;border-radius:4px;text-transform:uppercase;filter:url(#stampWorn);transition:opacity .35s ease,transform .35s ease;}
 .stamp.inked{opacity:.85;transform:translate(-50%,-50%) rotate(-13deg) scale(1);}
 .dim{font-family:var(--mono);font-weight:600;color:var(--accent);white-space:nowrap;}
 /* ===== instrument-drag mechanism: nine sheets scattered as a drawing pile ===== */
 .zone{position:absolute;width:clamp(132px,17vw,216px);min-height:clamp(120px,11.5vw,150px);padding:11px 13px 22px;
-  border:1px solid var(--line-soft);background:rgba(255,255,255,.9);
+  border:1px solid var(--line-soft);
+  background:rgba(255,255,255,.9); /* fallback */
+  background:color-mix(in srgb,var(--ic,var(--accent)) 7%,rgba(255,255,255,.92)); /* faint accent-tinted file tab, idle only */
   transform:rotate(var(--rot,0deg));transform-origin:center center;
-  box-shadow:2px 3px 11px -6px rgba(27,46,56,.4);
+  /* z-order depth: sheets further back (low --lift) get a flatter, tighter shadow;
+     sheets further forward (high --lift) lift off the pile with a softer, deeper shadow */
+  box-shadow:calc(var(--lift,3)*0.55px) calc(var(--lift,3)*0.8px + 1px) calc(6px + var(--lift,3)*2.3px) calc(-6px + var(--lift,3)*0.15px) rgba(27,46,56,.42);
   transition:transform .28s ease,width .28s ease,box-shadow .25s ease,border-color .25s ease,background .25s ease;}
 .zone .z-head{display:flex;align-items:center;gap:6px;}
 .zone .z-ico{width:14px;height:14px;flex:none;display:block;color:var(--ic,var(--accent));}
@@ -753,7 +760,7 @@
 .zone .z-dwg{position:absolute;right:10px;bottom:7px;font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--graphite);opacity:.55;}
 .zone .z-body{max-height:0;overflow:hidden;opacity:0;transition:max-height .35s ease,opacity .25s ease,margin .35s ease;font-size:12.5px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere;}
 .zone.revealed{border-color:var(--accent);background:#fff;box-shadow:0 14px 34px -12px rgba(30,95,204,.55);z-index:40 !important;transform:rotate(0deg) scale(1.03);width:clamp(210px,30vw,300px) !important;}
-.zone.revealed .z-body{max-height:430px;opacity:1;margin-top:9px;overflow:auto;}
+.zone.revealed .z-body{max-height:clamp(200px,44vh,430px);opacity:1;margin-top:9px;overflow:auto;}
 .zone.revealed .z-dwg{opacity:.75;}
 .zone.near:not(.revealed){border-color:var(--accent);}
 .zone.primary{width:clamp(150px,19vw,240px);}
@@ -775,6 +782,25 @@
 /* flip readout above the compass when it sits low so it never clips the canvas edge */
 .instrument.ro-up .inst-readout{top:auto;bottom:calc(100% + 4px);}
 @media (prefers-reduced-motion: reduce){.zone,.zone .z-body,.stamp{transition:none;}.instrument .reach{animation:none;}.instrument.parked,.instrument .comp,.instrument .reach{transition:none;}}
+/* ---- decorative drafting fill: non-interactive, behind the sheets (z-index:0 < zones' 2+) ---- */
+.dl-deco{position:absolute;inset:0;z-index:0;pointer-events:none;}
+.dl-deco .deco{position:absolute;}
+.dl-deco svg{display:block;overflow:visible;}
+.dl-north{right:6%;top:70%;width:60px;}
+.dl-geo{right:9%;top:33%;width:90px;}
+.dl-scalebar{left:57%;top:90%;width:150px;}
+.dl-scalebar .sb-lab{font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:#7B93A4;margin-bottom:2px;}
+.dl-scalebar .sb-ticks{height:9px;border:1px solid #93AEC4;border-top:0;display:flex;}
+.dl-scalebar .sb-ticks i{flex:1;border-left:1px solid #93AEC4;}
+.dl-scalebar .sb-ticks i:first-child{border-left:0;}
+.dl-scalebar .sb-cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:#7B93A4;margin-top:2px;}
+/* ---- top scale-ruler strip: tick language + mono label, behind the sheets ---- */
+.dl-ruler{position:absolute;left:0;right:0;top:0;height:16px;z-index:0;pointer-events:none;opacity:.7;
+  background-image:repeating-linear-gradient(90deg,#93AEC4 0,#93AEC4 1px,transparent 1px,transparent 40px),
+                   repeating-linear-gradient(90deg,rgba(147,174,196,.55) 0,rgba(147,174,196,.55) 1px,transparent 1px,transparent 8px);
+  background-position:0 bottom,0 bottom;background-size:auto 9px,auto 4px;background-repeat:repeat-x;
+  border-bottom:1px solid rgba(147,174,196,.5);}
+.dl-ruler .r-lab{position:absolute;left:8px;top:2px;font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;color:#7B93A4;background:var(--paper);padding:0 4px;}
 /* ---- narrow viewports: the instrument-drag canvas can't hold five positioned sheets + a compass,
        so present the same sheets as a clean vertical stack (compass hidden), like the print layout ---- */
 @media (max-width:560px){
@@ -786,6 +812,7 @@
   .zone .z-body p{max-width:none;}
   .instrument,.inst-readout{display:none !important;}
   .dl-hint,.dl-title{display:none;} /* no compass in stacked mode — drop the "drag the compass" copy */
+  .dl-deco,.dl-ruler{display:none !important;} /* absolute decorations don't belong in the static stack */
   .stamp{top:auto;bottom:12px;}
 }
 @media (max-width:480px){.zone{width:150px;padding:8px 9px;}.zone.primary{width:170px;}.instrument{width:150px;height:150px;margin:-75px 0 0 -75px;}.inst-handle{width:58px;height:58px;margin:-29px 0 0 -29px;}
@@ -882,64 +909,78 @@
     <span class="dl-hint" id="dlHint">DRAG THE COMPASS — NEAREST SHEET OPENS</span>
   </div>
   <div class="dl-canvas" id="dlCanvas">
-    
-    <div class="zone" data-zone="about" id="zone-about" style="left:3%;top:6%;--rot:-4deg;z-index:2;--ic:#1E5FCC">
+
+    <!-- scale-ruler strip along the top edge (behind the sheets, non-interactive) -->
+    <div class="dl-ruler" aria-hidden="true"><span class="r-lab">SCALE 1:1 · CM</span></div>
+
+    <!-- decorative drafting elements filling the empty canvas gaps (behind the sheets, non-interactive) -->
+    <div class="dl-deco" aria-hidden="true">
+      <div class="deco dl-north"><svg viewBox="0 0 60 78" fill="none"><circle class="ctor" cx="30" cy="48" r="24"/><path class="ctor" d="M30 20 V72 M6 48 H54"/><path d="M30 4 L38 26 L30 20 L22 26 Z" fill="#93AEC4" stroke="#93AEC4" stroke-width="1"/><text class="d-cap" x="30" y="16" text-anchor="middle" style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;fill:#7B93A4">N</text></svg></div>
+      <div class="deco dl-geo"><svg viewBox="0 0 90 90" fill="none"><circle class="ctor" cx="45" cy="45" r="40"/><circle class="ctor" cx="45" cy="45" r="22"/><path class="ctor cline" d="M45 1 V89 M1 45 H89"/><path class="ctor" d="M14 14 L76 76 M76 14 L14 76"/></svg></div>
+      <div class="deco dl-scalebar">
+        <div class="sb-lab">SCALE BAR</div>
+        <div class="sb-ticks"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="sb-cap"><span>0</span><span>25</span><span>50 M</span></div>
+      </div>
+    </div>
+
+    <div class="zone" data-zone="about" id="zone-about" style="left:3%;top:6%;--rot:-4deg;z-index:2;--lift:2;--ic:#1E5FCC">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="2.6"/><path d="M2.8 13.8a5.2 5.2 0 0 1 10.4 0"/></svg><span class="z-no">SHEET 01</span></div>
       <div class="z-label">ABOUT</div>
       <div class="z-sub">FULL ML STACK</div>
       <div class="z-body"><p>I've worked across the ML stack, from unsupervised clustering on data with no labels to inference pipelines running in production for tens of thousands of users. Right now I'm building at Focara, an EdTech startup, and leading applied ML work at Virginia Tech's NLP Research Lab. Before that I built embedding visualization infrastructure at Nomic AI.</p></div>
       <span class="z-dwg">AS-101</span>
     </div>
-    <div class="zone" data-zone="education" id="zone-education" style="left:15%;top:15%;--rot:4deg;z-index:3;--ic:#3E7CB1">
+    <div class="zone" data-zone="education" id="zone-education" style="left:15%;top:15%;--rot:4deg;z-index:3;--lift:3;--ic:#3E7CB1">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.2 L14.4 5.9 L8 8.6 L1.6 5.9 Z"/><path d="M4.6 7.2 V10 C4.6 11.3 11.4 11.3 11.4 10 V7.2"/><path d="M14.4 5.9 V10.4"/></svg><span class="z-no">SHEET 02</span></div>
       <div class="z-label">EDUCATION</div>
       <div class="z-sub">CORNELL · NY</div>
       <div class="z-body"><p>Cornell University &middot; Ithaca, NY.</p><p style='color:var(--graphite)'>Currently at Cornell. Transferred in from Virginia Tech.</p></div>
       <span class="z-dwg">AS-102</span>
     </div>
-    <div class="zone" data-zone="experience" id="zone-experience" style="left:31%;top:4%;--rot:-2deg;z-index:4;--ic:#0E7B6C">
+    <div class="zone" data-zone="experience" id="zone-experience" style="left:31%;top:4%;--rot:-2deg;z-index:4;--lift:4;--ic:#0E7B6C">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="10.2" width="11" height="3.3"/><rect x="3.6" y="6.4" width="8.8" height="2.9"/><rect x="4.7" y="2.6" width="6.6" height="2.9"/></svg><span class="z-no">SHEET 03</span></div>
       <div class="z-label">EXPERIENCE</div>
       <div class="z-sub">FOCARA · VT NLP</div>
       <div class="z-body"><div class='exp'><b>ML Engineer, Focara</b> (May 2026–present). Canvas webhook + LLM classifier surfacing critical announcements before deadlines. Latency <span class='dim'>900ms to 500ms</span>.</div><div class='exp'><b>Applied ML Lead, Virginia Tech NLP Lab</b> (Dec 2025–present). Led a 10-person team, no baseline. <span class='dim'>40%+ MAP</span> gain, serving <span class='dim'>45k users</span>.</div><div class='exp'><b>AI Data Engineering Intern, Nomic AI</b> (Summer 2024). Embedding visualization + ETL for <span class='dim'>250k+</span> monthly users.</div></div>
       <span class="z-dwg">AS-103</span>
     </div>
-    <div class="zone" data-zone="skills" id="zone-skills" style="left:45%;top:12%;--rot:3deg;z-index:6;--ic:#B0417B">
+    <div class="zone" data-zone="skills" id="zone-skills" style="left:45%;top:12%;--rot:3deg;z-index:6;--lift:6;--ic:#B0417B">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2"/><circle cx="8" cy="8" r="4.7"/><path d="M8 1.4V3.2 M8 12.8V14.6 M1.4 8H3.2 M12.8 8H14.6 M3.6 3.6l1.3 1.3 M11.1 11.1l1.3 1.3 M12.4 3.6l-1.3 1.3 M4.9 11.1l-1.3 1.3"/></svg><span class="z-no">SHEET 04</span></div>
       <div class="z-label">SKILLS</div>
       <div class="z-sub">ML · AGENTS · INFRA</div>
       <div class="z-body"><div class='sk'><b>ML / DATA</b>PyTorch, TensorFlow, scikit-learn, UMAP, HDBSCAN</div><div class='sk'><b>LLM / AGENTS</b>Gemini on Vertex AI, Deepgram, Google Cloud TTS, multi-agent systems</div><div class='sk'><b>BACKEND / INFRA</b>FastAPI, WebSockets, Kubernetes, Helm</div></div>
       <span class="z-dwg">AS-104</span>
     </div>
-    <div class="zone primary" data-zone="opensight" id="zone-opensight" style="left:8%;top:44%;--rot:-2deg;z-index:5;--ic:#7A3EB8">
+    <div class="zone primary" data-zone="opensight" id="zone-opensight" style="left:8%;top:44%;--rot:-2deg;z-index:5;--lift:5;--ic:#7A3EB8">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1.8 8C4.2 4.7 11.8 4.7 14.2 8C11.8 11.3 4.2 11.3 1.8 8Z"/><circle cx="8" cy="8" r="1.9"/></svg><span class="z-no">SHEET 05</span></div>
       <div class="z-label">OPENSIGHT</div>
       <div class="z-sub">TOP 10 · 2,500+</div>
       <div class="z-body"><p>A real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. I built it because screen readers describe a page, they don't act on it.</p><p><span class='dim'>Top 10 of 2,500+ teams</span>, Google Developer Groups Solution Challenge 2026, North America. Multi-step web task in <span class='dim'>under 60s</span>.</p><p>Stack: FastAPI, WebSockets, Gemini on Vertex AI, Deepgram, Google Cloud TTS. Validated with the Blind Institute of Technology and the Virginia Department for the Blind and Vision Impaired.</p><p><a href='https://github.com/abhisomala/OpenSight_GDGChallenge_2026'>github.com/abhisomala/OpenSight_GDGChallenge_2026</a></p></div>
       <span class="z-dwg">AS-105</span>
     </div>
-    <div class="zone" data-zone="wildfire" id="zone-wildfire" style="left:21%;top:53%;--rot:3deg;z-index:7;--ic:#B4552D">
+    <div class="zone" data-zone="wildfire" id="zone-wildfire" style="left:21%;top:53%;--rot:3deg;z-index:7;--lift:7;--ic:#B4552D">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.6C8.4 4.2 11.9 5.6 11.9 9.3A3.9 3.9 0 0 1 4.1 9.3C4.1 7.4 5.5 6.2 6.1 4.5C6.7 5.7 7.6 6 8 1.6Z"/></svg><span class="z-no">SHEET 06</span></div>
       <div class="z-label">WILDFIRE</div>
       <div class="z-sub">100K+ NASA POINTS</div>
       <div class="z-body"><p>Wildfire spread prediction. A deep learning pipeline trained on <span class='dim'>100K+</span> NASA environmental datapoints from VIIRS and MODIS.</p><p style='color:var(--graphite)'>Containerized with Kubernetes and Helm.</p></div>
       <span class="z-dwg">AS-106</span>
     </div>
-    <div class="zone" data-zone="algae" id="zone-algae" style="left:40%;top:45%;--rot:-3deg;z-index:8;--ic:#3F8F5C">
+    <div class="zone" data-zone="algae" id="zone-algae" style="left:40%;top:45%;--rot:-3deg;z-index:8;--lift:8;--ic:#3F8F5C">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5.5 q1.75 -2 3.5 0 t3.5 0 t3.5 0"/><path d="M2 8.5 q1.75 -2 3.5 0 t3.5 0 t3.5 0"/><path d="M2 11.5 q1.75 -2 3.5 0 t3.5 0 t3.5 0"/></svg><span class="z-no">SHEET 07</span></div>
       <div class="z-label">ALGAE BLOOM</div>
       <div class="z-sub">ROC-AUC 0.58–0.69</div>
       <div class="z-body"><p>Harmful algal bloom detection. Ground truth comes from EPA measured microcystin concentrations, not a heuristic proxy.</p><p>Leak-free cross-validation splits, so reported performance isn't inflated by data leakage. Cross-validated <span class='dim'>ROC-AUC 0.58–0.69</span> and still improving. Active work in progress.</p><p><a href='https://github.com/abhisomala/Capstone'>github.com/abhisomala/Capstone</a></p></div>
       <span class="z-dwg">AS-107</span>
     </div>
-    <div class="zone" data-zone="awards" id="zone-awards" style="left:64%;top:28%;--rot:2deg;z-index:9;--ic:#C9A227">
+    <div class="zone" data-zone="awards" id="zone-awards" style="left:64%;top:28%;--rot:2deg;z-index:9;--lift:9;--ic:#C9A227">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5.4" r="3.6"/><path d="M6.1 8.5 L4.7 14 L8 12 L11.3 14 L9.9 8.5"/></svg><span class="z-no">SHEET 08</span></div>
       <div class="z-label">AWARDS</div>
       <div class="z-sub">$1.7M · EAGLE SCOUT</div>
       <div class="z-body"><div class='exp'><b>STEM+C Competition Grant</b> (Virginia). Won a STEM+C competition grant, putting <span class='dim'>$1.7M</span> of STEM funding in front of almost <span class='dim'>38,000</span> students.</div><div class='exp'><b>Eagle Scout</b>. Attained the highest rank in scouting.</div><div class='exp'><b>GDG Solution Challenge 2026</b> (North America). <span class='dim'>Top 10 of 2,500+</span> teams for OpenSight.</div></div>
       <span class="z-dwg">AS-108</span>
     </div>
-    <div class="zone" data-zone="contact" id="zone-contact" style="left:52%;top:62%;--rot:-2deg;z-index:10;--ic:#48606E">
+    <div class="zone" data-zone="contact" id="zone-contact" style="left:52%;top:62%;--rot:-2deg;z-index:10;--lift:10;--ic:#48606E">
       <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="3.6" width="12.4" height="8.8"/><path d="M2.2 4.2L8 9L13.8 4.2"/></svg><span class="z-no">SHEET 09</span></div>
       <div class="z-label">CONTACT</div>
       <div class="z-sub">EMAIL · GITHUB · LI</div>
@@ -969,6 +1010,7 @@
       </div>
     </div>
   </div>
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute"><filter id="stampWorn" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.8" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
   <div class="stamp" id="stamp" aria-hidden="true">Issued for review</div>
 </section>
       </main>
@@ -1166,9 +1208,30 @@
   var canvas=document.getElementById('dlCanvas'),instrument=document.getElementById('instrument'),handle=document.getElementById('instHandle'),readout=document.getElementById('instReadout');
   var zones=Array.prototype.slice.call(canvas.querySelectorAll('.zone'));
   var inst={x:0,y:0}, active=null, firstRun=true, dragging=false, parked=false, kbTimer=0;
+  var centers=[]; // resting sheet centers, recomputed only on layout change (see measure)
   var STACK=window.matchMedia('(max-width:560px)'); // narrow: sheets render as a static stack, compass hidden
   function radius(){return Math.max(150, Math.min(canvas.clientWidth,canvas.clientHeight)*0.24);}
   function zoneCenter(z){var cb=canvas.getBoundingClientRect(),zb=z.getBoundingClientRect();return {x:zb.left-cb.left+zb.width/2,y:zb.top-cb.top+zb.height/2};}
+  // Cache each sheet's RESTING center from its layout box (offsetLeft/Top ignore the reveal
+  // transform+width growth). Reading the live getBoundingClientRect every move made a promoted
+  // sheet's own growth shift its center, which fed back into proximity and caused flicker.
+  function measure(){
+    centers=zones.map(function(z){
+      var was=z.classList.contains('revealed');
+      if(was)z.classList.remove('revealed');
+      var w=z.offsetWidth,h=z.offsetHeight,x=z.offsetLeft,y=z.offsetTop;
+      if(was)z.classList.add('revealed');
+      return {x:x+w/2,y:y+h/2};
+    });
+  }
+  // Cap a promoted sheet's body to the room left below it inside the canvas, so the card can
+  // never grow past the canvas edge and get clipped by overflow:hidden. The body scrolls
+  // (overflow:auto) if its content is taller than that room — contained, never cut off.
+  function fitBody(z){
+    var body=z.querySelector('.z-body'); if(!body)return;
+    var avail=canvas.clientHeight - z.offsetTop - 114; // 114 leaves room for chrome + the reveal scale(1.03) growth
+    body.style.maxHeight=Math.max(150,Math.min(430,avail))+'px';
+  }
   function render(){instrument.classList.toggle('reading', !!active && !parked);}
   function roFlip(){instrument.classList.toggle('ro-up', inst.y > canvas.clientHeight-84);}
   function place(x,y){
@@ -1187,11 +1250,24 @@
     roFlip();
   }
   function proximity(){
-    var R=radius(),best=null,bestD=Infinity;
-    zones.forEach(function(z){var c=zoneCenter(z);var d=Math.hypot(c.x-inst.x,c.y-inst.y);z.classList.toggle('near',d<R*1.25);if(d<R&&d<bestD){bestD=d;best=z;}});
+    if(!centers.length)measure();
+    var R=radius(),best=null,bestD=Infinity,curD=Infinity,curZone=null;
+    zones.forEach(function(z,i){
+      var c=centers[i]||zoneCenter(z);
+      var d=Math.hypot(c.x-inst.x,c.y-inst.y);
+      z.classList.toggle('near',d<R*1.25);
+      if(z.getAttribute('data-zone')===active){curD=d;curZone=z;}
+      if(d<R&&d<bestD){bestD=d;best=z;}
+    });
+    // hysteresis: keep the currently-open sheet unless a different one is clearly closer,
+    // so the reveal doesn't flip-flop when the compass hovers near a boundary between two sheets
+    if(curZone&&best&&best!==curZone&&curD<R&&bestD>curD-R*0.16){best=curZone;bestD=curD;}
     var id=best?best.getAttribute('data-zone'):null;
     if(id!==active){
-      zones.forEach(function(z){z.classList.toggle('revealed',z===best);});
+      zones.forEach(function(z){
+        var on=z===best; z.classList.toggle('revealed',on);
+        if(on)fitBody(z); else z.querySelector('.z-body').style.maxHeight='';
+      });
       active=id;instrument.setAttribute('aria-valuetext',id||'idle');
       if(id&&!firstRun)addRevision('MEASURED '+id.toUpperCase());
     }
@@ -1226,9 +1302,9 @@
   // init: seat instrument in the clear top-right corner, no reveal on load (skipped in narrow static-stack mode)
   function init(){
     if(STACK.matches){zones.forEach(function(z){z.classList.remove('revealed','near');});return;}
-    parked=false;instrument.classList.remove('parked');place(canvas.clientWidth-66, 66);
+    parked=false;instrument.classList.remove('parked');measure();place(canvas.clientWidth-66, 66);
   }
-  window.addEventListener('resize',function(){if(STACK.matches){zones.forEach(function(z){z.classList.remove('revealed','near');});return;}if(parked)park();else place(inst.x,inst.y);});
+  window.addEventListener('resize',function(){if(STACK.matches){zones.forEach(function(z){z.classList.remove('revealed','near');});return;}measure();var rz=canvas.querySelector('.zone.revealed');if(rz)fitBody(rz);if(parked)park();else place(inst.x,inst.y);});
   if(STACK.addEventListener)STACK.addEventListener('change',init);
   // test hooks
   window.__inst=function(){return {x:inst.x,y:inst.y};};
