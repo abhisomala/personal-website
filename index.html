@@ -796,9 +796,9 @@
 /* title-band header: accent spine + boxed sheet-set tag + bold title, matching the weight of the canvas below */
 .dl-head{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:7px 14px;border:1px solid var(--ink);border-bottom:0;background:linear-gradient(180deg,#fff,#eaf0f5);padding:12px 14px 12px 22px;font-family:var(--mono);box-shadow:inset 0 -2px 0 rgba(30,95,204,.14);}
 .dl-head::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--accent);}
-.dl-no{font-size:10px;letter-spacing:.14em;color:#fff;font-weight:600;background:var(--ink);padding:5px 10px;}
+.dl-no{font-size:10px;letter-spacing:.14em;color:var(--ink);font-weight:600;background:#fff;border:1px solid var(--ink);padding:4px 10px;}
 .dl-title{font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--ink);}
-.dl-hint{margin-left:auto;font-size:9.5px;letter-spacing:.1em;color:var(--accent);font-weight:600;border:1px solid var(--accent);background:var(--accent-soft);padding:4px 9px;}
+.dl-hint{margin-left:auto;font-size:9.5px;letter-spacing:.1em;color:var(--graphite);font-weight:600;border:1px solid var(--line-soft);background:#fff;padding:4px 9px;}
 .dl-canvas{position:relative;border:1px solid var(--ink);background:
   linear-gradient(rgba(30,95,204,0.10) 1px,transparent 1px),
   linear-gradient(90deg,rgba(30,95,204,0.10) 1px,transparent 1px),
@@ -853,14 +853,12 @@
 .instrument .comp{position:absolute;inset:0;}
 /* the compass casts one consistent down-right shadow, so it floats above the surface */
 .instrument .comp{filter:drop-shadow(3px 5px 3px rgba(27,46,56,.32));}
-/* refined drafting-divider body: tapered legs with a touch of depth, a crafted pivot, fine points */
-.c-leg{fill:url(#legFill);stroke:#0f1e26;stroke-width:.5;stroke-linejoin:round;}
+/* divider body (Option C): ink line-stroke legs (heaviest), accent hinge + tips, muted dashed arc (lightest) */
+.c-leg{stroke:var(--ink);stroke-width:4.5;stroke-linecap:round;fill:none;}
 .c-tip{fill:var(--accent);}
-.c-arc{stroke:var(--accent);stroke-width:1;stroke-dasharray:2.5 2.5;fill:none;opacity:.5;}
-.c-tick{stroke:var(--accent);stroke-width:1;stroke-linecap:round;opacity:.5;}
-.c-hinge-o{fill:#eef2f6;stroke:var(--accent);stroke-width:1.5;}
+.c-arc{stroke:var(--graphite);stroke-width:1.2;stroke-dasharray:3 3;fill:none;opacity:.75;}
+.c-hinge-o{fill:none;stroke:var(--accent);stroke-width:1.6;}
 .c-hinge-i{fill:var(--accent);}
-.c-hinge-hl{fill:#ffffff;opacity:.65;}
 /* transparent central grab target — same drag hook (#instHandle), no visual of its own */
 .inst-handle{position:absolute;left:50%;top:50%;width:38px;height:44px;margin:-22px 0 0 -19px;background:transparent;border:0;cursor:grab;}
 /* while the compass sits over an open sheet, fade its linework so the text below stays readable */
@@ -890,7 +888,6 @@
 /* compass rose: a fixed N/S/E/W reference anchored in the bottom-right corner */
 .dl-north{right:4%;bottom:5%;top:auto;width:92px;}
 .dl-north .cr-lab{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;fill:#5F7385;}
-.dl-geo{right:9%;top:33%;width:90px;}
 .dl-scalebar{left:57%;top:90%;width:150px;}
 .dl-scalebar .sb-lab{font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:#7B93A4;margin-bottom:2px;}
 .dl-scalebar .sb-ticks{height:9px;border:1px solid #93AEC4;border-top:0;display:flex;}
@@ -1082,7 +1079,6 @@
         <text class="cr-lab" x="99" y="54" text-anchor="middle">E</text>
         <text class="cr-lab" x="1" y="54" text-anchor="middle">W</text>
       </svg></div>
-      <div class="deco dl-geo"><svg viewBox="0 0 90 90" fill="none"><circle class="ctor" cx="45" cy="45" r="40"/><circle class="ctor" cx="45" cy="45" r="22"/><path class="ctor cline" d="M45 1 V89 M1 45 H89"/><path class="ctor" d="M14 14 L76 76 M76 14 L14 76"/></svg></div>
       <div class="deco dl-scalebar">
         <div class="sb-lab">SCALE BAR</div>
         <div class="sb-ticks"><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -1156,25 +1152,17 @@
     <div class="instrument" id="instrument" role="slider" tabindex="0" aria-label="Drafting compass. Drag near a sheet to open it." aria-valuetext="idle">
       <div class="reach"></div>
       <svg class="comp" viewBox="0 0 118 118" aria-hidden="true">
-        <defs>
-          <linearGradient id="legFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#35505f"/>
-            <stop offset="1" stop-color="#152530"/>
-          </linearGradient>
-        </defs>
-        <!-- faint dashed span arc + centre tick (lightest, behind the legs) -->
-        <path class="c-arc" d="M49.5 62 Q59 69 68.5 62"/>
-        <line class="c-tick" x1="59" y1="64.5" x2="59" y2="70.5"/>
-        <!-- two symmetric tapered legs (heaviest), mirror images about x=59 -->
-        <polygon class="c-leg" points="61.57,27.74 41.97,96.24 40.15,99.40 40.03,95.76 54.97,26.09"/>
-        <polygon class="c-leg" points="56.43,27.74 76.03,96.24 77.85,99.40 77.97,95.76 63.03,26.09"/>
-        <!-- fine accent needle points at both tips -->
-        <polygon class="c-tip" points="40.15,99.40 42.30,95.20 39.00,96.10"/>
-        <polygon class="c-tip" points="77.85,99.40 75.70,95.20 79.00,96.10"/>
-        <!-- crafted pivot at top-centre (medium): accent ring, accent core, soft highlight -->
-        <circle class="c-hinge-o" cx="59" cy="25" r="6.2"/>
-        <circle class="c-hinge-i" cx="59" cy="25" r="2.8"/>
-        <circle class="c-hinge-hl" cx="56.8" cy="22.9" r="1.4"/>
+        <!-- faint dashed measuring arc between the legs (muted graphite, thin) -->
+        <path class="c-arc" d="M49.6 63 Q59 71 68.4 63"/>
+        <!-- two symmetric ink legs, rounded caps, mirror images about x=59 -->
+        <path class="c-leg" d="M59 34 L40.2 92"/>
+        <path class="c-leg" d="M59 34 L77.8 92"/>
+        <!-- matching accent triangular points at both tips -->
+        <polygon class="c-tip" points="37.73,99.61 43.53,93.08 36.87,90.92"/>
+        <polygon class="c-tip" points="80.27,99.61 74.47,93.08 81.13,90.92"/>
+        <!-- hinge: filled accent circle inset in a stroked accent ring -->
+        <circle class="c-hinge-o" cx="59" cy="34" r="6"/>
+        <circle class="c-hinge-i" cx="59" cy="34" r="3"/>
       </svg>
       <div class="inst-handle" id="instHandle"></div>
       <div class="inst-readout" id="instReadout">X — Y —</div>
@@ -1421,8 +1409,6 @@
     body.style.maxHeight=Math.max(150,Math.min(430,avail))+'px';
   }
   function render(){instrument.classList.toggle('reading', !!active && !parked);}
-  // swing the compass's long leg to aim at a canvas point (nearest sheet / promoted sheet)
-  function aim(cx,cy){var a=Math.atan2(cy-inst.y,cx-inst.x)*180/Math.PI;instrument.style.setProperty('--point',a.toFixed(1)+'deg');}
   function roFlip(){instrument.classList.toggle('ro-up', inst.y > canvas.clientHeight-84);}
   function place(x,y){
     inst.x=Math.max(0,Math.min(canvas.clientWidth,x));
@@ -1441,16 +1427,14 @@
   }
   function proximity(){
     if(!centers.length)measure();
-    var R=radius(),best=null,bestD=Infinity,curD=Infinity,curZone=null,nearC=null,nearD=Infinity;
+    var R=radius(),best=null,bestD=Infinity,curD=Infinity,curZone=null;
     zones.forEach(function(z,i){
       var c=centers[i]||zoneCenter(z);
       var d=Math.hypot(c.x-inst.x,c.y-inst.y);
       z.classList.toggle('near',d<R*1.25);
-      if(d<nearD){nearD=d;nearC=c;} // nearest of all, so the leg always has something to point at
       if(z.getAttribute('data-zone')===active){curD=d;curZone=z;}
       if(d<R&&d<bestD){bestD=d;best=z;}
     });
-    if(nearC)aim(nearC.x,nearC.y);
     // hysteresis: keep the currently-open sheet unless a different one is clearly closer,
     // so the reveal doesn't flip-flop when the compass hovers near a boundary between two sheets
     if(curZone&&best&&best!==curZone&&curD<R&&bestD>curD-R*0.16){best=curZone;bestD=curD;}
@@ -1480,7 +1464,7 @@
     var safe=[{x:W-m,y:m},{x:m,y:H-m}];
     var best=safe[0];
     if(Math.hypot(safe[1].x-zc.x,safe[1].y-zc.y)>Math.hypot(safe[0].x-zc.x,safe[0].y-zc.y))best=safe[1];
-    placeVisual(best.x,best.y);aim(zc.x,zc.y);render(); // parked in the corner, leg still points back at the open sheet
+    placeVisual(best.x,best.y);render();
   }
   // drag
   function onMove(e){if(!dragging)return;var b=canvas.getBoundingClientRect();place(e.clientX-b.left,e.clientY-b.top);}
