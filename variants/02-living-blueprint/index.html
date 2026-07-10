@@ -745,8 +745,11 @@
   transform:rotate(var(--rot,0deg));transform-origin:center center;
   box-shadow:2px 3px 11px -6px rgba(27,46,56,.4);
   transition:transform .28s ease,width .28s ease,box-shadow .25s ease,border-color .25s ease,background .25s ease;}
+.zone .z-head{display:flex;align-items:center;gap:6px;}
+.zone .z-ico{width:14px;height:14px;flex:none;display:block;color:var(--ic,var(--accent));}
 .zone .z-no{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--accent);font-weight:600;}
-.zone .z-label{font-family:var(--mono);font-size:12.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:600;margin-top:2px;color:var(--ink);}
+.zone .z-label{font-family:var(--mono);font-size:clamp(13px,1.05vw,14px);letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-top:4px;color:var(--ink);}
+.zone .z-sub{font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--graphite);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .zone .z-dwg{position:absolute;right:10px;bottom:7px;font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--graphite);opacity:.55;}
 .zone .z-body{max-height:0;overflow:hidden;opacity:0;transition:max-height .35s ease,opacity .25s ease,margin .35s ease;font-size:12.5px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere;}
 .zone.revealed{border-color:var(--accent);background:#fff;box-shadow:0 14px 34px -12px rgba(30,95,204,.55);z-index:40 !important;transform:rotate(0deg) scale(1.03);width:clamp(210px,30vw,300px) !important;}
@@ -880,48 +883,66 @@
   </div>
   <div class="dl-canvas" id="dlCanvas">
     
-    <div class="zone" data-zone="about" id="zone-about" style="left:3%;top:6%;--rot:-4deg;z-index:2">
-      <div class="z-no">SHEET 01</div><div class="z-label">ABOUT</div>
+    <div class="zone" data-zone="about" id="zone-about" style="left:3%;top:6%;--rot:-4deg;z-index:2;--ic:#1E5FCC">
+      <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="2.6"/><path d="M2.8 13.8a5.2 5.2 0 0 1 10.4 0"/></svg><span class="z-no">SHEET 01</span></div>
+      <div class="z-label">ABOUT</div>
+      <div class="z-sub">FULL ML STACK</div>
       <div class="z-body"><p>I've worked across the ML stack, from unsupervised clustering on data with no labels to inference pipelines running in production for tens of thousands of users. Right now I'm building at Focara, an EdTech startup, and leading applied ML work at Virginia Tech's NLP Research Lab. Before that I built embedding visualization infrastructure at Nomic AI.</p></div>
       <span class="z-dwg">AS-101</span>
     </div>
-    <div class="zone" data-zone="education" id="zone-education" style="left:15%;top:15%;--rot:4deg;z-index:3">
-      <div class="z-no">SHEET 02</div><div class="z-label">EDUCATION</div>
+    <div class="zone" data-zone="education" id="zone-education" style="left:15%;top:15%;--rot:4deg;z-index:3;--ic:#3E7CB1">
+      <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.2 L14.4 5.9 L8 8.6 L1.6 5.9 Z"/><path d="M4.6 7.2 V10 C4.6 11.3 11.4 11.3 11.4 10 V7.2"/><path d="M14.4 5.9 V10.4"/></svg><span class="z-no">SHEET 02</span></div>
+      <div class="z-label">EDUCATION</div>
+      <div class="z-sub">CORNELL · NY</div>
       <div class="z-body"><p>Cornell University &middot; Ithaca, NY.</p><p style='color:var(--graphite)'>Currently at Cornell. Transferred in from Virginia Tech.</p></div>
       <span class="z-dwg">AS-102</span>
     </div>
-    <div class="zone" data-zone="experience" id="zone-experience" style="left:31%;top:4%;--rot:-2deg;z-index:4">
-      <div class="z-no">SHEET 03</div><div class="z-label">EXPERIENCE</div>
+    <div class="zone" data-zone="experience" id="zone-experience" style="left:31%;top:4%;--rot:-2deg;z-index:4;--ic:#0E7B6C">
+      <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="10.2" width="11" height="3.3"/><rect x="3.6" y="6.4" width="8.8" height="2.9"/><rect x="4.7" y="2.6" width="6.6" height="2.9"/></svg><span class="z-no">SHEET 03</span></div>
+      <div class="z-label">EXPERIENCE</div>
+      <div class="z-sub">FOCARA · VT NLP</div>
       <div class="z-body"><div class='exp'><b>ML Engineer, Focara</b> (May 2026–present). Canvas webhook + LLM classifier surfacing critical announcements before deadlines. Latency <span class='dim'>900ms to 500ms</span>.</div><div class='exp'><b>Applied ML Lead, Virginia Tech NLP Lab</b> (Dec 2025–present). Led a 10-person team, no baseline. <span class='dim'>40%+ MAP</span> gain, serving <span class='dim'>45k users</span>.</div><div class='exp'><b>AI Data Engineering Intern, Nomic AI</b> (Summer 2024). Embedding visualization + ETL for <span class='dim'>250k+</span> monthly users.</div></div>
       <span class="z-dwg">AS-103</span>
     </div>
-    <div class="zone" data-zone="skills" id="zone-skills" style="left:45%;top:12%;--rot:3deg;z-index:6">
-      <div class="z-no">SHEET 04</div><div class="z-label">SKILLS</div>
+    <div class="zone" data-zone="skills" id="zone-skills" style="left:45%;top:12%;--rot:3deg;z-index:6;--ic:#B0417B">
+      <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2"/><circle cx="8" cy="8" r="4.7"/><path d="M8 1.4V3.2 M8 12.8V14.6 M1.4 8H3.2 M12.8 8H14.6 M3.6 3.6l1.3 1.3 M11.1 11.1l1.3 1.3 M12.4 3.6l-1.3 1.3 M4.9 11.1l-1.3 1.3"/></svg><span class="z-no">SHEET 04</span></div>
+      <div class="z-label">SKILLS</div>
+      <div class="z-sub">ML · AGENTS · INFRA</div>
       <div class="z-body"><div class='sk'><b>ML / DATA</b>PyTorch, TensorFlow, scikit-learn, UMAP, HDBSCAN</div><div class='sk'><b>LLM / AGENTS</b>Gemini on Vertex AI, Deepgram, Google Cloud TTS, multi-agent systems</div><div class='sk'><b>BACKEND / INFRA</b>FastAPI, WebSockets, Kubernetes, Helm</div></div>
       <span class="z-dwg">AS-104</span>
     </div>
-    <div class="zone primary" data-zone="opensight" id="zone-opensight" style="left:8%;top:44%;--rot:-2deg;z-index:5">
-      <div class="z-no">SHEET 05</div><div class="z-label">OPENSIGHT</div>
+    <div class="zone primary" data-zone="opensight" id="zone-opensight" style="left:8%;top:44%;--rot:-2deg;z-index:5;--ic:#7A3EB8">
+      <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1.8 8C4.2 4.7 11.8 4.7 14.2 8C11.8 11.3 4.2 11.3 1.8 8Z"/><circle cx="8" cy="8" r="1.9"/></svg><span class="z-no">SHEET 05</span></div>
+      <div class="z-label">OPENSIGHT</div>
+      <div class="z-sub">TOP 10 · 2,500+</div>
       <div class="z-body"><p>A real-time multi-agent voice assistant that replaces screen readers with active task execution for blind and low-vision users. I built it because screen readers describe a page, they don't act on it.</p><p><span class='dim'>Top 10 of 2,500+ teams</span>, Google Developer Groups Solution Challenge 2026, North America. Multi-step web task in <span class='dim'>under 60s</span>.</p><p>Stack: FastAPI, WebSockets, Gemini on Vertex AI, Deepgram, Google Cloud TTS. Validated with the Blind Institute of Technology and the Virginia Department for the Blind and Vision Impaired.</p><p><a href='https://github.com/abhisomala/OpenSight_GDGChallenge_2026'>github.com/abhisomala/OpenSight_GDGChallenge_2026</a></p></div>
       <span class="z-dwg">AS-105</span>
     </div>
-    <div class="zone" data-zone="wildfire" id="zone-wildfire" style="left:21%;top:53%;--rot:3deg;z-index:7">
-      <div class="z-no">SHEET 06</div><div class="z-label">WILDFIRE</div>
+    <div class="zone" data-zone="wildfire" id="zone-wildfire" style="left:21%;top:53%;--rot:3deg;z-index:7;--ic:#B4552D">
+      <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.6C8.4 4.2 11.9 5.6 11.9 9.3A3.9 3.9 0 0 1 4.1 9.3C4.1 7.4 5.5 6.2 6.1 4.5C6.7 5.7 7.6 6 8 1.6Z"/></svg><span class="z-no">SHEET 06</span></div>
+      <div class="z-label">WILDFIRE</div>
+      <div class="z-sub">100K+ NASA POINTS</div>
       <div class="z-body"><p>Wildfire spread prediction. A deep learning pipeline trained on <span class='dim'>100K+</span> NASA environmental datapoints from VIIRS and MODIS.</p><p style='color:var(--graphite)'>Containerized with Kubernetes and Helm.</p></div>
       <span class="z-dwg">AS-106</span>
     </div>
-    <div class="zone" data-zone="algae" id="zone-algae" style="left:40%;top:45%;--rot:-3deg;z-index:8">
-      <div class="z-no">SHEET 07</div><div class="z-label">ALGAE BLOOM</div>
+    <div class="zone" data-zone="algae" id="zone-algae" style="left:40%;top:45%;--rot:-3deg;z-index:8;--ic:#3F8F5C">
+      <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5.5 q1.75 -2 3.5 0 t3.5 0 t3.5 0"/><path d="M2 8.5 q1.75 -2 3.5 0 t3.5 0 t3.5 0"/><path d="M2 11.5 q1.75 -2 3.5 0 t3.5 0 t3.5 0"/></svg><span class="z-no">SHEET 07</span></div>
+      <div class="z-label">ALGAE BLOOM</div>
+      <div class="z-sub">ROC-AUC 0.58–0.69</div>
       <div class="z-body"><p>Harmful algal bloom detection. Ground truth comes from EPA measured microcystin concentrations, not a heuristic proxy.</p><p>Leak-free cross-validation splits, so reported performance isn't inflated by data leakage. Cross-validated <span class='dim'>ROC-AUC 0.58–0.69</span> and still improving. Active work in progress.</p><p><a href='https://github.com/abhisomala/Capstone'>github.com/abhisomala/Capstone</a></p></div>
       <span class="z-dwg">AS-107</span>
     </div>
-    <div class="zone" data-zone="awards" id="zone-awards" style="left:64%;top:28%;--rot:2deg;z-index:9">
-      <div class="z-no">SHEET 08</div><div class="z-label">AWARDS</div>
+    <div class="zone" data-zone="awards" id="zone-awards" style="left:64%;top:28%;--rot:2deg;z-index:9;--ic:#C9A227">
+      <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5.4" r="3.6"/><path d="M6.1 8.5 L4.7 14 L8 12 L11.3 14 L9.9 8.5"/></svg><span class="z-no">SHEET 08</span></div>
+      <div class="z-label">AWARDS</div>
+      <div class="z-sub">$1.7M · EAGLE SCOUT</div>
       <div class="z-body"><div class='exp'><b>STEM+C Competition Grant</b> (Virginia). Won a STEM+C competition grant, putting <span class='dim'>$1.7M</span> of STEM funding in front of almost <span class='dim'>38,000</span> students.</div><div class='exp'><b>Eagle Scout</b>. Attained the highest rank in scouting.</div><div class='exp'><b>GDG Solution Challenge 2026</b> (North America). <span class='dim'>Top 10 of 2,500+</span> teams for OpenSight.</div></div>
       <span class="z-dwg">AS-108</span>
     </div>
-    <div class="zone" data-zone="contact" id="zone-contact" style="left:52%;top:62%;--rot:-2deg;z-index:10">
-      <div class="z-no">SHEET 09</div><div class="z-label">CONTACT</div>
+    <div class="zone" data-zone="contact" id="zone-contact" style="left:52%;top:62%;--rot:-2deg;z-index:10;--ic:#48606E">
+      <div class="z-head"><svg class="z-ico" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="3.6" width="12.4" height="8.8"/><path d="M2.2 4.2L8 9L13.8 4.2"/></svg><span class="z-no">SHEET 09</span></div>
+      <div class="z-label">CONTACT</div>
+      <div class="z-sub">EMAIL · GITHUB · LI</div>
       <div class="z-body"><p>Email: <a href='mailto:somala.abhi@gmail.com'>somala.abhi@gmail.com</a></p><p>GitHub: <a href='https://github.com/abhisomala'>github.com/abhisomala</a></p><p>LinkedIn: <a href='https://linkedin.com/in/abhijitsomala'>linkedin.com/in/abhijitsomala</a></p></div>
       <span class="z-dwg">AS-109</span>
     </div>
