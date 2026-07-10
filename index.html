@@ -793,10 +793,12 @@
 
 /* ===== bottom scaffold ===== */
 .drawing-layers{position:relative;max-width:1260px;margin:0 auto;padding:0 clamp(10px,3vw,26px) 40px;}
-.dl-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;border:1px solid var(--ink);border-bottom:0;background:#fff;padding:9px 13px;font-family:var(--mono);}
-.dl-no{font-size:10px;letter-spacing:.14em;color:var(--accent);font-weight:600;}
-.dl-title{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--ink);}
-.dl-hint{margin-left:auto;font-size:10px;letter-spacing:.06em;color:var(--graphite);}
+/* title-band header: accent spine + boxed sheet-set tag + bold title, matching the weight of the canvas below */
+.dl-head{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:7px 14px;border:1px solid var(--ink);border-bottom:0;background:linear-gradient(180deg,#fff,#eaf0f5);padding:12px 14px 12px 22px;font-family:var(--mono);box-shadow:inset 0 -2px 0 rgba(30,95,204,.14);}
+.dl-head::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--accent);}
+.dl-no{font-size:10px;letter-spacing:.14em;color:#fff;font-weight:600;background:var(--ink);padding:5px 10px;}
+.dl-title{font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--ink);}
+.dl-hint{margin-left:auto;font-size:9.5px;letter-spacing:.1em;color:var(--accent);font-weight:600;border:1px solid var(--accent);background:var(--accent-soft);padding:4px 9px;}
 .dl-canvas{position:relative;border:1px solid var(--ink);background:
   linear-gradient(rgba(30,95,204,0.10) 1px,transparent 1px),
   linear-gradient(90deg,rgba(30,95,204,0.10) 1px,transparent 1px),
@@ -825,9 +827,9 @@
   background:rgba(255,255,255,.9); /* fallback */
   background:color-mix(in srgb,var(--ic,var(--accent)) 7%,rgba(255,255,255,.92)); /* faint accent-tinted file tab, idle only */
   transform:rotate(var(--rot,0deg));transform-origin:center center;
-  /* z-order depth: sheets further back (low --lift) get a flatter, tighter shadow;
-     sheets further forward (high --lift) lift off the pile with a softer, deeper shadow */
-  box-shadow:calc(var(--lift,3)*0.55px) calc(var(--lift,3)*0.8px + 1px) calc(6px + var(--lift,3)*2.3px) calc(-6px + var(--lift,3)*0.15px) rgba(27,46,56,.42);
+  /* z-order depth (light from top-left, so every shadow falls down-right): back-of-pile sheets
+     (low --lift) are nearly flat; front sheets (high --lift) lift clearly off the surface */
+  box-shadow:calc(var(--lift,3)*0.7px) calc(var(--lift,3)*1.05px + 1px) calc(4px + var(--lift,3)*3.2px) calc(-7px + var(--lift,3)*0.18px) rgba(27,46,56,.42);
   transition:transform .28s ease,width .28s ease,box-shadow .25s ease,border-color .25s ease,background .25s ease;}
 .zone .z-head{display:flex;align-items:center;gap:6px;}
 .zone .z-ico{width:14px;height:14px;flex:none;display:block;color:var(--ic,var(--accent));}
@@ -836,7 +838,7 @@
 .zone .z-sub{font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--graphite);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .zone .z-dwg{position:absolute;right:10px;bottom:7px;font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--graphite);opacity:.55;}
 .zone .z-body{max-height:0;overflow:hidden;opacity:0;transition:max-height .35s ease,opacity .25s ease,margin .35s ease;font-size:12.5px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere;}
-.zone.revealed{border-color:var(--accent);background:#fff;box-shadow:0 14px 34px -12px rgba(30,95,204,.55);z-index:40 !important;transform:rotate(0deg) scale(1.03);width:clamp(210px,30vw,300px) !important;}
+.zone.revealed{border-color:var(--accent);background:#fff;box-shadow:11px 22px 46px -16px rgba(27,46,56,.52),0 0 0 1px rgba(30,95,204,.22);z-index:40 !important;transform:rotate(0deg) scale(1.03);width:clamp(210px,30vw,300px) !important;}
 .zone.revealed .z-body{max-height:clamp(200px,44vh,430px);opacity:1;margin-top:9px;overflow:auto;}
 .zone.revealed .z-dwg{opacity:.75;}
 .zone.near:not(.revealed){border-color:var(--accent);}
@@ -846,24 +848,47 @@
 .zone .sk{margin:0 0 6px;} .zone .sk b{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--graphite);display:block;margin-bottom:1px;}
 .instrument{position:absolute;width:118px;height:118px;margin:-59px 0 0 -59px;z-index:20;cursor:grab;touch-action:none;}
 .instrument:active{cursor:grabbing;}
-.instrument .reach{position:absolute;inset:0;border:1px dashed rgba(30,95,204,.5);border-radius:50%;}
-.instrument .comp{position:absolute;inset:0;}
-.inst-handle{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:rgba(255,255,255,.62);border:1.5px solid var(--accent);cursor:grab;}
+/* dashed reach ring — now clearly SECONDARY to the weighted compass body */
+.instrument .reach{position:absolute;inset:0;border:1px dashed rgba(30,95,204,.3);border-radius:50%;}
+.instrument .comp,.instrument .needle{position:absolute;inset:0;}
+/* the compass body casts one consistent down-right shadow, so it floats above the surface */
+.instrument .comp{filter:drop-shadow(3px 5px 4px rgba(27,46,56,.34));}
+/* the long pointed leg swings to aim at the nearest sheet (--point set in JS) */
+.instrument .needle{transform:rotate(var(--point,0deg));transform-origin:50% 50%;}
+/* pivot / hinge knob — the grab target, machined-metal look */
+.inst-handle{position:absolute;left:50%;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;
+  background:radial-gradient(circle at 38% 32%,#ffffff,#d3dade 42%,#a3aeb7 78%,#7f8b95);
+  border:1.5px solid #6b7883;cursor:grab;
+  box-shadow:inset 0 1px 1.5px rgba(255,255,255,.75),inset 0 -1px 2px rgba(27,46,56,.25),0 2px 5px -1px rgba(27,46,56,.4);}
+.inst-handle::after{content:"";position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:#5b6a76;box-shadow:0 0 0 2px rgba(255,255,255,.35);}
 /* while the compass sits over an open sheet, fade its linework so the text below stays readable */
 .instrument .comp,.instrument .reach{transition:opacity .22s ease;}
-.instrument.reading .comp,.instrument.reading .reach{opacity:.13;}
+.instrument .needle{transition:opacity .22s ease,transform .32s cubic-bezier(.22,.7,.28,1);}
+.instrument.reading .comp,.instrument.reading .reach,.instrument.reading .needle{opacity:.13;}
 .instrument.reading .inst-readout{opacity:.5;}
 /* smooth glide when the compass parks clear of an opened sheet */
 .instrument.parked{transition:left .32s cubic-bezier(.22,.7,.28,1),top .32s cubic-bezier(.22,.7,.28,1);}
 .inst-readout{position:absolute;left:50%;top:calc(100% + 4px);transform:translateX(-50%);white-space:nowrap;font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--graphite);background:rgba(243,247,250,.85);padding:1px 5px;}
 /* flip readout above the compass when it sits low so it never clips the canvas edge */
 .instrument.ro-up .inst-readout{top:auto;bottom:calc(100% + 4px);}
-@media (prefers-reduced-motion: reduce){.zone,.zone .z-body,.stamp{transition:none;}.instrument .reach{animation:none;}.instrument.parked,.instrument .comp,.instrument .reach{transition:none;}}
+@media (prefers-reduced-motion: reduce){.zone,.zone .z-body,.stamp{transition:none;}.instrument .reach{animation:none;}.instrument.parked,.instrument .comp,.instrument .reach,.instrument .needle{transition:none;}}
+/* ---- background watermark: abstracted OpenSight multi-agent pipeline, far behind everything ---- */
+.dl-watermark{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;}
+.dl-watermark svg{width:100%;height:100%;display:block;}
+.wm-node{fill:none;stroke:#9DB4C6;stroke-width:1.4;}
+.wm-link{fill:none;stroke:#9DB4C6;stroke-width:1;stroke-dasharray:6 5;}
+.wm-lab{font-family:var(--mono);letter-spacing:.14em;fill:#8CA6BC;}
+/* ---- soft cast shadow pooling under the whole scattered pile (grounds it on the surface) ---- */
+.dl-pile-shadow{position:absolute;left:5%;top:9%;width:82%;height:72%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 54% 58% at 47% 50%,rgba(27,46,56,.2),rgba(27,46,56,.08) 46%,transparent 72%);
+  filter:blur(22px);}
 /* ---- decorative drafting fill: non-interactive, behind the sheets (z-index:0 < zones' 2+) ---- */
 .dl-deco{position:absolute;inset:0;z-index:0;pointer-events:none;}
 .dl-deco .deco{position:absolute;}
 .dl-deco svg{display:block;overflow:visible;}
-.dl-north{right:6%;top:70%;width:60px;}
+/* compass rose: a fixed N/S/E/W reference anchored in the bottom-right corner */
+.dl-north{right:4%;bottom:5%;top:auto;width:92px;}
+.dl-north .cr-lab{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;fill:#5F7385;}
 .dl-geo{right:9%;top:33%;width:90px;}
 .dl-scalebar{left:57%;top:90%;width:150px;}
 .dl-scalebar .sb-lab{font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:#7B93A4;margin-bottom:2px;}
@@ -889,7 +914,7 @@
   .zone .z-body p{max-width:none;}
   .instrument,.inst-readout{display:none !important;}
   .dl-hint,.dl-title{display:none;} /* no compass in stacked mode — drop the "drag the compass" copy */
-  .dl-deco,.dl-ruler{display:none !important;} /* absolute decorations don't belong in the static stack */
+  .dl-deco,.dl-ruler,.dl-watermark,.dl-pile-shadow{display:none !important;} /* absolute decorations don't belong in the static stack */
   .stamp{top:auto;bottom:12px;}
 }
 @media (max-width:480px){.zone{width:150px;padding:8px 9px;}.zone.primary{width:170px;}.instrument{width:150px;height:150px;margin:-75px 0 0 -75px;}.inst-handle{width:58px;height:58px;margin:-29px 0 0 -29px;}
@@ -1003,12 +1028,59 @@
   </div>
   <div class="dl-canvas" id="dlCanvas">
 
+    <!-- background watermark: abstracted OpenSight multi-agent pipeline (behind everything, non-interactive) -->
+    <div class="dl-watermark" aria-hidden="true">
+      <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <path class="wm-link" d="M150 350 H300"/>
+        <path class="wm-link" d="M470 350 C560 350 560 160 645 160"/>
+        <path class="wm-link" d="M470 350 C560 350 560 290 645 290"/>
+        <path class="wm-link" d="M470 350 C560 350 560 415 645 415"/>
+        <path class="wm-link" d="M470 350 C560 350 560 545 645 545"/>
+        <path class="wm-link" d="M855 160 C935 160 935 350 965 350"/>
+        <path class="wm-link" d="M855 290 C935 290 935 350 965 350"/>
+        <path class="wm-link" d="M855 415 C935 415 935 350 965 350"/>
+        <path class="wm-link" d="M855 545 C935 545 935 350 965 350"/>
+        <circle class="wm-node" cx="112" cy="350" r="42"/>
+        <text class="wm-lab" x="112" y="355" text-anchor="middle" style="font-size:14px">VOICE</text>
+        <rect class="wm-node" x="300" y="312" width="170" height="76" rx="7"/>
+        <text class="wm-lab" x="385" y="356" text-anchor="middle" style="font-size:14px">ORCH</text>
+        <rect class="wm-node" x="645" y="134" width="210" height="52" rx="7"/>
+        <text class="wm-lab" x="750" y="165" text-anchor="middle" style="font-size:12px">PERCEIVE</text>
+        <rect class="wm-node" x="645" y="264" width="210" height="52" rx="7"/>
+        <text class="wm-lab" x="750" y="295" text-anchor="middle" style="font-size:12px">PLAN</text>
+        <rect class="wm-node" x="645" y="389" width="210" height="52" rx="7"/>
+        <text class="wm-lab" x="750" y="420" text-anchor="middle" style="font-size:12px">ACT</text>
+        <rect class="wm-node" x="645" y="519" width="210" height="52" rx="7"/>
+        <text class="wm-lab" x="750" y="550" text-anchor="middle" style="font-size:12px">SPEAK</text>
+        <circle class="wm-node" cx="1005" cy="350" r="42"/>
+        <text class="wm-lab" x="1005" y="355" text-anchor="middle" style="font-size:14px">DOM</text>
+        <text class="wm-lab" x="40" y="640" style="font-size:12px;letter-spacing:.22em">OPENSIGHT · MULTI-AGENT PIPELINE · SCHEMATIC</text>
+      </svg>
+    </div>
+
+    <!-- soft cast shadow pooling under the scattered pile -->
+    <div class="dl-pile-shadow" aria-hidden="true"></div>
+
     <!-- scale-ruler strip along the top edge (behind the sheets, non-interactive) -->
     <div class="dl-ruler" aria-hidden="true"><span class="r-lab">SCALE 1:1 · CM</span></div>
 
     <!-- decorative drafting elements filling the empty canvas gaps (behind the sheets, non-interactive) -->
     <div class="dl-deco" aria-hidden="true">
-      <div class="deco dl-north"><svg viewBox="0 0 60 78" fill="none"><circle class="ctor" cx="30" cy="48" r="24"/><path class="ctor" d="M30 20 V72 M6 48 H54"/><path d="M30 4 L38 26 L30 20 L22 26 Z" fill="#93AEC4" stroke="#93AEC4" stroke-width="1"/><text class="d-cap" x="30" y="16" text-anchor="middle" style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;fill:#7B93A4">N</text></svg></div>
+      <div class="deco dl-north"><svg viewBox="-8 -8 116 116" fill="none">
+        <circle class="ctor" cx="50" cy="50" r="35"/>
+        <circle class="ctor" cx="50" cy="50" r="3"/>
+        <!-- diagonal short rays -->
+        <path d="M50 50 L69 31 M50 50 L31 31 M50 50 L69 69 M50 50 L31 69" stroke="#B7C6D4" stroke-width="1"/>
+        <!-- horizontal star point (E–W) -->
+        <path d="M14 50 L50 45 L86 50 L50 55 Z" fill="#D3DEE7" stroke="#8CA6BC" stroke-width="1"/>
+        <!-- vertical star point (N–S), N half accented -->
+        <path d="M50 14 L55 50 L50 86 L45 50 Z" fill="#B7C6D4" stroke="#8CA6BC" stroke-width="1"/>
+        <path d="M50 14 L55 50 L45 50 Z" fill="#8CA6BC"/>
+        <text class="cr-lab" x="50" y="-1" text-anchor="middle">N</text>
+        <text class="cr-lab" x="50" y="106" text-anchor="middle">S</text>
+        <text class="cr-lab" x="99" y="54" text-anchor="middle">E</text>
+        <text class="cr-lab" x="1" y="54" text-anchor="middle">W</text>
+      </svg></div>
       <div class="deco dl-geo"><svg viewBox="0 0 90 90" fill="none"><circle class="ctor" cx="45" cy="45" r="40"/><circle class="ctor" cx="45" cy="45" r="22"/><path class="ctor cline" d="M45 1 V89 M1 45 H89"/><path class="ctor" d="M14 14 L76 76 M76 14 L14 76"/></svg></div>
       <div class="deco dl-scalebar">
         <div class="sb-lab">SCALE BAR</div>
@@ -1083,12 +1155,30 @@
     <div class="instrument" id="instrument" role="slider" tabindex="0" aria-label="Drafting compass. Drag near a sheet to open it." aria-valuetext="idle">
       <div class="reach"></div>
       <svg class="comp" viewBox="0 0 118 118" aria-hidden="true">
-        <circle cx="59" cy="59" r="34" fill="none" stroke="#48606E" stroke-width="1" stroke-dasharray="4 4"/>
-        <g stroke="#1E5FCC" stroke-width="2" fill="none" stroke-linecap="round">
-          <circle cx="59" cy="59" r="10"/>
-          <path d="M59 33 V49 M59 69 V85 M33 59 H49 M69 59 H85"/>
-        </g>
-        <circle cx="59" cy="59" r="2.4" fill="#1E5FCC"/>
+        <defs>
+          <radialGradient id="cbody" cx="40%" cy="34%" r="72%">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset=".35" stop-color="#e6ebef"/>
+            <stop offset=".72" stop-color="#bcc5cd"/>
+            <stop offset="1" stop-color="#8b97a1"/>
+          </radialGradient>
+          <linearGradient id="cleg" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#aeb8c0"/>
+            <stop offset=".5" stop-color="#eef1f4"/>
+            <stop offset="1" stop-color="#8f9ba5"/>
+          </linearGradient>
+        </defs>
+        <circle cx="59" cy="59" r="30" fill="url(#cbody)" stroke="#6b7883" stroke-width="1.3"/>
+        <circle cx="59" cy="59" r="23" fill="none" stroke="#6b7883" stroke-opacity=".42" stroke-width="1"/>
+        <circle cx="59" cy="59" r="14" fill="none" stroke="#6b7883" stroke-opacity=".28" stroke-width="1"/>
+      </svg>
+      <svg class="needle" viewBox="0 0 118 118" aria-hidden="true">
+        <!-- short anchor leg (trailing) -->
+        <path d="M59 59 L83 78 L86 82" fill="none" stroke="url(#cleg)" stroke-width="4.5" stroke-linecap="round"/>
+        <circle cx="86" cy="82" r="3.2" fill="#8f9ba5" stroke="#6b7883" stroke-width="1"/>
+        <!-- long pointed leg (reaches toward the nearest sheet) -->
+        <polygon points="59,55.5 100,58.2 108,59 100,59.8 59,62.5" fill="url(#cleg)" stroke="#6b7883" stroke-width=".8"/>
+        <path d="M62 58 L100 58.9" stroke="#ffffff" stroke-opacity=".6" stroke-width="1" fill="none"/>
       </svg>
       <div class="inst-handle" id="instHandle"></div>
       <div class="inst-readout" id="instReadout">X — Y —</div>
@@ -1335,6 +1425,8 @@
     body.style.maxHeight=Math.max(150,Math.min(430,avail))+'px';
   }
   function render(){instrument.classList.toggle('reading', !!active && !parked);}
+  // swing the compass's long leg to aim at a canvas point (nearest sheet / promoted sheet)
+  function aim(cx,cy){var a=Math.atan2(cy-inst.y,cx-inst.x)*180/Math.PI;instrument.style.setProperty('--point',a.toFixed(1)+'deg');}
   function roFlip(){instrument.classList.toggle('ro-up', inst.y > canvas.clientHeight-84);}
   function place(x,y){
     inst.x=Math.max(0,Math.min(canvas.clientWidth,x));
@@ -1353,14 +1445,16 @@
   }
   function proximity(){
     if(!centers.length)measure();
-    var R=radius(),best=null,bestD=Infinity,curD=Infinity,curZone=null;
+    var R=radius(),best=null,bestD=Infinity,curD=Infinity,curZone=null,nearC=null,nearD=Infinity;
     zones.forEach(function(z,i){
       var c=centers[i]||zoneCenter(z);
       var d=Math.hypot(c.x-inst.x,c.y-inst.y);
       z.classList.toggle('near',d<R*1.25);
+      if(d<nearD){nearD=d;nearC=c;} // nearest of all, so the leg always has something to point at
       if(z.getAttribute('data-zone')===active){curD=d;curZone=z;}
       if(d<R&&d<bestD){bestD=d;best=z;}
     });
+    if(nearC)aim(nearC.x,nearC.y);
     // hysteresis: keep the currently-open sheet unless a different one is clearly closer,
     // so the reveal doesn't flip-flop when the compass hovers near a boundary between two sheets
     if(curZone&&best&&best!==curZone&&curD<R&&bestD>curD-R*0.16){best=curZone;bestD=curD;}
@@ -1390,7 +1484,7 @@
     var safe=[{x:W-m,y:m},{x:m,y:H-m}];
     var best=safe[0];
     if(Math.hypot(safe[1].x-zc.x,safe[1].y-zc.y)>Math.hypot(safe[0].x-zc.x,safe[0].y-zc.y))best=safe[1];
-    placeVisual(best.x,best.y);render();
+    placeVisual(best.x,best.y);aim(zc.x,zc.y);render(); // parked in the corner, leg still points back at the open sheet
   }
   // drag
   function onMove(e){if(!dragging)return;var b=canvas.getBoundingClientRect();place(e.clientX-b.left,e.clientY-b.top);}
