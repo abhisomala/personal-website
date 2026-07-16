@@ -848,29 +848,65 @@
 .zone .sk{margin:0 0 6px;} .zone .sk b{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--graphite);display:block;margin-bottom:1px;}
 .instrument{position:absolute;width:118px;height:118px;margin:-59px 0 0 -59px;z-index:20;cursor:grab;touch-action:none;}
 .instrument:active{cursor:grabbing;}
-/* dashed reach ring — sits behind/around the divider body, clearly SECONDARY */
+/* dashed reach ring — the large SECONDARY radius around the whole instrument (kept separate from the target icon) */
 .instrument .reach{position:absolute;inset:0;border:1px dashed rgba(30,95,204,.3);border-radius:50%;}
-.instrument .comp{position:absolute;inset:0;}
-/* the compass casts one consistent down-right shadow, so it floats above the surface */
-.instrument .comp{filter:drop-shadow(3px 5px 3px rgba(27,46,56,.32));}
-/* divider body (Option C): ink line-stroke legs (heaviest), accent hinge + tips, muted dashed arc (lightest) */
-.c-leg{stroke:var(--ink);stroke-width:4.5;stroke-linecap:round;fill:none;}
-.c-tip{fill:var(--accent);}
-.c-arc{stroke:var(--graphite);stroke-width:1.2;stroke-dasharray:3 3;fill:none;opacity:.75;}
-.c-hinge-o{fill:none;stroke:var(--accent);stroke-width:1.6;}
-.c-hinge-i{fill:var(--accent);}
-/* transparent central grab target — same drag hook (#instHandle), no visual of its own */
-.inst-handle{position:absolute;left:50%;top:50%;width:38px;height:44px;margin:-22px 0 0 -19px;background:transparent;border:0;cursor:grab;}
+.instrument .comp{position:absolute;inset:0;filter:drop-shadow(2px 4px 3px rgba(27,46,56,.24));}
+/* target/crosshair reticle: muted dashed target ring (construction-line look) + accent crosshair aimed at the center point */
+.t-ring{fill:none;stroke:var(--graphite);stroke-width:1.2;stroke-dasharray:3 3;opacity:.8;}
+.t-cross{stroke:var(--accent);stroke-width:1.8;stroke-linecap:round;}
+/* idle nudge: a soft glow-pulse on the target ring so the instrument reads as responsive to the user */
+@keyframes tRingPulse{0%,100%{opacity:.5;}50%{opacity:1;stroke-width:1.9;}}
+.instrument.idle .t-ring{animation:tRingPulse 2.1s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+/* visible grab knob (slider-thumb / map-pin look) seated at the hinge/center so it's unambiguous where to grab.
+   its accent center dot doubles as the target's filled center point; the white body + accent ring is the affordance. */
+.inst-knob{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;
+  background:radial-gradient(circle at 42% 36%,#fff,#e7eef5);border:2px solid var(--accent);
+  box-shadow:0 2px 5px -1px rgba(27,46,56,.42),0 0 0 3px rgba(255,255,255,.72);pointer-events:none;z-index:2;}
+.inst-knob::after{content:"";position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:var(--accent);}
+/* transparent central grab target — same drag hook (#instHandle); sits above the knob so it takes the pointer */
+.inst-handle{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;background:transparent;border:0;border-radius:50%;cursor:grab;z-index:3;}
+/* "DRAG" load hint with an arrow aimed at the knob; fades out for the session on the first real drag.
+   affordances open toward the canvas interior (aff-left / aff-right, set in JS) so they never clip a corner. */
+.drag-hint{position:absolute;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:5px;
+  white-space:nowrap;font-family:var(--mono);font-size:9px;letter-spacing:.16em;font-weight:700;color:var(--accent);
+  background:rgba(255,255,255,.94);border:1px solid var(--accent);padding:3px 7px;border-radius:2px;pointer-events:none;z-index:4;
+  box-shadow:0 2px 6px -2px rgba(27,46,56,.4);transition:opacity .4s ease,visibility .4s ease;}
+.drag-hint .dh-arrow{width:13px;height:9px;display:block;color:var(--accent);}
+/* default & aff-left: hint sits to the LEFT of the knob, arrow points right toward it */
+.instrument .drag-hint{right:calc(50% + 20px);left:auto;}
+/* aff-right: hint sits to the RIGHT of the knob, arrow flips to point left toward it */
+.instrument.aff-right .drag-hint{left:calc(50% + 20px);right:auto;flex-direction:row-reverse;}
+.instrument.aff-right .dh-arrow{transform:scaleX(-1);}
+.instrument.dragged .drag-hint{opacity:0;visibility:hidden;}
+/* one-time callout after an index link drives the compass: teaches that the compass is directly draggable */
+.compass-callout{position:absolute;bottom:calc(50% + 26px);
+  white-space:nowrap;font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--ink);
+  background:rgba(255,255,255,.97);border:1px solid var(--accent);padding:5px 9px;border-radius:3px;pointer-events:none;z-index:5;
+  box-shadow:0 4px 11px -3px rgba(27,46,56,.5);opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s ease;}
+.compass-callout::after{content:"";position:absolute;top:100%;width:0;height:0;border:5px solid transparent;border-top-color:var(--accent);}
+/* aff-right: callout opens rightward (its pointer near the left/knob side) */
+.instrument.aff-right .compass-callout{left:calc(50% - 16px);right:auto;}
+.instrument.aff-right .compass-callout::after{left:20px;}
+/* default & aff-left: callout opens leftward (its pointer near the right/knob side) */
+.instrument .compass-callout{right:calc(50% - 16px);left:auto;}
+.instrument .compass-callout::after{right:20px;}
+.instrument.callout-on .compass-callout{opacity:1;visibility:visible;}
+/* cursor: grab on hover over the instrument/handle, grabbing while actively dragging */
+.instrument.dragging,.instrument.dragging .inst-handle{cursor:grabbing;}
+/* the site's custom crosshair cursor sets `cursor:none !important` across #frame; the instrument
+   is a draggable control, so force the real grab/grabbing cursor over it (id specificity beats #frame) */
+body.cur-on #frame #instrument,body.cur-on #frame #instrument *{cursor:grab !important;}
+body.cur-on #frame #instrument.dragging,body.cur-on #frame #instrument.dragging *{cursor:grabbing !important;}
 /* while the compass sits over an open sheet, fade its linework so the text below stays readable */
 .instrument .comp,.instrument .reach{transition:opacity .22s ease;}
-.instrument.reading .comp,.instrument.reading .reach{opacity:.13;}
+.instrument.reading .comp,.instrument.reading .reach,.instrument.reading .inst-knob{opacity:.13;}
 .instrument.reading .inst-readout{opacity:.5;}
 /* smooth glide when the compass parks clear of an opened sheet */
 .instrument.parked{transition:left .32s cubic-bezier(.22,.7,.28,1),top .32s cubic-bezier(.22,.7,.28,1);}
 .inst-readout{position:absolute;left:50%;top:calc(100% + 4px);transform:translateX(-50%);white-space:nowrap;font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--graphite);background:rgba(243,247,250,.85);padding:1px 5px;}
 /* flip readout above the compass when it sits low so it never clips the canvas edge */
 .instrument.ro-up .inst-readout{top:auto;bottom:calc(100% + 4px);}
-@media (prefers-reduced-motion: reduce){.zone,.zone .z-body,.stamp{transition:none;}.instrument .reach{animation:none;}.instrument.parked,.instrument .comp,.instrument .reach{transition:none;}}
+@media (prefers-reduced-motion: reduce){.zone,.zone .z-body,.stamp{transition:none;}.instrument .reach{animation:none;}.instrument.idle .t-ring{animation:none;}.instrument.parked,.instrument .comp,.instrument .reach{transition:none;}}
 /* ---- background watermark: abstracted OpenSight multi-agent pipeline, far behind everything ---- */
 .dl-watermark{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;}
 .dl-watermark svg{width:100%;height:100%;display:block;}
@@ -1152,19 +1188,18 @@
     <div class="instrument" id="instrument" role="slider" tabindex="0" aria-label="Drafting compass. Drag near a sheet to open it." aria-valuetext="idle">
       <div class="reach"></div>
       <svg class="comp" viewBox="0 0 118 118" aria-hidden="true">
-        <!-- faint dashed measuring arc between the legs (muted graphite, thin) -->
-        <path class="c-arc" d="M49.6 63 Q59 71 68.4 63"/>
-        <!-- two symmetric ink legs, rounded caps, mirror images about x=59 -->
-        <path class="c-leg" d="M59 34 L40.2 92"/>
-        <path class="c-leg" d="M59 34 L77.8 92"/>
-        <!-- matching accent triangular points at both tips -->
-        <polygon class="c-tip" points="37.73,99.61 43.53,93.08 36.87,90.92"/>
-        <polygon class="c-tip" points="80.27,99.61 74.47,93.08 81.13,90.92"/>
-        <!-- hinge: filled accent circle inset in a stroked accent ring -->
-        <circle class="c-hinge-o" cx="59" cy="34" r="6"/>
-        <circle class="c-hinge-i" cx="59" cy="34" r="3"/>
+        <!-- dashed target ring (muted construction-line look) surrounding the aiming point -->
+        <circle class="t-ring" cx="59" cy="59" r="26"/>
+        <!-- accent crosshair: horizontal + vertical, gapped at the center for the knob, tips just past the ring -->
+        <line class="t-cross" x1="59" y1="29" x2="59" y2="43"/>
+        <line class="t-cross" x1="59" y1="75" x2="59" y2="89"/>
+        <line class="t-cross" x1="29" y1="59" x2="43" y2="59"/>
+        <line class="t-cross" x1="75" y1="59" x2="89" y2="59"/>
       </svg>
+      <div class="inst-knob" aria-hidden="true"></div>
       <div class="inst-handle" id="instHandle"></div>
+      <div class="drag-hint" aria-hidden="true">DRAG<svg class="dh-arrow" viewBox="0 0 13 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4.5h10M7.5 1l4 3.5-4 3.5"/></svg></div>
+      <div class="compass-callout" aria-hidden="true">You can also drag this directly</div>
       <div class="inst-readout" id="instReadout">X — Y —</div>
     </div>
   </div>
@@ -1327,9 +1362,12 @@
           py = e.clientY;
           var t = e.target;
           var inFrame = !!(t && t.closest && t.closest('#frame'));
-          if (inFrame !== shown) {
-            shown = inFrame;
-            cursorEl.style.opacity = inFrame ? '1' : '0';
+          // over the instrument, suppress the custom crosshair so the native grab/grabbing cursor is visible
+          var overInst = !!(t && t.closest && t.closest('#instrument'));
+          var visible = inFrame && !overInst;
+          if (visible !== shown) {
+            shown = visible;
+            cursorEl.style.opacity = visible ? '1' : '0';
           }
           var nearDim = !!(t && t.closest && t.closest('svg.fig, .dim, .co, .note, .dimset'));
           if (nearDim && !RM.matches) {
@@ -1410,12 +1448,14 @@
   }
   function render(){instrument.classList.toggle('reading', !!active && !parked);}
   function roFlip(){instrument.classList.toggle('ro-up', inst.y > canvas.clientHeight-84);}
+  // open the DRAG hint / callout toward the canvas interior so they never clip when the compass parks in a corner
+  function updateSide(){var onRight=inst.x>canvas.clientWidth*0.5;instrument.classList.toggle('aff-left',onRight);instrument.classList.toggle('aff-right',!onRight);}
   function place(x,y){
     inst.x=Math.max(0,Math.min(canvas.clientWidth,x));
     inst.y=Math.max(0,Math.min(canvas.clientHeight,y));
     instrument.style.left=inst.x+'px';instrument.style.top=inst.y+'px';
     readout.textContent='X '+Math.round(inst.x)+'  Y '+Math.round(inst.y);
-    roFlip();proximity();
+    roFlip();updateSide();proximity();
   }
   // reposition the compass WITHOUT re-evaluating proximity — used to park it clear of an open sheet
   function placeVisual(x,y){
@@ -1423,7 +1463,7 @@
     inst.y=Math.max(0,Math.min(canvas.clientHeight,y));
     instrument.style.left=inst.x+'px';instrument.style.top=inst.y+'px';
     readout.textContent='X '+Math.round(inst.x)+'  Y '+Math.round(inst.y);
-    roFlip();
+    roFlip();updateSide();
   }
   function proximity(){
     if(!centers.length)measure();
@@ -1466,20 +1506,34 @@
     if(Math.hypot(safe[1].x-zc.x,safe[1].y-zc.y)>Math.hypot(safe[0].x-zc.x,safe[0].y-zc.y))best=safe[1];
     placeVisual(best.x,best.y);render();
   }
+  // ---- discoverability affordances (visual only; do not alter drag/proximity/parking logic) ----
+  var idleTimer=0, didDrag=false;
+  // idle pulse: re-arm a timer on every interaction; after a few quiet seconds the target ring glows
+  function wakeIdle(){instrument.classList.remove('idle');clearTimeout(idleTimer);idleTimer=setTimeout(function(){instrument.classList.add('idle');},3500);}
+  // "DRAG" load hint fades permanently for the session the first time the user actually drags the instrument
+  function markDragged(){instrument.classList.add('dragged');try{sessionStorage.setItem('compassDragged','1');}catch(_){}}
+  // one-time callout after an index link drives the compass — teaches the direct-drag mechanic, once per session
+  function showCompassCallout(){
+    try{if(sessionStorage.getItem('compassCalloutShown'))return;sessionStorage.setItem('compassCalloutShown','1');}catch(_){}
+    instrument.classList.add('callout-on');
+    setTimeout(function(){instrument.classList.remove('callout-on');},4200);
+  }
   // drag
-  function onMove(e){if(!dragging)return;var b=canvas.getBoundingClientRect();place(e.clientX-b.left,e.clientY-b.top);}
-  function onUp(){dragging=false;window.removeEventListener('pointermove',onMove);window.removeEventListener('pointerup',onUp);window.removeEventListener('pointercancel',onUp);park();}
-  handle.addEventListener('pointerdown',function(e){dragging=true;unpark();try{handle.setPointerCapture(e.pointerId);}catch(_){}e.preventDefault();window.addEventListener('pointermove',onMove);window.addEventListener('pointerup',onUp);window.addEventListener('pointercancel',onUp);});
+  function onMove(e){if(!dragging)return;didDrag=true;var b=canvas.getBoundingClientRect();place(e.clientX-b.left,e.clientY-b.top);}
+  function onUp(){dragging=false;instrument.classList.remove('dragging');window.removeEventListener('pointermove',onMove);window.removeEventListener('pointerup',onUp);window.removeEventListener('pointercancel',onUp);if(didDrag)markDragged();wakeIdle();park();}
+  handle.addEventListener('pointerdown',function(e){dragging=true;didDrag=false;instrument.classList.add('dragging');unpark();wakeIdle();try{handle.setPointerCapture(e.pointerId);}catch(_){}e.preventDefault();window.addEventListener('pointermove',onMove);window.addEventListener('pointerup',onUp);window.addEventListener('pointercancel',onUp);});
   // keyboard: move live, then park clear once the user stops arrowing
-  instrument.addEventListener('keydown',function(e){var s=RM.matches?40:24,used=true;unpark();if(e.key==='ArrowLeft'){place(inst.x-s,inst.y);}else if(e.key==='ArrowRight'){place(inst.x+s,inst.y);}else if(e.key==='ArrowUp'){place(inst.x,inst.y-s);}else if(e.key==='ArrowDown'){place(inst.x,inst.y+s);}else{used=false;}if(used){e.preventDefault();clearTimeout(kbTimer);kbTimer=setTimeout(park,420);}});
+  instrument.addEventListener('keydown',function(e){var s=RM.matches?40:24,used=true;unpark();wakeIdle();if(e.key==='ArrowLeft'){place(inst.x-s,inst.y);}else if(e.key==='ArrowRight'){place(inst.x+s,inst.y);}else if(e.key==='ArrowUp'){place(inst.x,inst.y-s);}else if(e.key==='ArrowDown'){place(inst.x,inst.y+s);}else{used=false;}if(used){e.preventDefault();markDragged();clearTimeout(kbTimer);kbTimer=setTimeout(park,420);}});
   // hero index links drive the instrument (hero markup unchanged)
   var MAP={'sheet-about':'about','sheet-education':'education','sheet-experience':'experience','sheet-skills':'skills','sheet-opensight':'opensight','sheet-wildfire':'wildfire','sheet-algae':'algae','sheet-awards':'awards','sheet-contact':'contact'};
-  Array.prototype.forEach.call(document.querySelectorAll('[data-open]'),function(a){a.addEventListener('click',function(e){var zid=MAP[a.getAttribute('data-open')];var z=zid&&document.getElementById('zone-'+zid);if(!z)return;e.preventDefault();unpark();var c=zoneCenter(z);canvas.scrollIntoView({behavior:RM.matches?'auto':'smooth',block:'center'});place(c.x,c.y);park();});});
+  Array.prototype.forEach.call(document.querySelectorAll('[data-open]'),function(a){a.addEventListener('click',function(e){var zid=MAP[a.getAttribute('data-open')];var z=zid&&document.getElementById('zone-'+zid);if(!z)return;e.preventDefault();unpark();wakeIdle();var c=zoneCenter(z);canvas.scrollIntoView({behavior:RM.matches?'auto':'smooth',block:'center'});place(c.x,c.y);park();if(!STACK.matches)showCompassCallout();});});
   // init: seat instrument in the clear top-right corner, no reveal on load (skipped in narrow static-stack mode)
   function init(){
     flag(active); // default the key-plan flag to OpenSight on load
     if(STACK.matches){zones.forEach(function(z){z.classList.remove('revealed','near');});return;}
     parked=false;instrument.classList.remove('parked');measure();place(canvas.clientWidth-66, 66);
+    try{if(sessionStorage.getItem('compassDragged'))instrument.classList.add('dragged');}catch(_){}
+    wakeIdle();
   }
   window.addEventListener('resize',function(){if(STACK.matches){zones.forEach(function(z){z.classList.remove('revealed','near');});return;}measure();var rz=canvas.querySelector('.zone.revealed');if(rz)fitBody(rz);if(parked)park();else place(inst.x,inst.y);});
   if(STACK.addEventListener)STACK.addEventListener('change',init);
