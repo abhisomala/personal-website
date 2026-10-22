@@ -1,4 +1,4 @@
-# Abhijit Somala · The Moving Section
+# Abhijit Somala · One Continuous Section
 
 A personal portfolio about building ML systems around tasks people need to finish. Six project records sit inside an architectural section: choose a way in, inspect the work, and change its reading order.
 
@@ -11,12 +11,14 @@ The site includes the same simple credit: “Built with Factory.”
 ## Explore the work
 
 - **Choose a priority:** People, Agents, Planet, or Scale changes the routing engine's arrangement and brings its lead project to the front.
-- **Inspect a station:** select it or press Enter to read the contribution, then follow “Open selected work.”
-- **Patch a gap:** drag a station onto a highlighted route gap, or use the native insertion selector and “Patch this gap.” Shift+Enter on a station focuses that selector.
-- **Read your route:** the project articles and key plan follow the actual route order. The route is a reading order, not a claim that separate projects depend on one another.
-- **Restore:** “Restore route” returns to the original reading order. Changes last for the open page; they are not saved across reloads.
+- **Inspect a station:** select it or press Enter, then follow the selected-work link to its project record.
+- **Patch a gap:** drag a station onto a highlighted route gap, or use the native insertion selector and “Patch.” Shift+Enter on a station focuses that selector.
+- **Read your route:** the project articles follow the actual route order. The route is a reading order, not a claim that separate projects depend on one another.
+- **Restore:** “Restore” returns to the original reading order. Changes last for the open page; they are not saved across reloads.
 
 Ordinary scrolling, fragment links, evidence links, and native disclosures remain the core reading experience.
+
+The current content/layout stage uses a compact OpenSight scene, one consolidated engine tool row, and quieter project records. **The scroll rework is still to come.** Project drawings are static in this stage; it does not ship between-project morphing or scroll choreography.
 
 ## Run locally
 
@@ -40,7 +42,7 @@ The commitments are:
 - **Reduced motion:** respect `prefers-reduced-motion`, stop decorative travel, and show complete static drawing states.
 - **Pause:** provide a motion control without removing project content or route controls.
 - **No JavaScript:** keep all six project records, evidence links, contact links, and native disclosures in the authored HTML. Direct project links replace the routing controls. Generated decorative marks need not appear.
-- **Native scrolling:** do not take over wheel or touch scrolling. The wide OpenSight drawing has its own horizontally scrollable aperture.
+- **Native scrolling:** do not take over wheel or touch scrolling. The compact OpenSight drawing scales to the available width without a separate panning surface.
 
 These are implementation commitments, not a claim of verified accessibility conformance. Rendered browser QA, computed contrast, keyboard and touch interaction, Safari, physical phones, real screen-reader output, focus retention during reordering, and frame timing still need validation.
 
@@ -50,8 +52,7 @@ These are implementation commitments, not a claim of verified accessibility conf
 index.html                       Project records, navigation, metadata, SVG drawings
 assets/
   engine.js                      Selection, priorities, gap insertion, route state
-  section-model.js               Pure route and drawing-geometry helpers
-  section.js                     Article ordering and scroll-linked drawing shell
+  section.js                     Article ordering, selection label, static drawing setup
   section.css                    Layout, drawing styles, responsive and motion rules
   opensight-demo-thumb.jpg        Existing public demo thumbnail
 docs/
@@ -67,11 +68,10 @@ JavaScript syntax can be checked without a browser:
 
 ```sh
 node --check assets/engine.js
-node --check assets/section-model.js
 node --check assets/section.js
 ```
 
-The initial integration passed source-integrity checks, eleven pure-model checks, authored ID/fragment checks, and HTTP checks for the page and all five local resources. These checks do not establish rendering or native-input behavior.
+The current content/layout integration passed source-integrity checks, six isolated route-projection checks, authored ID/fragment checks, and HTTP checks for the page and all four local resources. These checks do not establish rendering or native-input behavior.
 
 The repository is deployed with Vercel. Feature-branch pushes create preview deployments, not production releases. Review and production promotion are separate steps.
 

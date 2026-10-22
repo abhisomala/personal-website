@@ -4,9 +4,15 @@
 
 The portfolio is a section through a building, not a grid of interchangeable cards. A title block introduces the person and the work. The routing engine is the entry; project spaces form the building; the biography and contact area provide its foundation.
 
-Drafting lines, cut hatching, restrained color, numbered records, and a continuous circulation thread give the page a shared visual language. Each project gets a distinct drawing that explains something specific about the work. The architecture is a way to read the portfolio, not a literal diagram of a shared software system.
+Drafting lines, cut hatching, restrained color, and project-specific drawings give the page a shared visual language. Each project gets a distinct drawing that explains something specific about the work. The architecture is a way to read the portfolio, not a literal diagram of a shared software system.
 
 The headline stays direct: **“I build ML systems around tasks people need to finish.”**
+
+### Current stage
+
+This is a content/layout refinement: a compact OpenSight scene, consolidated engine controls, clear project titles, fewer repeated labels, and contact links at the foundation rather than repeated on every record. The previous key plan, visible route ledger, position stamps, and passage preludes are removed.
+
+**The scroll rework is still to come.** The current shell keeps project drawings static and does not attach scroll choreography or between-project morphing. Future transitions must describe a visitor's reading instrument, not suggest shared data or causal dependencies between projects.
 
 ## How it was built
 
@@ -21,7 +27,7 @@ The routing engine lets the visitor author a reading order:
 1. A priority changes the engine's arrangement and moves its lead project to the front of the current route.
 2. Selecting a station inspects its contribution without inserting it elsewhere.
 3. Patching removes the selected project from its old position and inserts it into an exact gap, including the beginning or end.
-4. The route ledger, article order, displayed position numbers, and key plan reflect that same route.
+4. The actual article order follows that same route. The engine's internal route list remains hidden rather than appearing as another project index.
 5. Restoring the route returns the original order and clears the edit count.
 
 An insertion that would leave the order unchanged is a no-op, not a new edit. The route lives in the open page, with no saved cross-visit preference.
@@ -32,27 +38,27 @@ Dragging is optional. The insertion selector and patch button offer a native alt
 
 ## Project spaces
 
-- **OpenSight:** a bridge between research and shopping represents retained context. Its linked image is an existing public-demo thumbnail, explicitly labeled as such, not a fabricated screenshot or a claimed observed video frame.
+- **OpenSight:** one compact scene places a retained omega-3 topic beside the new budget constraint. Its linked image is an existing public-demo thumbnail, explicitly labeled as such, not a fabricated screenshot or a claimed observed video frame.
 - **VT NLP Lab:** exploded floor plates represent building and iterating. They are conceptual construction geometry, not a quantitative score plot.
 - **Nomic AI:** an illustrative field sits over its supporting infrastructure. The points are not customer data or observed clusters.
 - **Production ML:** two latency lengths share one scale, corresponding to 900 ms before and 500 ms after. Private company and implementation details stay private.
-- **Wildfire:** terrain and satellite swaths illustrate input scope. They do not communicate measured prediction quality.
+- **Wildfire:** the responsibility line states the confirmed data-pipeline, model-training, and Kubernetes/Helm deployment work. Terrain and satellite swaths illustrate input scope, not measured prediction quality.
 - **Algal-bloom research:** a zero-to-one ruler locates the current cross-validation ROC-AUC range of 0.58–0.69. It is not a confidence interval or an operational-readiness claim.
 
-Destination-specific passages connect the spaces in the visitor's chosen order. A continuous thread travels through their drawings toward the foundation.
+Project records appear in the visitor's chosen order without separate passage preludes. Nomic's illustrative-data disclaimer appears once, next to its drawing.
 
 ## Motion principles
 
 Motion should explain a change or clarify the reading path, not gate access to content.
 
 - The engine's movement shows a change of priority or route.
-- The scroll-linked cut plane, thread, and drawing layers follow native scrolling. They do not intercept wheel or touch input or advance the page automatically.
-- Scroll events schedule a single paint; layout geometry is cached and refreshed when needed.
+- The current content/layout shell has no scroll-linked animation. Project drawings show their complete static states.
+- Future scroll work must follow native scrolling, without intercepting wheel or touch input or advancing the page automatically.
 - Decorative engine animation is suspended when its region is offscreen or the document is hidden.
-- Reduced motion and the pause control resolve the section drawings into complete static states rather than leaving information halfway revealed.
+- Reduced motion and the pause control stop decorative engine movement without removing project records or route controls.
 - The no-JavaScript page retains the authored project records and real links even when generated decoration is absent.
 
-Responsive layout and a horizontally scrollable OpenSight drawing are authored in CSS. Their presence is not proof of containment, touch behavior, or smoothness on a physical phone.
+Responsive layout and a compact, non-panned OpenSight drawing are authored in CSS. Their presence is not proof of containment, touch behavior, or smoothness on a physical phone.
 
 ## Content truth rules
 
@@ -71,6 +77,6 @@ The route is a reading aid. Its wires do not assert dependencies, partnerships, 
 
 ## Validation boundary
 
-The integration has source-level integrity, model, syntax, and local HTTP checks. Rendered desktop/mobile review, native drag and keyboard insertion, focus visibility and retention, status announcements, SVG link exposure, computed contrast, reduced-motion transitions, frame timing, Safari, physical phones, and real screen readers remain open.
+The integration has source-level integrity, isolated route-projection, syntax, and local HTTP checks. Rendered desktop/mobile review, native drag and keyboard insertion, focus visibility and retention, status announcements, drawing descriptions, computed contrast, reduced-motion changes, frame timing, Safari, physical phones, and real screen readers remain open. The scroll rework remains a separate pending design and implementation stage.
 
 Do not describe those items as passing until they have actually been tested. No accessibility-conformance or cross-browser-performance claim follows from source checks alone.
