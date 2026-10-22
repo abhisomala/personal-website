@@ -1,0 +1,76 @@
+# Architectural Section
+
+## The idea
+
+The portfolio is a section through a building, not a grid of interchangeable cards. A title block introduces the person and the work. The routing engine is the entry; project spaces form the building; the biography and contact area provide its foundation.
+
+Drafting lines, cut hatching, restrained color, numbered records, and a continuous circulation thread give the page a shared visual language. Each project gets a distinct drawing that explains something specific about the work. The architecture is a way to read the portfolio, not a literal diagram of a shared software system.
+
+The headline stays direct: **“I build ML systems around tasks people need to finish.”**
+
+## How it was built
+
+Abhi directed and approved the work through a [Factory](https://factory.ai) Mission. Multiple Droid agents developed design directions, built prototypes, implemented the chosen direction, reviewed the content and code, and ran source-level QA. Abhi chose Architectural Section and approved the public content and Factory credit.
+
+This is a human-directed, multi-agent design and implementation process. Source review and automated checks are not substitutes for rendered browser, device, or assistive-technology testing.
+
+## Interaction model
+
+The routing engine lets the visitor author a reading order:
+
+1. A priority changes the engine's arrangement and moves its lead project to the front of the current route.
+2. Selecting a station inspects its contribution without inserting it elsewhere.
+3. Patching removes the selected project from its old position and inserts it into an exact gap, including the beginning or end.
+4. The route ledger, article order, displayed position numbers, and key plan reflect that same route.
+5. Restoring the route returns the original order and clears the edit count.
+
+An insertion that would leave the order unchanged is a no-op, not a new edit. The route lives in the open page, with no saved cross-visit preference.
+
+`assets/engine.js` owns selection and route state. `assets/section.js` observes `data-route`, moves the existing article elements, and updates the drawing shell. Stable project IDs identify records; position numbers show where they currently sit. The shell attempts to preserve focus if moving an article dislodges it, but that behavior still needs real-browser verification.
+
+Dragging is optional. The insertion selector and patch button offer a native alternative, including when motion is paused or reduced. Ordinary links provide a route into the work when JavaScript is unavailable.
+
+## Project spaces
+
+- **OpenSight:** a bridge between research and shopping represents retained context. Its linked image is an existing public-demo thumbnail, explicitly labeled as such, not a fabricated screenshot or a claimed observed video frame.
+- **VT NLP Lab:** exploded floor plates represent building and iterating. They are conceptual construction geometry, not a quantitative score plot.
+- **Nomic AI:** an illustrative field sits over its supporting infrastructure. The points are not customer data or observed clusters.
+- **Production ML:** two latency lengths share one scale, corresponding to 900 ms before and 500 ms after. Private company and implementation details stay private.
+- **Wildfire:** terrain and satellite swaths illustrate input scope. They do not communicate measured prediction quality.
+- **Algal-bloom research:** a zero-to-one ruler locates the current cross-validation ROC-AUC range of 0.58–0.69. It is not a confidence interval or an operational-readiness claim.
+
+Destination-specific passages connect the spaces in the visitor's chosen order. A continuous thread travels through their drawings toward the foundation.
+
+## Motion principles
+
+Motion should explain a change or clarify the reading path, not gate access to content.
+
+- The engine's movement shows a change of priority or route.
+- The scroll-linked cut plane, thread, and drawing layers follow native scrolling. They do not intercept wheel or touch input or advance the page automatically.
+- Scroll events schedule a single paint; layout geometry is cached and refreshed when needed.
+- Decorative engine animation is suspended when its region is offscreen or the document is hidden.
+- Reduced motion and the pause control resolve the section drawings into complete static states rather than leaving information halfway revealed.
+- The no-JavaScript page retains the authored project records and real links even when generated decoration is absent.
+
+Responsive layout and a horizontally scrollable OpenSight drawing are authored in CSS. Their presence is not proof of containment, touch behavior, or smoothness on a physical phone.
+
+## Content truth rules
+
+Every public claim should keep its scope and limits close to the evidence:
+
+- Distinguish Abhi's contribution from the wider team's system and credit collaborators where applicable.
+- Keep the baseline, unit, and comparison attached to a metric. Relative MAP improvement over the team's own first working version is not an external benchmark.
+- Do not turn a demonstrated workflow into a broad capability, evaluation result, or proof of a completed purchase.
+- Do not turn input counts or audience reach into model-quality claims.
+- Label illustrative drawings and sample fields; never present them as measured data.
+- Keep ongoing research, modest results, and evaluation limits explicit.
+- Preserve confidentiality rather than inventing an optimization explanation or implementation detail.
+- Use real evidence destinations. When there is no public artifact, offer contact rather than a fabricated case study.
+
+The route is a reading aid. Its wires do not assert dependencies, partnerships, or causal relationships between otherwise separate projects.
+
+## Validation boundary
+
+The integration has source-level integrity, model, syntax, and local HTTP checks. Rendered desktop/mobile review, native drag and keyboard insertion, focus visibility and retention, status announcements, SVG link exposure, computed contrast, reduced-motion transitions, frame timing, Safari, physical phones, and real screen readers remain open.
+
+Do not describe those items as passing until they have actually been tested. No accessibility-conformance or cross-browser-performance claim follows from source checks alone.
