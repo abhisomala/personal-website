@@ -2,7 +2,7 @@
 
 ## The idea
 
-The portfolio is a section through a building, not a grid of interchangeable cards. A title block introduces the person and the work. The routing engine is the entry; project spaces form the building; the biography and contact area provide its foundation.
+The portfolio is a drawing set, not a grid of interchangeable cards. An authored top-down plan offers spatial browsing; section sheets reveal the project records. The routing engine is the plant room; six project spaces form the building; the biography and contact area provide its foundation.
 
 Drafting lines, cut hatching, restrained color, and project-specific drawings give the page a shared visual language. Each project gets a distinct drawing that explains something specific about the work. The architecture is a way to read the portfolio, not a literal diagram of a shared software system.
 
@@ -10,9 +10,15 @@ The headline stays direct: **“I build ML systems around tasks people need to f
 
 ### Current stage
 
-This is a content/layout refinement: a compact OpenSight scene, consolidated engine controls, clear project titles, fewer repeated labels, and contact links at the foundation rather than repeated on every record. The previous key plan, visible route ledger, position stamps, and passage preludes are removed.
+The **Plan Table** is a two-view architecture. On JavaScript-capable screens at least 900px wide, six authored plan figures carry poché walls, door swings, and project-specific evidence geometry. The machine sits at the north edge as the plant room. A circulation line visits room doors in the chosen route and ends at the contact boundary. A title-block mini-map uses the same real plan coordinates.
 
-**The scroll rework is still to come.** The current shell keeps project drawings static and does not attach scroll choreography or between-project morphing. Future transitions must describe a visitor's reading instrument, not suggest shared data or causal dependencies between projects.
+Activating a figure lifts its existing article as a section sheet. OpenSight starts lifted without taking focus or scrolling. “List view” returns to the linear articles. The same column remains the mobile, no-JavaScript, print, and screen-reader foundation; the plan does not duplicate its project content.
+
+Drawing-set chrome is honest about these views and the visitor's reading route. The drawings do not claim a shared software system, measured customer data, or relationships between otherwise separate projects.
+
+This stage is feature-branch/PR preview only. It has not replaced the current production website. Options A–D and D-plus remain private research artifacts, not shipped interfaces.
+
+**Four riders remain deferred:** shareable route URLs, view transitions, a designed print artifact, and a cover ritual. Existing print rules are a fallback, not the deferred print artifact.
 
 ## How it was built
 
@@ -27,12 +33,14 @@ The routing engine lets the visitor author a reading order:
 1. A priority changes the engine's arrangement and moves its lead project to the front of the current route.
 2. Selecting a station inspects its contribution without inserting it elsewhere.
 3. Patching removes the selected project from its old position and inserts it into an exact gap, including the beginning or end.
-4. The actual article order follows that same route. The engine's internal route list remains hidden rather than appearing as another project index.
+4. Actual article order and plan-figure link order follow that same route. The circulation line and mini-map re-plot from it; changed segments briefly flash oxide before returning to ink. The engine's internal route list remains hidden rather than appearing as another project index.
 5. Restoring the route returns the original order and clears the edit count.
 
 An insertion that would leave the order unchanged is a no-op, not a new edit. The route lives in the open page, with no saved cross-visit preference.
 
-`assets/engine.js` owns selection and route state. `assets/section.js` observes `data-route`, moves the existing article elements, and updates the drawing shell. Stable project IDs identify records; position numbers show where they currently sit. The shell attempts to preserve focus if moving an article dislodges it, but that behavior still needs real-browser verification.
+`assets/engine.js` owns selection and route state and is byte-identical to the approved previous stage. `assets/section.js` observes `data-route`, moves existing article elements and plan links, and re-plots circulation, the mini-map, and “Next on route” controls. Stable project IDs identify records. The shell attempts to preserve focus if moving an article dislodges it, but that behavior still needs real-browser verification.
+
+Named plan links open or close the corresponding sheet. Escape closes a sheet and returns focus to its plan figure. The List-view toggle exposes all articles as a column without maintaining a second content tree. These are authored behaviors, not claims of verified screen-reader output.
 
 Dragging is optional. The insertion selector and patch button offer a native alternative, including when motion is paused or reduced. Ordinary links provide a route into the work when JavaScript is unavailable.
 
@@ -47,15 +55,20 @@ Dragging is optional. The insertion selector and patch button offer a native alt
 
 Project records appear in the visitor's chosen order without separate passage preludes. Nomic's illustrative-data disclaimer appears once, next to its drawing.
 
+Each plan figure adapts that room's existing evidence: OpenSight's research/shopping counters and handoff rail, VT's iteration plates, Nomic's illustrative field and supporting plane, Production ML's 900→500 bar ratio, Wildfire's terrain and swaths, and the algae ruler's fixed 0.58–0.69 band. In-drawing labels reuse approved vocabulary rather than adding new performance claims.
+
 ## Motion principles
 
 Motion should explain a change or clarify the reading path, not gate access to content.
 
 - The engine's movement shows a change of priority or route.
-- The current content/layout shell has no scroll-linked animation. Project drawings show their complete static states.
-- Future scroll work must follow native scrolling, without intercepting wheel or touch input or advancing the page automatically.
+- The shell has no scroll-linked animation. Project evidence drawings retain their complete static states.
+- A sheet rises for 250ms using only a transform, with a pre-rendered shadow rather than an animated shadow.
+- Circulation re-plotting flashes only changed segments in oxide. The title-block mini-map mirrors the same coordinates and route.
+- Matched-pair drawing morphs play for 600ms at the entered room's door. They transform a reading instrument, not project data or dependencies. OpenSight has no entry morph.
+- Native scrolling remains intact, with no wheel or touch interception.
 - Decorative engine animation is suspended when its region is offscreen or the document is hidden.
-- Reduced motion and the pause control stop decorative engine movement without removing project records or route controls.
+- Reduced motion removes the sheet rise and oxide flash and skips door morphs to their final state. The pause control stops decorative engine movement without removing project records or route controls.
 - The no-JavaScript page retains the authored project records and real links even when generated decoration is absent.
 
 Responsive layout and a compact, non-panned OpenSight drawing are authored in CSS. Their presence is not proof of containment, touch behavior, or smoothness on a physical phone.
@@ -77,6 +90,8 @@ The route is a reading aid. Its wires do not assert dependencies, partnerships, 
 
 ## Validation boundary
 
-The integration has source-level integrity, isolated route-projection, syntax, and local HTTP checks. Rendered desktop/mobile review, native drag and keyboard insertion, focus visibility and retention, status announcements, drawing descriptions, computed contrast, reduced-motion changes, frame timing, Safari, physical phones, and real screen readers remain open. The scroll rework remains a separate pending design and implementation stage.
+The approved stage passed 38 static checks, 21 pure-Node plan checks, and six isolated route-projection checks. Root integration passed runtime parity, authored IDs/fragments, syntax, and the plan/route tests. All five runtime files returned HTTP 200 with exact body matches on the localhost preview.
+
+**Rendered browser QA is still pending.** Abhi previews manually; owner approval does not stand in for a browser QA pass. Figure legibility, sheet-lift feel, door-morph staging, native drag and keyboard insertion, focus visibility and retention, status announcements, drawing descriptions, computed contrast, reduced-motion changes, and frame timing remain unverified. Safari, physical phones, and real screen readers are untested.
 
 Do not describe those items as passing until they have actually been tested. No accessibility-conformance or cross-browser-performance claim follows from source checks alone.

@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-10-23 · Plan Table preview
+
+- Add an authored top-down plan on JavaScript-capable screens at least 900px wide: the routing machine as plant room, six project plan figures with poché walls and door swings, and a contact boundary.
+- Draw each room from its approved evidence geometry, with no new project claims.
+- Re-plot circulation and the title-block mini-map from the engine's reading route, with an oxide flash on patched segments.
+- Lift the existing article sheets with a 250ms transform-only rise and pre-rendered shadow. OpenSight starts lifted; matched-pair drawing morphs play at entered doors.
+- Add a List-view toggle while retaining the linear column as the mobile, no-JavaScript, print, and screen-reader foundation.
+- Keep drawing-set chrome honest, the approved engine and thumbnail bytes unchanged, and the established sharing metadata and linked “Built with Factory” credit.
+- Keep this stage on the feature branch and PR preview only. No merge or production change. Options A–D and D-plus remain private research artifacts and are not shipped.
+
+**Deferred:** shareable route URLs, view transitions, a designed print artifact, and a cover ritual.
+
+The approved stage passed 38 static checks, 21 pure-Node plan checks, and six isolated route-projection checks. Root integration passed runtime parity, syntax, anchors, the plan/route tests, and HTTP 200 with exact body matches for all five runtime files on localhost. **Rendered browser QA remains pending.** Abhi previews manually; Safari, physical phones, and real screen readers are untested.
+
 ## 2026-10-22 · Content and layout refinement
 
 - Fit OpenSight's research-to-shopping relationship into one compact, non-panned scene, with one retained omega-3 topic and a new budget constraint.

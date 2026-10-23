@@ -49,3 +49,51 @@
 @media(max-width:350px){.station{width:104px}.station strong{font-size:15px}.hub{width:65px;height:65px}.hub-code{font-size:31px}.assay-range{font-size:45px}.metric>strong{font-size:57px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.latency-before i{background:repeating-linear-gradient(135deg,transparent,transparent 4px,#24312f70 4px,#24312f70 5px)}.latency-after i{background:var(--ink)}}
 @media print{body,.drawing-set{margin:0;background:white;border:0}.structure{display:none!important}.building{padding:0 20px}.room{break-inside:avoid;padding-bottom:35px}.room-heading,.metric,.room figcaption{background:white}.foundation{break-inside:avoid}.demo-record{max-width:350px}.latency-after i{background:var(--ink)}}
+
+/* ══ THE PLAN TABLE — gate stage 1 (OpenSight plan+section pair) ══
+   Desktop enhancement over the frozen v3 column: top-down plan, machine as
+   plant room, route as a re-plotting circulation line, rooms lifting as
+   section sheets. Mobile / no-JS / print keep the v3 column untouched.
+   Ambience is interaction-coupled only: re-plot flash, sheet lift, door
+   morph. No clocks, no scroll listeners, no hijacking. */
+.plan{display:none}
+.plan-bar{display:flex;justify-content:flex-end;padding:0 0 8px}
+#view-toggle{font:10px var(--mono);min-height:44px;padding:8px 14px;border:1px solid var(--line);background:transparent}
+.mini-map{display:block;width:100%;height:auto;margin:8px 0 16px;color:var(--ink)}
+.mini-map path{stroke-width:10;vector-effect:non-scaling-stroke}
+.mini-map #mini-route{stroke-width:2.5;vector-effect:none}
+.mini-map a:hover path{stroke:var(--signal)}
+.next-route{display:none}
+@media(min-width:900px){
+ .js .plan{display:block;padding:8px 55px 4px}
+ .plan-drawing{display:block;width:100%;height:auto;color:var(--ink)}
+ .plan-link{cursor:pointer;outline-offset:4px}
+ .plan-link:focus-visible{outline:2px solid var(--signal)}
+ .plan-link:hover .walls{stroke:var(--signal)}
+ .plan-room.current .walls{stroke:var(--signal)}
+ .plan-room.current .floor{fill:#e9efea}
+ .plan-room.unfiled{transform-box:fill-box;transform-origin:center;transform:rotate(1.2deg)}
+ .plan-room.unfiled .walls{fill:none;stroke-dasharray:6 5}
+ .plan-label{letter-spacing:-.02em}
+ .plan.reading .plan-drawing{opacity:.45;transition:opacity .25s}
+ #circulation-flash.run{animation:replot-flash .9s ease-out forwards}
+ #door-morph{pointer-events:none}
+ /* Section-sheet stack: rooms share one grid cell; the active room lifts. */
+ .js .building{padding-top:6px}
+ .js .rooms{display:grid}
+ .js .room{grid-area:1/1;visibility:hidden}
+ .js .room.active{visibility:visible;background:var(--paper);box-shadow:0 18px 34px #24312f24,0 2px 0 #24312f18;animation:sheet-lift .25s ease-out}
+ .js .list-view .rooms{display:block}
+ .js .list-view .room{visibility:visible}
+ .js .next-route{display:inline-flex;align-items:center;min-height:44px;margin-top:24px;padding:8px 16px;border:1px solid var(--ink);background:var(--paper);font:11px var(--mono);position:relative;z-index:4}
+ .js .next-route:hover{border-color:var(--signal);color:var(--signal)}
+}
+@keyframes sheet-lift{from{transform:translateY(18px)}to{transform:translateY(0)}}
+@keyframes replot-flash{from{opacity:1}to{opacity:0}}
+/* Reduced motion: final states only — sheet appears, no rise, no flash. */
+@media (prefers-reduced-motion:reduce){
+ .js .room.active{animation:none}
+ #circulation-flash{display:none!important}
+ .plan.reading .plan-drawing{transition:none}
+}
+@media print{.plan,.mini-map,.next-route{display:none!important}}
