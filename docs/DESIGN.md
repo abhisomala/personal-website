@@ -44,6 +44,27 @@ Named plan links open or close the corresponding sheet. Escape closes a sheet an
 
 Dragging is optional. The insertion selector and patch button offer a native alternative, including when motion is paused or reduced. Ordinary links provide a route into the work when JavaScript is unavailable.
 
+## The key-plan instrument
+
+Stage 3 replaces the corner's outlined rectangles with a true miniature of the authored plan. Each room preserves the large plan's wall, outline, and door-swing paths, checked path-for-path. Solid poché is designed for miniature legibility; real door gaps, reduced evidence glyphs, and live route-position numerals distinguish the six rooms. The route is the heaviest line.
+
+The states describe the open-page visit, not a stored reading history:
+
+- **Unread:** dashed outline and dimmed glyph, gated on JavaScript so the no-JavaScript map remains solid.
+- **Visited:** inked and latched after a sheet opens or its article reaches the observer's visibility threshold.
+- **Current:** at most one room carries the section cut-flag at the door, inverted numeral chip, and `aria-current`.
+- **Patched:** route-position numerals re-key and changed route segments flash oxide.
+
+Hover and focus cross-highlight the corresponding real plan figure and register its route number and name in the corner. Every mark remains a named fragment link, progressively enhanced to sheet activation on wide screens. The correspondence link is a stamp-chip with a transform-only registration effect and pre-rendered shadow states.
+
+When all six rooms have been visited, the corner reveals its **ROUTE AS VISITED** certificate once. Codes come from the visited Set's insertion order, so they retain actual first-visit order rather than masquerading as the current route. Sheet activation counts immediately, including OpenSight when presented already lifted. Column visits latch through the observer. The record is page-local and forgotten on reload; later route patches do not rewrite the certificate.
+
+A shared IntersectionObserver tracks article ratios, latches visits at half visibility, and selects the highest-ratio room in the column. A CSS `scroll(root)` timeline drives a bead along the current drawn route without JavaScript per frame. An `@supports` gate enables that ornament only where supported; its default state is off. The observer-driven current-room flag is the fallback, including under reduced motion.
+
+The bead expresses overall document progress, not exact room-by-room position. Reordering the route does not turn it into a truthful between-room locator. The discrete current flag carries that responsibility. No scroll, wheel, or touch listeners are added.
+
+The instrument remains in the title-block flow rather than becoming a floating overlay. Mobile retains the real miniature and working anchors. Print hides the key plan.
+
 ## Project spaces
 
 - **OpenSight:** one compact scene places a retained omega-3 topic beside the new budget constraint. Its linked image is an existing public-demo thumbnail, explicitly labeled as such, not a fabricated screenshot or a claimed observed video frame.
@@ -62,13 +83,13 @@ Each plan figure adapts that room's existing evidence: OpenSight's research/shop
 Motion should explain a change or clarify the reading path, not gate access to content.
 
 - The engine's movement shows a change of priority or route.
-- The shell has no scroll-linked animation. Project evidence drawings retain their complete static states.
+- Project evidence drawings retain their complete static states. Only the optional key-plan bead follows document scroll progress through a capability-gated CSS timeline.
 - A sheet rises for 250ms using only a transform, with a pre-rendered shadow rather than an animated shadow.
 - Circulation re-plotting flashes only changed segments in oxide. The title-block mini-map mirrors the same coordinates and route.
 - Matched-pair drawing morphs play for 600ms at the entered room's door. They transform a reading instrument, not project data or dependencies. OpenSight has no entry morph.
 - Native scrolling remains intact, with no wheel or touch interception.
 - Decorative engine animation is suspended when its region is offscreen or the document is hidden.
-- Reduced motion removes the sheet rise and oxide flash and skips door morphs to their final state. The pause control stops decorative engine movement without removing project records or route controls.
+- Reduced motion removes the sheet rise and oxide flash, disables the bead, and skips door morphs to their final state. The current-room flag remains available. The pause control stops decorative engine movement without removing project records or route controls.
 - The no-JavaScript page retains the authored project records and real links even when generated decoration is absent.
 
 Responsive layout and a compact, non-panned OpenSight drawing are authored in CSS. Their presence is not proof of containment, touch behavior, or smoothness on a physical phone.
@@ -90,7 +111,7 @@ The route is a reading aid. Its wires do not assert dependencies, partnerships, 
 
 ## Validation boundary
 
-The approved stage passed 38 static checks, 21 pure-Node plan checks, and six isolated route-projection checks. Root integration passed runtime parity, authored IDs/fragments, syntax, and the plan/route tests. All five runtime files returned HTTP 200 with exact body matches on the localhost preview.
+The approved stage 3 source passed 46 static checks, 29 pure-Node plan checks, and six isolated route-projection checks. Root integration passed runtime parity, authored IDs/fragments, syntax, the plan/route tests, and five isolated certificate checks. All five runtime files returned HTTP 200 with exact body matches on localhost.
 
 **Rendered browser QA is still pending.** Abhi previews manually; owner approval does not stand in for a browser QA pass. Figure legibility, sheet-lift feel, door-morph staging, native drag and keyboard insertion, focus visibility and retention, status announcements, drawing descriptions, computed contrast, reduced-motion changes, and frame timing remain unverified. Safari, physical phones, and real screen readers are untested.
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-10-23 · Plan Table stage 3, key-plan instrument
+
+- Replace the corner's outlined rectangles with a true miniature: solid poché, real door gaps, evidence glyphs, and live route-position numerals. Wall, outline, and door-swing paths match the large plan path-for-path.
+- Add current cut-flags and inverted numeral chips, inked/latched visited rooms, and JavaScript-gated dashed unread rooms.
+- Flash patched circulation segments oxide, cross-highlight real plan figures on hover/focus, and retain named fragment navigation.
+- Restyle correspondence as a stamp-chip with a transform-only registration effect.
+- Reveal a **ROUTE AS VISITED** certificate once in the corner after all six rooms are visited. Codes preserve actual first-visit order, including OpenSight when presented lifted, rather than the current route order; the record resets on reload.
+- Track room states with IntersectionObserver. Add an `@supports`-gated CSS scroll-timeline bead, default-off elsewhere; the current-room flag remains the fallback. The bead reflects document progress, not exact between-room position.
+- Keep the instrument in flow on desktop and mobile; hide the key plan in print.
+- Keep the feature-branch/PR preview boundary. No merge or production change. Route URLs, view transitions, the designed print artifact, and the cover ritual remain deferred.
+
+The approved source passed 46 static checks, 29 pure-Node plan checks, and six isolated route-projection checks. Root-runtime integrity, syntax, plan/route tests, five certificate checks, and localhost HTTP body checks also pass. **Rendered browser QA remains pending.** Abhi previews manually; Safari, physical phones, and real screen readers are untested.
+
 ## 2026-10-23 · Plan Table preview
 
 - Add an authored top-down plan on JavaScript-capable screens at least 900px wide: the routing machine as plant room, six project plan figures with poché walls and door swings, and a contact boundary.

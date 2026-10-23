@@ -50,19 +50,42 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.latency-before i{background:repeating-linear-gradient(135deg,transparent,transparent 4px,#24312f70 4px,#24312f70 5px)}.latency-after i{background:var(--ink)}}
 @media print{body,.drawing-set{margin:0;background:white;border:0}.structure{display:none!important}.building{padding:0 20px}.room{break-inside:avoid;padding-bottom:35px}.room-heading,.metric,.room figcaption{background:white}.foundation{break-inside:avoid}.demo-record{max-width:350px}.latency-after i{background:var(--ink)}}
 
-/* ══ THE PLAN TABLE — gate stage 1 (OpenSight plan+section pair) ══
-   Desktop enhancement over the frozen v3 column: top-down plan, machine as
-   plant room, route as a re-plotting circulation line, rooms lifting as
-   section sheets. Mobile / no-JS / print keep the v3 column untouched.
-   Ambience is interaction-coupled only: re-plot flash, sheet lift, door
-   morph. No clocks, no scroll listeners, no hijacking. */
+/* THE PLAN TABLE: top-down plan over the frozen v3 column; ambience is
+   interaction-coupled only — no clocks, scroll listeners, or hijacking. */
 .plan{display:none}
 .plan-bar{display:flex;justify-content:flex-end;padding:0 0 8px}
 #view-toggle{font:10px var(--mono);min-height:44px;padding:8px 14px;border:1px solid var(--line);background:transparent}
-.mini-map{display:block;width:100%;height:auto;margin:8px 0 16px;color:var(--ink)}
-.mini-map path{stroke-width:10;vector-effect:non-scaling-stroke}
-.mini-map #mini-route{stroke-width:2.5;vector-effect:none}
-.mini-map a:hover path{stroke:var(--signal)}
+/* Stage 3 key plan: true miniature (solid poché, two weights, route heaviest),
+   live states unread/visited/current, no-JS all solid. */
+.keyplan{border:1px dashed var(--ink);background-color:var(--paper);background-image:linear-gradient(#24312f14 1px,transparent 1px),linear-gradient(90deg,#24312f14 1px,transparent 1px);background-size:20px 20px;padding:8px;margin:10px 0 6px}
+.kp-head{font:8px var(--mono);letter-spacing:.14em;margin:0 0 6px;padding:2px 5px;background:#24312f0d;color:var(--muted)}
+.mini-map{display:block;width:100%;height:auto;color:var(--ink)}
+.mout{stroke-width:1.2;vector-effect:non-scaling-stroke}
+.msw{stroke-dasharray:4 4}
+.mg path{stroke-width:5}
+.msw,.mflag,.mchip{display:none}
+.mini-room.current :is(.msw,.mflag,.mchip){display:block}
+.mini-room.current .mnum{fill:var(--paper)}
+.mini-room.current .mout{stroke-width:2}
+.js .mini-room.unread .mout{stroke-dasharray:6 5}
+.js .mini-room.unread :is(.mg){opacity:.6}
+.js .mini-room.unread .mw{opacity:.35}
+.mini-room.ghost{opacity:.25}
+:is(.mini-room:hover,.mini-room:focus-visible) .mout{stroke:var(--signal);stroke-width:2}
+:is(.mini-room:hover,.mini-room:focus-visible) .mg{opacity:1}
+.plan-room.peek .walls{stroke:var(--signal)}
+#mini-route{stroke-width:2;vector-effect:non-scaling-stroke}
+#mini-flash{stroke-width:2;vector-effect:non-scaling-stroke}
+#mini-flash.run{animation:replot-flash .6s ease-out forwards}
+#mini-marker{display:none;stroke-width:1.5;vector-effect:non-scaling-stroke}
+@supports(animation-timeline:scroll(root)){@media(prefers-reduced-motion:no-preference){#mini-marker{display:block;offset-distance:0%;animation:mini-travel linear both;animation-timeline:scroll(root)}}}
+@keyframes mini-travel{to{offset-distance:100%}}
+.mini-readout{font:9px var(--mono);letter-spacing:.08em;text-transform:uppercase;min-height:15px;margin:5px 0 0}
+.visit-stamp{font:8px var(--mono);letter-spacing:.12em;margin:6px 0 0;padding:4px 6px;border:1px solid var(--ink);display:inline-block}
+.author-block>a:last-child{border:1px solid var(--ink);padding:0 12px;margin-top:6px;box-shadow:3px 3px 0 #24312f2e;transition:transform .18s ease-out}
+.author-block>a:last-child:hover{transform:translate(3px,3px);box-shadow:0 0 0 #24312f2e}
+@media print{.keyplan,.visit-stamp{display:none!important}}
+@media(max-width:650px){.keyplan{max-width:340px}}
 .next-route{display:none}
 @media(min-width:900px){
  .js .plan{display:block;padding:8px 55px 4px}

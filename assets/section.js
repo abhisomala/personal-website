@@ -57,12 +57,8 @@
   readRoute();readSelection();registerControls();
 })();
 
-/* THE PLAN TABLE — gate stage 1 (OpenSight plan+section pair).
-   Desktop spatial layer over the frozen v3 column. The engine owns route
-   state; this shell only re-plots. Circulation re-plots on patch with an
-   oxide flash on re-plotted segments; reading a room lifts its section
-   sheet; the approved matched-pair morph registry plays at the door being
-   entered. No scroll listeners, no clocks, no input interception. */
+/* THE PLAN TABLE: spatial layer over the frozen v3 column. The engine owns
+   route state; this shell only re-plots. No scroll listeners or clocks. */
 (() => {
 'use strict';
 const plan=document.querySelector('#plan');
@@ -122,6 +118,27 @@ function morphAt(key,p){
 // </morph-math>
 const circ=plan.querySelector('#circulation'),flash=plan.querySelector('#circulation-flash');
 const mini=document.querySelector('#mini-route'),doorMorph=plan.querySelector('#door-morph');
+// Key-plan instrument: IO drives states (unread/visited/current), CSS
+// scroll-timeline drives the bead, IO is its stepped fallback. No timers.
+const miniRooms=new Map([...document.querySelectorAll('.mini-room')].map(a=>[a.getAttribute('href').slice(1),a]));
+const miniFlash=document.querySelector('#mini-flash'),marker=document.querySelector('#mini-marker');
+const readout=document.querySelector('.mini-readout'),stamp=document.querySelector('.visit-stamp'),stampRoute=document.querySelector('#visit-route');
+const CODES={opensight:'OS',vt:'VT',nomic:'NM',production:'ML',wildfire:'WF',algae:'AB'};
+const visited=new Set();let ioCurrent=null;
+function paintMini(cur){
+  miniRooms.forEach((a,k)=>{
+    a.classList.toggle('unread',!visited.has(k));
+    const isCur=k===cur;
+    a.classList.toggle('current',isCur);
+    if(isCur)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current');
+  });
+}
+function checkStamp(){
+  if(stamp&&stamp.hidden&&visited.size===known.length){
+    stampRoute.textContent=[...visited].map(k=>CODES[k]).join('·');
+    stamp.hidden=false;
+  }
+}
 const roomParent=plan.querySelector('#plan-rooms');
 const figures=new Map([...roomParent.querySelectorAll('.plan-room')].map(g=>[g.id.slice(5),g]));
 const figureLink=key=>figures.get(key)?.querySelector('a');
@@ -152,14 +169,18 @@ function replot(){
     if(span&&!reduced.matches){
       flash.setAttribute('d',pathFrom(span));
       flash.classList.remove('run');void flash.getBoundingClientRect();flash.classList.add('run');
+      if(miniFlash){miniFlash.setAttribute('d',pathFrom(span));miniFlash.classList.remove('run');void miniFlash.getBoundingClientRect();miniFlash.classList.add('run');}
     }
   }
   circ.setAttribute('d',d);if(mini)mini.setAttribute('d',d);
+  if(marker)marker.style.offsetPath='path("'+d+'")';
   lastD=d;lastOrder=order;
   order.forEach((k,i)=>{
     const nxt=order[i+1],b=buttons.get(k);
     b.dataset.target=nxt||'about';
     b.textContent=nxt?('Next on route: '+names[nxt]+' →'):'Finish at the foundation ↓';
+    const a=miniRooms.get(k);
+    if(a){const n=a.querySelector('.mnum');if(n)n.textContent=String(i+1).padStart(2,'0');a.classList.toggle('ghost',!route.includes(k));}
   });
 }
 function activate(key,user=true){
@@ -167,6 +188,7 @@ function activate(key,user=true){
   rooms.forEach(r=>r.classList.toggle('active',r.id===key));
   plan.classList.add('reading');
   figures.forEach((g,k)=>g.classList.toggle('current',k===key));
+  visited.add(key);paintMini(key);checkStamp();
   if(!user)return;
   const room=byKey.get(key);
   room.focus({preventScroll:true});
@@ -178,6 +200,7 @@ function deactivate(){
   rooms.forEach(r=>r.classList.remove('active'));
   plan.classList.remove('reading');
   figures.forEach(g=>g.classList.remove('current'));
+  paintMini(wide.matches?null:ioCurrent);
 }
 function playDoorMorph(key){
   const d=DOORS[key],s=0.16;
@@ -212,6 +235,24 @@ toggle.addEventListener('click',()=>{
   toggle.textContent=on?'Plan view':'List view';
 });
 new MutationObserver(replot).observe(engine,{attributes:true,attributeFilter:['data-route']});
+// Column/list states: highest-ratio room is current; ≥0.5 latches visited.
+if('IntersectionObserver' in window&&miniRooms.size){
+  const ratios=new Map();
+  const io=new IntersectionObserver(entries=>{
+    for(const e of entries){ratios.set(e.target.id,e.intersectionRatio);if(e.intersectionRatio>=.5)visited.add(e.target.id);}
+    let best=null,bv=0;for(const[k,v]of ratios)if(v>bv){bv=v;best=k;}
+    ioCurrent=bv>0?best:null;
+    if(!active)paintMini(ioCurrent);
+    checkStamp();
+  },{threshold:[0,.5]});
+  rooms.forEach(r=>io.observe(r));
+}
+// Hover/focus: the real plan figure answers; the readout registers the room.
+miniRooms.forEach((a,k)=>{
+  const on=()=>{figures.get(k)?.classList.add('peek');if(readout)readout.textContent=a.querySelector('.mnum').textContent+' · '+names[k];};
+  const off=()=>{figures.get(k)?.classList.remove('peek');if(readout)readout.textContent='';};
+  a.onmouseenter=a.onfocus=on;a.onmouseleave=a.onblur=off;
+});
 wide.addEventListener('change',()=>{if(wide.matches){if(!active&&lastOrder.length)activate(lastOrder[0],false);}else deactivate();});
 replot();
 // Flagship evidence with zero prior interaction: the lead room's sheet
