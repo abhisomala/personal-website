@@ -20,9 +20,16 @@
     });
     if(restore&&focused.isConnected&&document.activeElement!==focused)focused.focus({preventScroll:true});
   }
+  // Stage 5: the machine carries content. The selected station's approved
+  // WHAT-IT-IS line (copy-deck §10, verbatim) surfaces in the result strip;
+  // the engine's sr-only #result-text updates on the same selection, so the
+  // visible line and the SR text stay in sync. Site-owned; engine untouched.
+  const whats={opensight:'A voice-first assistant for blind and low-vision users: speak a request, it acts on the live web and speaks the result back.',vt:'An applied NLP research system we built from zero — the first working version became the baseline for everything after.',nomic:'The infrastructure underneath embedding-visualization: the ETL pipelines and visualization systems that let people explore embedding data.',production:'A live production ML system that surfaces time-sensitive course announcements.',wildfire:'A deep-learning model for predicting wildfire spread, trained on 100K+ NASA VIIRS/MODIS datapoints and deployed on Kubernetes/Helm.',algae:'Research toward detecting harmful algal blooms, using EPA-measured microcystin concentrations as ground truth rather than a proxy.'};
   function readSelection(){
-    const link=document.querySelector('#result-link');
-    link.textContent=(names[link.getAttribute('href').slice(1)]||'Selected work')+' ↓';
+    const link=document.querySelector('#result-link'),key=link.getAttribute('href').slice(1);
+    link.textContent=(names[key]||'Selected work')+' ↓';
+    const what=document.querySelector('#result-what');
+    if(what&&whats[key])what.replaceChildren(what.querySelector('.rw-tag'),document.createTextNode(whats[key]));
   }
   function registerControls(){
     const world=engine.getBoundingClientRect();

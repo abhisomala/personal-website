@@ -24,13 +24,25 @@ This stage is feature-branch/PR preview only. It has not replaced the current pr
 
 Room sheets now lead with **WHAT → MY PART → PROOF**. The owner chose and approved the full introductions below; the existing responsibility sentences remain verbatim under the `MY PART — ` label. Short plan tags identify what each project is before its sheet opens.
 
-The header is tighter, with a larger headline, a cutting-plane hairline and drawing/scale meta row, and a static ghost elevation strip. The strip aligns to the plan's real horizontal coordinates; its heights are schematic proportions of plan depths, not measured building elevations. It is decorative, hidden below 900px and in print. The header A—A mark is removed, eyebrow navigation relocated to `#engine`; the separate foundation stamp remains.
+The header is tighter, with a larger headline, a cutting-plane hairline and drawing/scale meta row, and a static ghost elevation strip. The strip aligns to the plan's real horizontal coordinates; its heights are schematic proportions of plan depths, not measured building elevations. It is decorative, hidden below 900px and in print. The eyebrow is now simply `SELECTED WORK`, linked to `#engine`; stage 5 removes the section motif completely, including the foundation stamp.
 
-The engine gains breathing room through CSS only, including a viewport-relative world height and a tighter tool rail. Its runtime bytes and route geometry are unchanged. A capability-gated `:has()` rule mutes help until station hover/focus; browsers without that support retain full-weight instructions.
+The engine's stage 4 breathing room comes from CSS, including a viewport-relative world height and a tighter tool rail. Stage 5 separately replaces its rendering layer, as documented below. A capability-gated `:has()` rule mutes help until station hover/focus; browsers without that support retain full-weight instructions.
 
 The sheet underlay uses a static grid, construction datums, ruler ticks, and registration crosses, all at or below 8% ink. One `scroll(root)` timeline translates the ground subtly with document progress. It is JavaScript-, capability-, and motion-preference-gated; fallback and reduced-motion states are static. There are no added scroll, wheel, or touch listeners. Datum positions approximate bay insets between breakpoints, so they are atmospheric scaffolding, not measurement evidence.
 
-`engine-web-1` is a separate private experiment pending owner reaction. It is not part of this stage or its runtime.
+### Stage 5: site-owned rendering, frozen logic
+
+The rejected section motif is removed everywhere it rendered, not merely moved into navigation. Its foundation stamp and dead styles are gone. Runtime sweeps include normalized DOM text to catch split-element letter/arrow variants. The v3-copy preservation check has one documented `allowed_drops` entry for the old eyebrow string; the rest of the approved content remains preserved.
+
+The owner-approved web renderer is adopted from the private `engine-web-1` prototype. All priority modes now use straight point-to-point drafting wires rather than curves or orthogonal doglegs. Six hub-to-station spokes and a ring connecting stations in angular order draw at 1px and 35% ink beneath the full-weight reading route. That mesh follows station movement through the existing frame loop; no new clock or listener is introduced.
+
+**The whole engine file is no longer byte-identical to v3.** The new invariant is function-level: logic is byte-identical and test-pinned; rendering is site-owned. The parity harness pins these twelve logic functions: `renderRoute`, `showProject`, `setTargets`, `choose`, `patchRoute`, `findGap`, `previewDrop`, `positionNodes`, `frame`, `start`, `resize`, and `updateMotion`.
+
+Only `wireFor`, `wirePoint`, and `draw` change. `test-web.cjs` verifies that stripping those three functions leaves the canonical engine unchanged, that wire sampling still meets the gap/insertion contract, and that the listener inventory and `preventDefault` count remain unchanged. There are zero new listeners. This is a logic/render boundary, not a claim of measured browser performance.
+
+The selected station's owner-approved WHAT line appears in `#result-what`, verbatim from copy-deck §10 and the full introductions below. The existing `#result-link` observer updates the visible strip, and the engine's screen-reader text follows the same selected project. The status region still announces the responsibility sentence, not a new verbatim WHAT announcement. Synchronization is authored by construction; real assistive-technology output remains untested.
+
+OpenSight's default WHAT line is authored into static HTML rather than generated only by JavaScript. The no-JavaScript page has real default content, and the linear print document retains the same approved introduction. The prototype remains private historical material; its approved rendering is now part of the site's runtime.
 
 ## How it was built
 
@@ -50,7 +62,7 @@ The routing engine lets the visitor author a reading order:
 
 An insertion that would leave the order unchanged is a no-op, not a new edit. The route lives in the open page, with no saved cross-visit preference.
 
-`assets/engine.js` owns selection and route state and is byte-identical to the approved previous stage. `assets/section.js` observes `data-route`, moves existing article elements and plan links, and re-plots circulation, the mini-map, and “Next on route” controls. Stable project IDs identify records. The shell attempts to preserve focus if moving an article dislodges it, but that behavior still needs real-browser verification.
+`assets/engine.js` owns selection and route state. Its twelve logic functions remain byte-identical to frozen v3; its three rendering functions are site-owned and test-pinned. `assets/section.js` observes `data-route`, moves existing article elements and plan links, and re-plots circulation, the mini-map, and “Next on route” controls. Stable project IDs identify records. The shell attempts to preserve focus if moving an article dislodges it, but that behavior still needs real-browser verification.
 
 Named plan links open or close the corresponding sheet. Escape closes a sheet and returns focus to its plan figure. The List-view toggle exposes all articles as a column without maintaining a second content tree. These are authored behaviors, not claims of verified screen-reader output.
 
@@ -79,7 +91,7 @@ The instrument remains in the title-block flow rather than becoming a floating o
 
 ### Owner-approved room copy
 
-These full introductions and plan tags are approved site copy, quoted verbatim from the manifest-verified stage 4 source:
+These full introductions and plan tags are approved site copy, quoted verbatim from the manifest-verified source. Stage 5 also surfaces these full lines in the station-inspection strip:
 
 | Room | Full introduction | Plan tag |
 |---|---|---|
@@ -136,7 +148,7 @@ The route is a reading aid. Its wires do not assert dependencies, partnerships, 
 
 ## Validation boundary
 
-The approved stage 4 source passed 53 static checks, 34 pure-Node plan checks, and six isolated route-projection checks. Root integration passed runtime parity, syntax, plan/route tests, five isolated certificate checks, verbatim approved copy, and authored IDs/fragments. All five runtime files returned HTTP 200 with exact body matches on localhost.
+The corrected stage 5 source passed 55 static checks, 36 plan checks, five engine-parity/wire-contract checks, and six route-projection checks. Root runtime passes the plan, web, and route suites plus six isolated WHAT-selection checks. Independent root sweeps strip tags/whitespace and check tag-split motif patterns; positive fixtures verify the sweep catches the former failure. Listener inventory matches the canonical engine exactly, with 15 registrations and three `preventDefault` occurrences. Runtime parity, syntax, approved copy, IDs/fragments, and all five localhost HTTP body checks pass.
 
 **Rendered browser QA is still pending.** Abhi previews manually; owner approval does not stand in for a browser QA pass. Figure legibility, sheet-lift feel, door-morph staging, native drag and keyboard insertion, focus visibility and retention, status announcements, drawing descriptions, computed contrast, reduced-motion changes, and frame timing remain unverified. Safari, physical phones, and real screen readers are untested.
 

@@ -2,7 +2,7 @@
 
 A personal portfolio about building ML systems around tasks people need to finish. Six project records share two views: an authored top-down plan and a linear reading column.
 
-**Preview only:** Plan Table stage 4, with clearer room introductions and a quieter drawing sheet, is on `redesign/open-set` in [PR #3](https://github.com/abhisomala/personal-website/pull/3). It has not replaced the current production website. [Open the branch preview](https://abhijit-somala-git-redesign-open-set-abhisomalas-projects.vercel.app).
+**Preview only:** Plan Table stage 5, with the web machine and project introductions in its inspection strip, is on `redesign/open-set` in [PR #3](https://github.com/abhisomala/personal-website/pull/3). It has not replaced the current production website. [Open the branch preview](https://abhijit-somala-git-redesign-open-set-abhisomalas-projects.vercel.app).
 
 ## Built with Factory
 
@@ -15,7 +15,7 @@ The site includes the same simple credit: “Built with Factory.”
 - **Choose a priority:** People, Agents, Planet, or Scale changes the routing engine's arrangement and brings its lead project to the front.
 - **Read the plan:** on JavaScript-capable screens at least 900px wide, the machine becomes the plant room above six project plan figures. Poché walls, door swings, and project-specific evidence distinguish the rooms. OpenSight's section sheet starts lifted.
 - **Open a sheet:** activate a plan figure or its title-block mini-map link. A 250ms transform-only lift reveals the existing project article; “Next on route” follows the current reading order. Escape closes the sheet and returns focus to its figure.
-- **Inspect a station:** select it or press Enter, then follow the selected-work link to its project record.
+- **Inspect a station:** select it or press Enter to surface its owner-approved WHAT line in the engine strip, then follow the selected-work link to its project record.
 - **Patch a gap:** drag a station onto a highlighted route gap, or use the native insertion selector and “Patch.” Shift+Enter on a station focuses that selector.
 - **Read your route:** the project articles and plan-figure links follow the actual route order. The circulation line and mini-map re-plot from that same route, with a brief oxide flash on patched segments. The route is a reading order, not a claim that separate projects depend on one another.
 - **Use the column:** “List view” reveals the linear articles on wide screens. The column remains the mobile, no-JavaScript, print, and screen-reader foundation, without a second copy of the project content.
@@ -27,9 +27,19 @@ Ordinary scrolling, fragment links, evidence links, and native disclosures remai
 
 Each project now reads **WHAT → MY PART → PROOF**: its full owner-approved introduction, the unchanged responsibility sentence in a labeled row, then the evidence. All six full introductions and plan tags are [quoted verbatim in the design document](docs/DESIGN.md#owner-approved-room-copy). They are approved site copy, not proposals.
 
-The tighter header pairs a cutting-plane hairline with the drawing/scale meta row and a static ghost elevation strip. The strip shares the plan's horizontal coordinates; its heights are schematic, not measured building elevations. It is hidden below 900px and in print. The header A—A mark is removed, eyebrow navigation relocated; the separate foundation stamp remains.
+The tighter header pairs a cutting-plane hairline with the drawing/scale meta row and a static ghost elevation strip. The strip shares the plan's horizontal coordinates; its heights are schematic, not measured building elevations. It is hidden below 900px and in print. The eyebrow now reads `SELECTED WORK` and links to the engine. Stage 5 removes the former section motif everywhere, including its foundation stamp.
 
-Engine breathing room comes from CSS alone; the engine runtime is unchanged. The tool instructions step back until station hover/focus where `:has()` is supported, with full-weight fallback instructions elsewhere. A static grid, construction datums, ruler ticks, and corner crosses use at most 8% ink. One capability-gated, scroll-coupled ground drift adds subtle movement; reduced motion, no JavaScript, and unsupported browsers keep the ground static.
+Engine breathing room comes from CSS; stage 5 separately adopts the web renderer described below. The tool instructions step back until station hover/focus where `:has()` is supported, with full-weight fallback instructions elsewhere. A static grid, construction datums, ruler ticks, and corner crosses use at most 8% ink. One capability-gated, scroll-coupled ground drift adds subtle movement; reduced motion, no JavaScript, and unsupported browsers keep the ground static.
+
+## Stage 5: the web machine
+
+The section motif is deleted rather than relocated. Runtime sweeps check both source strings and normalized DOM text so letters split by markup cannot hide. The content-preservation checker documents one allowed drop for the old eyebrow label.
+
+Straight point-to-point drafting wires replace curves and doglegs. Six hub-to-station spokes and an angular-order station ring form a web at 1px and 35% ink beneath the full-weight reading route. The web is visual context, not a claim that the projects depend on one another.
+
+**The engine invariant has changed:** the whole file is no longer byte-identical to frozen v3. Twelve logic functions remain byte-identical and test-pinned; rendering is site-owned. Only `wireFor`, `wirePoint`, and `draw` differ. The wire-sampling contract, listener inventory, and `preventDefault` count are unchanged, with zero new listeners.
+
+Inspecting a station updates `#result-what` with its full owner-approved WHAT line, verbatim from copy-deck §10. The existing selection observer drives the visible line while the engine's screen-reader text tracks the same selected project. That synchronization is by construction, not a verified screen-reader pass; status announcements still use the responsibility sentence. Static HTML includes OpenSight's default WHAT line, and the linear print content retains that same approved introduction.
 
 ## The live key plan
 
@@ -80,8 +90,8 @@ These are implementation commitments, not a claim of verified accessibility conf
 ```text
 index.html                       Project records, authored plan, mini-map, metadata
 assets/
-  engine.js                      Selection, priorities, gap insertion, route state
-  section.js                     Route, sheet, door, and live key-plan interactions
+  engine.js                      Route logic and site-owned web rendering
+  section.js                     Route, WHAT strip, sheet, door, and key-plan shell
   section.css                    Two-view layout, drawings, responsive and motion rules
   opensight-demo-thumb.jpg        Existing public demo thumbnail
 docs/
@@ -89,7 +99,7 @@ docs/
   CHANGELOG.md                   Public-facing design changes
 ```
 
-`engine.js` owns the route and publishes it through `data-route`. The section shell reads that state; it does not maintain a competing route model. Project IDs remain stable as their displayed positions change. The engine and public demo thumbnail retain the approved previous-stage bytes.
+`engine.js` owns the route and publishes it through `data-route`. The section shell reads that state; it does not maintain a competing route model. Project IDs remain stable as their displayed positions change. Engine logic stays byte-identical to frozen v3 while its three rendering functions are site-owned. The approved public demo thumbnail retains its bytes.
 
 ## Checks and deployment
 
@@ -100,8 +110,8 @@ node --check assets/engine.js
 node --check assets/section.js
 ```
 
-The approved Plan Table stage 4 source passed 53 static checks, 34 pure-Node plan checks, and six isolated route-projection checks. Root integration passed runtime parity, syntax, plan/route tests, five isolated certificate checks, verbatim approved copy, authored IDs/fragments, and HTTP 200 with exact body matches for all five runtime files on localhost. These checks do not establish rendering or native-input behavior.
+The corrected stage 5 source passed 55 static checks, 36 plan checks, five `test-web.cjs` checks, and six isolated route-projection checks. Those plan, web, and route tests also pass against the root runtime, alongside six isolated WHAT-selection checks, exact engine listener-inventory comparison, and independent normalized-text/tag-split motif sweeps. Syntax, approved-copy parity, authored IDs/fragments, and HTTP 200 with exact bodies for all five runtime files pass. These checks do not establish rendering or native-input behavior.
 
-The repository is deployed with Vercel. This stage is feature-branch/PR preview only. Do not merge or promote it to production without separate owner approval. Options A–D and D-plus remain private research artifacts and are not shipped. `engine-web-1` also remains a private experiment pending owner reaction.
+The repository is deployed with Vercel. This stage is feature-branch/PR preview only. Do not merge or promote it to production without separate owner approval. Options A–D and D-plus remain private research artifacts and are not shipped. The `engine-web-1` prototype stays private; its approved three-function rendering fork is now adopted by the site.
 
 Read the [design rationale](docs/DESIGN.md) and [changelog](docs/CHANGELOG.md).

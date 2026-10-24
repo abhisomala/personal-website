@@ -1,10 +1,21 @@
 # Changelog
 
+## 2026-10-23 · Plan Table stage 5, the web machine
+
+- Remove the rejected section motif everywhere, including the foundation stamp and dead styles. The eyebrow now reads `SELECTED WORK`; normalized DOM-text sweeps catch split-markup variants, with one documented content-preservation allowance for the old eyebrow.
+- Adopt the approved rendering from `engine-web-1`: straight drafting wires and a hub/spoke plus station-ring web at 1px and 35% ink beneath the full-weight reading route.
+- Replace the whole-file engine invariant with a test-pinned split: twelve logic functions byte-identical to frozen v3, rendering site-owned, and only `wireFor`, `wirePoint`, and `draw` changed. The wire contract, listener inventory, and `preventDefault` count remain unchanged, with zero new listeners.
+- Surface the selected station's full owner-approved WHAT line verbatim in `#result-what`. The existing selection observer keeps it aligned with the engine's selected-project screen-reader text by construction; real screen-reader output remains untested.
+- Author the default OpenSight WHAT line into static HTML. Keep the same approved introduction in the linear no-JavaScript/print content.
+- Keep all four riders deferred and the release feature-branch-preview only. No merge or production change.
+
+The corrected source passed 55 static, 36 plan, five web-parity, and six route checks. Root plan/web/route suites, six WHAT-selection checks, independent normalized/tag-split motif sweeps, exact listener inventory, syntax, integrity, and HTTP body checks pass. **Rendered browser QA remains pending.** Abhi previews manually; Safari, physical phones, and real screen readers are untested.
+
 ## 2026-10-23 · Plan Table stage 4, air and clarity
 
 - Establish **WHAT → MY PART → PROOF** in all six rooms. Publish the owner's chosen full introductions and plan tags as approved site copy, [quoted verbatim in the design document](DESIGN.md#owner-approved-room-copy), not proposals.
 - Tighten the header with a cutting-plane hairline, drawing/scale meta row, and static ghost elevation strip, hidden below 900px and in print.
-- Remove the header A—A mark and relocate eyebrow navigation to the engine; retain the separate foundation stamp.
+- Remove the header A—A mark and relocate eyebrow navigation to the engine. Stage 5 subsequently removes the motif everywhere.
 - Slim the key plan by removing evidence glyphs and the reading bead while keeping walls, door gaps, route numerals, live states, patch feedback, readout, and first-visit-order certificate.
 - Give the engine air through CSS only. Keep its runtime byte-identical, move its disclaimer into the tool rail, and progressively mute instructions until station hover/focus.
 - Add a static underlay at no more than 8% ink and one capability-gated, scroll-coupled ground drift. Reduced motion, no JavaScript, and unsupported browsers keep it static.

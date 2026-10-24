@@ -137,23 +137,18 @@
     nodes.forEach(n=>n.el.style.transform=`translate(${n.x}px,${n.y}px) translate(-50%,-50%)`);
   }
   function wireFor(order,index){
+    // engine-web-1: straight drafting segments, no wandering bend.
     const before=index?nodes.find(n=>n.key===order[index-1]):null,after=nodes.find(n=>n.key===order[index]);
     const fx=before?before.x:origin.x,fy=before?before.y:origin.y;
     const tx=after?after.x:Math.max(32,Math.min(width-32,fx+(fx<width/2?100:-100)));
     const ty=after?after.y:Math.min(lowerLimit-10,fy+24);
     const dx=tx-fx,dy=ty-fy,dist=Math.max(1,Math.hypot(dx,dy)),radius=width<500?65:width<750?82:100;
     const sx=before?fx:fx+dx/dist*radius,sy=before?fy:fy+dy/dist*radius;
-    const bend=Math.sin(index*2.1+time*.55)*(priority==='agents'?30:13);
-    return{sx,sy,tx,ty,cx:(sx+tx)/2-dy/dist*bend,cy:(sy+ty)/2+dx/dist*bend,index,before:before?.key||null,after:after?.key||null};
+    return{sx,sy,tx,ty,index,before:before?.key||null,after:after?.key||null};
   }
   function wirePoint(w,t){
-    const mid=(w.sx+w.tx)/2,mt=1-t;
-    if(priority==='scale'){
-      if(t<.25)return{x:w.sx+(mid-w.sx)*t*4,y:w.sy};
-      if(t<.75)return{x:mid,y:w.sy+(w.ty-w.sy)*(t-.25)*2};
-      return{x:mid+(w.tx-mid)*(t-.75)*4,y:w.ty};
-    }
-    return{x:mt*mt*w.sx+2*mt*t*w.cx+t*t*w.tx,y:mt*mt*w.sy+2*mt*t*w.cy+t*t*w.ty};
+    // engine-web-1: uniform linear point; findGap/previewDrop inherit the new geometry.
+    return{x:w.sx+(w.tx-w.sx)*t,y:w.sy+(w.ty-w.sy)*t};
   }
   function findGap(key,point){
     const base=route.filter(k=>k!==key);
@@ -199,14 +194,24 @@
     });
     const drawingOrder=dragged&&dragDistance>5?route.filter(k=>k!==dragged.key):route;
     previewDrop();
+    // engine-web-1: THE WEB. Hub spokes + angular ring at drafting weight, drawn
+    // beneath the route. Recomputed every frame, so a dragged station carries its
+    // mesh connections live. Straight segments only; the web carries no packets.
+    const radius=width<500?65:width<750?82:100;
+    ctx.lineWidth=1;ctx.strokeStyle='#73817a59';
+    nodes.forEach(n=>{
+      const dx=n.x-origin.x,dy=n.y-origin.y,dist=Math.max(1,Math.hypot(dx,dy));
+      ctx.beginPath();ctx.moveTo(origin.x+dx/dist*radius,origin.y+dy/dist*radius);ctx.lineTo(n.x,n.y);ctx.stroke();
+    });
+    const ring=nodes.slice().sort((a,b)=>Math.atan2(a.y-origin.y,a.x-origin.x)-Math.atan2(b.y-origin.y,b.x-origin.x));
+    ctx.beginPath();
+    ring.forEach((n,i)=>{const m=ring[(i+1)%ring.length];ctx.moveTo(n.x,n.y);ctx.lineTo(m.x,m.y);});
+    ctx.stroke();
+    // The route stays the legible signal: full ink, packet traffic, drawn on top.
     for(let i=0;i<=drawingOrder.length;i++){
       const w=wireFor(drawingOrder,i),candidate=dragged&&dropCandidate?.index===i;
       ctx.lineWidth=candidate?6:active.includes(w.before)||active.includes(w.after)?3:1.5;ctx.strokeStyle=candidate?'#a34432':'#1f302e';
-      ctx.beginPath();ctx.moveTo(w.sx,w.sy);
-      const mid=(w.sx+w.tx)/2;
-      if(priority==='scale'){ctx.lineTo(mid,w.sy);ctx.lineTo(mid,w.ty);ctx.lineTo(w.tx,w.ty);}
-      else ctx.quadraticCurveTo(w.cx,w.cy,w.tx,w.ty);
-      ctx.stroke();
+      ctx.beginPath();ctx.moveTo(w.sx,w.sy);ctx.lineTo(w.tx,w.ty);ctx.stroke();
       const count=priority==='agents'?4:3;
       for(let j=0;j<count;j++){
         const speed=priority==='scale'?.20:priority==='agents'?.27:.13;
