@@ -20,6 +20,18 @@ This stage is feature-branch/PR preview only. It has not replaced the current pr
 
 **Four riders remain deferred:** shareable route URLs, view transitions, a designed print artifact, and a cover ritual. Existing print rules are a fallback, not the deferred print artifact.
 
+### Stage 4: air, clarity, and underlay
+
+Room sheets now lead with **WHAT → MY PART → PROOF**. The owner chose and approved the full introductions below; the existing responsibility sentences remain verbatim under the `MY PART — ` label. Short plan tags identify what each project is before its sheet opens.
+
+The header is tighter, with a larger headline, a cutting-plane hairline and drawing/scale meta row, and a static ghost elevation strip. The strip aligns to the plan's real horizontal coordinates; its heights are schematic proportions of plan depths, not measured building elevations. It is decorative, hidden below 900px and in print. The header A—A mark is removed, eyebrow navigation relocated to `#engine`; the separate foundation stamp remains.
+
+The engine gains breathing room through CSS only, including a viewport-relative world height and a tighter tool rail. Its runtime bytes and route geometry are unchanged. A capability-gated `:has()` rule mutes help until station hover/focus; browsers without that support retain full-weight instructions.
+
+The sheet underlay uses a static grid, construction datums, ruler ticks, and registration crosses, all at or below 8% ink. One `scroll(root)` timeline translates the ground subtly with document progress. It is JavaScript-, capability-, and motion-preference-gated; fallback and reduced-motion states are static. There are no added scroll, wheel, or touch listeners. Datum positions approximate bay insets between breakpoints, so they are atmospheric scaffolding, not measurement evidence.
+
+`engine-web-1` is a separate private experiment pending owner reaction. It is not part of this stage or its runtime.
+
 ## How it was built
 
 Abhi directed and approved the work through a [Factory](https://factory.ai) Mission. Multiple Droid agents developed design directions, built prototypes, implemented the chosen direction, reviewed the content and code, and ran source-level QA. Abhi chose Architectural Section and approved the public content and Factory credit.
@@ -46,11 +58,11 @@ Dragging is optional. The insertion selector and patch button offer a native alt
 
 ## The key-plan instrument
 
-Stage 3 replaces the corner's outlined rectangles with a true miniature of the authored plan. Each room preserves the large plan's wall, outline, and door-swing paths, checked path-for-path. Solid poché is designed for miniature legibility; real door gaps, reduced evidence glyphs, and live route-position numerals distinguish the six rooms. The route is the heaviest line.
+The corner is a true miniature of the authored plan. Each room preserves the large plan's wall, outline, and door-swing paths, checked path-for-path. Stage 4 slims the instrument to solid poché, real door gaps, route-position numerals, and the route line, while keeping its live states, readout, and certificate. The miniature evidence glyphs and reading bead are removed; evidence geometry remains on the big plan.
 
 The states describe the open-page visit, not a stored reading history:
 
-- **Unread:** dashed outline and dimmed glyph, gated on JavaScript so the no-JavaScript map remains solid.
+- **Unread:** dashed outline and muted walls, gated on JavaScript so the no-JavaScript map remains solid.
 - **Visited:** inked and latched after a sheet opens or its article reaches the observer's visibility threshold.
 - **Current:** at most one room carries the section cut-flag at the door, inverted numeral chip, and `aria-current`.
 - **Patched:** route-position numerals re-key and changed route segments flash oxide.
@@ -59,13 +71,26 @@ Hover and focus cross-highlight the corresponding real plan figure and register 
 
 When all six rooms have been visited, the corner reveals its **ROUTE AS VISITED** certificate once. Codes come from the visited Set's insertion order, so they retain actual first-visit order rather than masquerading as the current route. Sheet activation counts immediately, including OpenSight when presented already lifted. Column visits latch through the observer. The record is page-local and forgotten on reload; later route patches do not rewrite the certificate.
 
-A shared IntersectionObserver tracks article ratios, latches visits at half visibility, and selects the highest-ratio room in the column. A CSS `scroll(root)` timeline drives a bead along the current drawn route without JavaScript per frame. An `@supports` gate enables that ornament only where supported; its default state is off. The observer-driven current-room flag is the fallback, including under reduced motion.
-
-The bead expresses overall document progress, not exact room-by-room position. Reordering the route does not turn it into a truthful between-room locator. The discrete current flag carries that responsibility. No scroll, wheel, or touch listeners are added.
+A shared IntersectionObserver tracks article ratios, latches visits at half visibility, and selects the highest-ratio room in the column. The discrete current flag carries position, including under reduced motion. No bead implies an exact between-room location, and no scroll, wheel, or touch listeners are added.
 
 The instrument remains in the title-block flow rather than becoming a floating overlay. Mobile retains the real miniature and working anchors. Print hides the key plan.
 
 ## Project spaces
+
+### Owner-approved room copy
+
+These full introductions and plan tags are approved site copy, quoted verbatim from the manifest-verified stage 4 source:
+
+| Room | Full introduction | Plan tag |
+|---|---|---|
+| OpenSight | “A voice-first assistant for blind and low-vision users: speak a request, it acts on the live web and speaks the result back.” | VOICE WEB TASKS |
+| VT NLP Lab | “An applied NLP research system we built from zero — the first working version became the baseline for everything after.” | APPLIED RESEARCH |
+| Nomic AI | “The infrastructure underneath embedding-visualization: the ETL pipelines and visualization systems that let people explore embedding data.” | EMBEDDING INFRASTRUCTURE |
+| Production ML | “A live production ML system that surfaces time-sensitive course announcements.” | COURSE ANNOUNCEMENTS |
+| Wildfire | “A deep-learning model for predicting wildfire spread, trained on 100K+ NASA VIIRS/MODIS datapoints and deployed on Kubernetes/Helm.” | SPREAD PREDICTION |
+| Algal-bloom research | “Research toward detecting harmful algal blooms, using EPA-measured microcystin concentrations as ground truth rather than a proxy.” | BLOOM DETECTION |
+
+### Evidence and its limits
 
 - **OpenSight:** one compact scene places a retained omega-3 topic beside the new budget constraint. Its linked image is an existing public-demo thumbnail, explicitly labeled as such, not a fabricated screenshot or a claimed observed video frame.
 - **VT NLP Lab:** exploded floor plates represent building and iterating. They are conceptual construction geometry, not a quantitative score plot.
@@ -76,20 +101,20 @@ The instrument remains in the title-block flow rather than becoming a floating o
 
 Project records appear in the visitor's chosen order without separate passage preludes. Nomic's illustrative-data disclaimer appears once, next to its drawing.
 
-Each plan figure adapts that room's existing evidence: OpenSight's research/shopping counters and handoff rail, VT's iteration plates, Nomic's illustrative field and supporting plane, Production ML's 900→500 bar ratio, Wildfire's terrain and swaths, and the algae ruler's fixed 0.58–0.69 band. In-drawing labels reuse approved vocabulary rather than adding new performance claims.
+Each plan figure adapts that room's existing evidence: OpenSight's research/shopping counters and handoff rail, VT's iteration plates, Nomic's illustrative field and supporting plane, Production ML's 900→500 bar ratio, Wildfire's terrain and swaths, and the algae ruler's fixed 0.58–0.69 band. The new plan tags use the approved project descriptions, not new performance claims.
 
 ## Motion principles
 
 Motion should explain a change or clarify the reading path, not gate access to content.
 
 - The engine's movement shows a change of priority or route.
-- Project evidence drawings retain their complete static states. Only the optional key-plan bead follows document scroll progress through a capability-gated CSS timeline.
+- Project evidence drawings retain their complete static states. Only the decorative ground follows document scroll progress through a capability-gated CSS timeline; the key-plan bead is gone.
 - A sheet rises for 250ms using only a transform, with a pre-rendered shadow rather than an animated shadow.
 - Circulation re-plotting flashes only changed segments in oxide. The title-block mini-map mirrors the same coordinates and route.
 - Matched-pair drawing morphs play for 600ms at the entered room's door. They transform a reading instrument, not project data or dependencies. OpenSight has no entry morph.
 - Native scrolling remains intact, with no wheel or touch interception.
 - Decorative engine animation is suspended when its region is offscreen or the document is hidden.
-- Reduced motion removes the sheet rise and oxide flash, disables the bead, and skips door morphs to their final state. The current-room flag remains available. The pause control stops decorative engine movement without removing project records or route controls.
+- Reduced motion removes the sheet rise and oxide flash, keeps the underlay static, and skips door morphs to their final state. The current-room flag remains available. The pause control stops decorative engine movement without removing project records or route controls.
 - The no-JavaScript page retains the authored project records and real links even when generated decoration is absent.
 
 Responsive layout and a compact, non-panned OpenSight drawing are authored in CSS. Their presence is not proof of containment, touch behavior, or smoothness on a physical phone.
@@ -111,7 +136,7 @@ The route is a reading aid. Its wires do not assert dependencies, partnerships, 
 
 ## Validation boundary
 
-The approved stage 3 source passed 46 static checks, 29 pure-Node plan checks, and six isolated route-projection checks. Root integration passed runtime parity, authored IDs/fragments, syntax, the plan/route tests, and five isolated certificate checks. All five runtime files returned HTTP 200 with exact body matches on localhost.
+The approved stage 4 source passed 53 static checks, 34 pure-Node plan checks, and six isolated route-projection checks. Root integration passed runtime parity, syntax, plan/route tests, five isolated certificate checks, verbatim approved copy, and authored IDs/fragments. All five runtime files returned HTTP 200 with exact body matches on localhost.
 
 **Rendered browser QA is still pending.** Abhi previews manually; owner approval does not stand in for a browser QA pass. Figure legibility, sheet-lift feel, door-morph staging, native drag and keyboard insertion, focus visibility and retention, status announcements, drawing descriptions, computed contrast, reduced-motion changes, and frame timing remain unverified. Safari, physical phones, and real screen readers are untested.
 

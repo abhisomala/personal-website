@@ -48,38 +48,31 @@
 @media(max-width:380px){h1{font-size:32px}.name{font-size:20px}.author-block>a:last-child{font-size:7px;max-width:90px}.switch{font-size:17px}.switches{gap:9px}.station{width:110px}.station strong{font-size:16px}.station .tag{font-size:6px}.station .sub{font-size:6px}.hub{width:78px;height:78px}.hub-code{font-size:37px}.hub-label{font-size:5px}.hub-bottom{display:none}.world-top p{max-width:182px}.world-top button{font-size:7px;padding:6px}.demo-record{grid-template-columns:110px 1fr;gap:12px}.demo-credit p{font-size:10px}.room-heading h3{font-size:33px}.assay-range{font-size:50px}}
 @media(max-width:350px){.station{width:104px}.station strong{font-size:15px}.hub{width:65px;height:65px}.hub-code{font-size:31px}.assay-range{font-size:45px}.metric>strong{font-size:57px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.latency-before i{background:repeating-linear-gradient(135deg,transparent,transparent 4px,#24312f70 4px,#24312f70 5px)}.latency-after i{background:var(--ink)}}
-@media print{body,.drawing-set{margin:0;background:white;border:0}.structure{display:none!important}.building{padding:0 20px}.room{break-inside:avoid;padding-bottom:35px}.room-heading,.metric,.room figcaption{background:white}.foundation{break-inside:avoid}.demo-record{max-width:350px}.latency-after i{background:var(--ink)}}
+@media print{body,.drawing-set{margin:0;background:white;border:0}.structure{display:none!important}.building{padding:0 20px}.room{break-inside:avoid;padding-bottom:35px}.room-heading,.metric,.room figcaption{background:white}.foundation{break-inside:avoid}.demo-record{max-width:350px}.latency-after i{background:var(--ink)}.elevation{display:none}}
 
 /* THE PLAN TABLE: top-down plan over the frozen v3 column; ambience is
    interaction-coupled only — no clocks, scroll listeners, or hijacking. */
 .plan{display:none}
 .plan-bar{display:flex;justify-content:flex-end;padding:0 0 8px}
 #view-toggle{font:10px var(--mono);min-height:44px;padding:8px 14px;border:1px solid var(--line);background:transparent}
-/* Stage 3 key plan: true miniature (solid poché, two weights, route heaviest),
-   live states unread/visited/current, no-JS all solid. */
+/* Stage 3 key plan: true miniature, live states, no-JS all solid. */
 .keyplan{border:1px dashed var(--ink);background-color:var(--paper);background-image:linear-gradient(#24312f14 1px,transparent 1px),linear-gradient(90deg,#24312f14 1px,transparent 1px);background-size:20px 20px;padding:8px;margin:10px 0 6px}
 .kp-head{font:8px var(--mono);letter-spacing:.14em;margin:0 0 6px;padding:2px 5px;background:#24312f0d;color:var(--muted)}
 .mini-map{display:block;width:100%;height:auto;color:var(--ink)}
 .mout{stroke-width:1.2;vector-effect:non-scaling-stroke}
 .msw{stroke-dasharray:4 4}
-.mg path{stroke-width:5}
 .msw,.mflag,.mchip{display:none}
 .mini-room.current :is(.msw,.mflag,.mchip){display:block}
 .mini-room.current .mnum{fill:var(--paper)}
 .mini-room.current .mout{stroke-width:2}
 .js .mini-room.unread .mout{stroke-dasharray:6 5}
-.js .mini-room.unread :is(.mg){opacity:.6}
 .js .mini-room.unread .mw{opacity:.35}
 .mini-room.ghost{opacity:.25}
 :is(.mini-room:hover,.mini-room:focus-visible) .mout{stroke:var(--signal);stroke-width:2}
-:is(.mini-room:hover,.mini-room:focus-visible) .mg{opacity:1}
 .plan-room.peek .walls{stroke:var(--signal)}
 #mini-route{stroke-width:2;vector-effect:non-scaling-stroke}
 #mini-flash{stroke-width:2;vector-effect:non-scaling-stroke}
 #mini-flash.run{animation:replot-flash .6s ease-out forwards}
-#mini-marker{display:none;stroke-width:1.5;vector-effect:non-scaling-stroke}
-@supports(animation-timeline:scroll(root)){@media(prefers-reduced-motion:no-preference){#mini-marker{display:block;offset-distance:0%;animation:mini-travel linear both;animation-timeline:scroll(root)}}}
-@keyframes mini-travel{to{offset-distance:100%}}
 .mini-readout{font:9px var(--mono);letter-spacing:.08em;text-transform:uppercase;min-height:15px;margin:5px 0 0}
 .visit-stamp{font:8px var(--mono);letter-spacing:.12em;margin:6px 0 0;padding:4px 6px;border:1px solid var(--ink);display:inline-block}
 .author-block>a:last-child{border:1px solid var(--ink);padding:0 12px;margin-top:6px;box-shadow:3px 3px 0 #24312f2e;transition:transform .18s ease-out}
@@ -101,7 +94,7 @@
  .plan.reading .plan-drawing{opacity:.45;transition:opacity .25s}
  #circulation-flash.run{animation:replot-flash .9s ease-out forwards}
  #door-morph{pointer-events:none}
- /* Section-sheet stack: rooms share one grid cell; the active room lifts. */
+
  .js .building{padding-top:6px}
  .js .rooms{display:grid}
  .js .room{grid-area:1/1;visibility:hidden}
@@ -118,5 +111,62 @@
  .js .room.active{animation:none}
  #circulation-flash{display:none!important}
  .plan.reading .plan-drawing{transition:none}
+ .js .tool-help{transition:none}
+ .elevation{animation:none}
 }
 @media print{.plan,.mini-map,.next-route{display:none!important}}
+/* Stage 4: air + deletion + static underlay (≤8% ink); ground drift is
+   scroll-position-driven, .js-gated, RM-off. */
+.title-block{grid-template-columns:1fr minmax(280px,300px)}
+.title-content{padding:20px 32px 18px}
+.title-content .eyebrow{margin:0 0 10px}
+.eyebrow a{color:inherit;text-decoration:none}
+.eyebrow a:hover{color:var(--signal)}
+h1{font-size:clamp(40px,4.2vw,66px)}
+.sheet-floor{display:flex;align-items:center;gap:16px;margin-top:16px}
+.plane{flex:1;border-top:1px solid var(--ink);position:relative}
+.plane:before,.plane:after{content:"";position:absolute;top:-4px;width:8px;height:8px}
+.plane:before{left:0;background:linear-gradient(45deg,transparent 3.5px,var(--ink) 3.5px 4.5px,transparent 4.5px)}
+.plane:after{right:0;background:linear-gradient(-45deg,transparent 3.5px,var(--ink) 3.5px 4.5px,transparent 4.5px)}
+.title-content dl{display:flex;gap:20px;font:9px var(--mono);margin:0;white-space:nowrap}
+.title-content dl>div{border-top:0;padding:0;display:flex;gap:6px}
+.title-content dt{color:var(--muted)}
+.title-content dd{margin:0}
+.author-block{padding-top:20px}
+.keyplan{padding:12px;margin:10px 0 8px}
+.elevation{display:block;grid-column:1/-1;height:44px;margin:0 23px;color:var(--ink);opacity:.05;background:var(--paper);position:relative;z-index:1}
+@media(max-width:1200px){.title-block{grid-template-columns:1fr minmax(260px,280px)}.elevation{margin:0 31px}}
+@media(max-width:900px){.title-block{grid-template-columns:1fr 220px}}
+@media(max-width:899px){.elevation{display:none}}
+@media(max-width:650px){.title-block{grid-template-columns:1fr}.author-block{grid-column:1}.sheet-floor{flex-wrap:wrap}.title-content dl{white-space:normal}}
+/* engine row air (CSS-only; engine geometry untouched) */
+.world{height:clamp(620px,72svh,760px)}
+.entry-lintel{padding-top:26px}
+.switch{min-height:58px}
+.engine-tools{padding:16px 30px 18px}
+@supports(selector(:has(*))){.js .tool-help{opacity:.45;transition:opacity .2s}
+.structure:has(.station:hover,.station:focus-visible) .tool-help{opacity:1}}
+/* room sheets: WHAT IT IS leads; responsibility demoted to the labeled row */
+.is-line{font-size:17px;line-height:1.5;margin:0 0 10px;max-width:52ch}
+.my-part{font:10px/1.6 var(--mono);color:var(--muted);margin:0;max-width:62ch}
+.mp-tag{letter-spacing:.1em}
+.plan-tag{letter-spacing:.08em;opacity:.75}
+/* underlay: static marks on one layer; rooms keep their own paper grounds */
+.drawing-set{overflow:clip}
+.drawing-set:before{content:"";position:absolute;left:0;right:0;top:-3%;height:106%;background-image:linear-gradient(#24312f08 1px,transparent 1px),linear-gradient(90deg,#24312f08 1px,transparent 1px);background-size:80px 80px;pointer-events:none;z-index:0}
+.sheet-bg{position:absolute;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(180deg,rgba(36,49,47,.08) 0 1px,transparent 1px 80px) 8px 0/14px auto no-repeat}
+.datum{position:absolute;top:0;bottom:0;width:1px;background:rgba(36,49,47,.05)}
+.d1{left:31px}.d2{left:109px}
+@media(max-width:1200px){.d1{left:23px}.d2{left:89px}}
+@media(max-width:900px){.d2{left:74px}}
+@media(max-width:650px){.d1{left:14px}.d2{left:27px}.sheet-bg{background-position-x:6px}}
+.reg{position:absolute;width:9px;height:9px}
+.reg:before,.reg:after{content:"";position:absolute;background:rgba(36,49,47,.06)}
+.reg:before{left:4px;top:0;width:1px;height:9px}
+.reg:after{left:0;top:4px;width:9px;height:1px}
+.reg:nth-child(1){top:6px;left:6px}.reg:nth-child(2){top:6px;right:6px}
+.reg:nth-child(3){bottom:6px;left:6px}.reg:nth-child(4){bottom:6px;right:6px}
+.drawing-set>.title-block,.drawing-set>main{position:relative;z-index:1}
+.room{background:var(--paper)}
+@supports(animation-timeline:scroll(root)){@media(prefers-reduced-motion:no-preference){.js .drawing-set:before{animation:ground-drift linear both;animation-timeline:scroll(root)}}}
+@keyframes ground-drift{to{transform:translateY(3%)}}

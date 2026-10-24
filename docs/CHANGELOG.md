@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-10-23 · Plan Table stage 4, air and clarity
+
+- Establish **WHAT → MY PART → PROOF** in all six rooms. Publish the owner's chosen full introductions and plan tags as approved site copy, [quoted verbatim in the design document](DESIGN.md#owner-approved-room-copy), not proposals.
+- Tighten the header with a cutting-plane hairline, drawing/scale meta row, and static ghost elevation strip, hidden below 900px and in print.
+- Remove the header A—A mark and relocate eyebrow navigation to the engine; retain the separate foundation stamp.
+- Slim the key plan by removing evidence glyphs and the reading bead while keeping walls, door gaps, route numerals, live states, patch feedback, readout, and first-visit-order certificate.
+- Give the engine air through CSS only. Keep its runtime byte-identical, move its disclaimer into the tool rail, and progressively mute instructions until station hover/focus.
+- Add a static underlay at no more than 8% ink and one capability-gated, scroll-coupled ground drift. Reduced motion, no JavaScript, and unsupported browsers keep it static.
+- Keep `engine-web-1` private and unshipped pending owner reaction. All four riders remain deferred. Feature-branch preview only, with no merge or production change.
+
+The approved source passed 53 static checks, 34 pure-Node plan checks, and six isolated route-projection checks. Root integrity, approved-copy parity, syntax, plan/route tests, five certificate checks, and localhost HTTP body checks also pass. **Rendered browser QA remains pending.** Abhi previews manually; Safari, physical phones, and real screen readers are untested.
+
 ## 2026-10-23 · Plan Table stage 3, key-plan instrument
 
 - Replace the corner's outlined rectangles with a true miniature: solid poché, real door gaps, evidence glyphs, and live route-position numerals. Wall, outline, and door-swing paths match the large plan path-for-path.

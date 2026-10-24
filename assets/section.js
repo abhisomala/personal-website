@@ -121,7 +121,7 @@ const mini=document.querySelector('#mini-route'),doorMorph=plan.querySelector('#
 // Key-plan instrument: IO drives states (unread/visited/current), CSS
 // scroll-timeline drives the bead, IO is its stepped fallback. No timers.
 const miniRooms=new Map([...document.querySelectorAll('.mini-room')].map(a=>[a.getAttribute('href').slice(1),a]));
-const miniFlash=document.querySelector('#mini-flash'),marker=document.querySelector('#mini-marker');
+const miniFlash=document.querySelector('#mini-flash');
 const readout=document.querySelector('.mini-readout'),stamp=document.querySelector('.visit-stamp'),stampRoute=document.querySelector('#visit-route');
 const CODES={opensight:'OS',vt:'VT',nomic:'NM',production:'ML',wildfire:'WF',algae:'AB'};
 const visited=new Set();let ioCurrent=null;
@@ -173,7 +173,6 @@ function replot(){
     }
   }
   circ.setAttribute('d',d);if(mini)mini.setAttribute('d',d);
-  if(marker)marker.style.offsetPath='path("'+d+'")';
   lastD=d;lastOrder=order;
   order.forEach((k,i)=>{
     const nxt=order[i+1],b=buttons.get(k);
